@@ -12,11 +12,14 @@ public class BettingCentre {
         /* broker wait */
     }
 
-    public void placeABet(int spectatorID, int betValue) {
-        Bet bet = new Bet(spectatorID, betValue);
+    public void placeABet(Bet bet) {
         /* add to waiting FIFO */
         /* notify broker */
         /* spectator wait */
+    }
+
+    public void existPendingBets() {
+        // returns true if there pending bets in FIFO
     }
 
     public void validateBet() {
