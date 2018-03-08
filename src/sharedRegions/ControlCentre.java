@@ -27,11 +27,24 @@ public class ControlCentre {
     }
 
     public void reportResulst() {
+        /* save horses winners */
         /* notify all spectators */
     }
 
     public void areThereAnyWinners() {
         /* notify all spectators */
+    }
+
+    public void haveIWon(int spectatorID) {
+        /* checks if winner is the one he/she bet */
+    }
+
+    public void entertainTheGuests() {
+        /* broker just playing host, end the afternoon */
+    }
+
+    public void relaxABit(int spectatorID) {
+        /* just relax, end the afternoon */
     }
 
 }

@@ -2,33 +2,48 @@ package sharedRegions;
 
 public class BettingCentre {
 
-    /* FIFO with waiting bets */
+    /* FIFO with pending bets */
     /* FIFO with accepted bets */
 
-    public void acceptBets(int raceId) {
+    /* FIFO with pending collections */
+    /* FIFO with accepted collections */
+
+    public void acceptBets(int raceID) {
         /* broker wait */
     }
 
-    public void placeABet(int spectatorId, int betValue) {
-        Bet bet = new Bet(spectatorId, betValue);
+    public void placeABet(int spectatorID, int betValue) {
+        Bet bet = new Bet(spectatorID, betValue);
         /* add to waiting FIFO */
         /* notify broker */
         /* spectator wait */
     }
 
     public void validateBet() {
-        /* validate waiting FIFO's head bet */
+        /* validate pending FIFO's head bet */
         /* notify spectator */
         if (!acceptedBets.isFull())
             /* broker wait */
-
     }
 
-    public void reportResults() {
-        /* save horse winners */
+    public void areThereAnyWinners(int[] raceWinners) {
+        /* save horses winners */
+        /* creates FIFO for the number of winning bets */
+        if (FIFO.length) // if there are winners
+            /* broker wait */
+            /* waits for the winners */
     }
 
-    public void areThereAnyWinners() {
-        /* save horse winners */
+    public void goCollectTheGains(int spectatorID) {
+        /* add to pending collections FIFO */
+        /* notify broker */
+        /* spectator waits */
+    }
+
+    public void honorTheBets() {
+        /* honor pending FIFO's head gains */
+        /* notify spectator */
+        if (!acceptedCollections.isFull())
+            /* broker wait */
     }
 }
