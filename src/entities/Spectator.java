@@ -2,6 +2,7 @@ package entities;
 
 import sharedRegions.BettingCentre;
 import sharedRegions.ControlCentre;
+import sharedRegions.Paddock;
 
 
 public class Spectator {
@@ -15,7 +16,7 @@ public class Spectator {
     }
 
     public void run() {
-        while(ControlCentre.waitForNextRace(self.id)) {
+        while(ControlCentre.waitForNextRace(this.id)) {
             // goCheckHorses
             ControlCentre.goCheckHorses();
             Paddock.goCheckHorses();
@@ -28,6 +29,6 @@ public class Spectator {
                 BettingCentre.goCollectGains(self.id);
         }
 
-        ControlCentre.relaxABit(self.id);
+        ControlCentre.relaxABit(this.id);
     }
 }

@@ -1,6 +1,8 @@
 package entities;
 
+import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
+import sharedRegions.Stable;
 
 public class Horse {
 
@@ -8,22 +10,20 @@ public class Horse {
     private int id;
     private double agility;
 
-    private makeAStep() {
+    private int makeAStep() {
         // calculate step
     }
 
     public void run() {
-        Stable.proceedToStable(self.id);
+        Stable.proceedToStable(this.id);
 
-        Paddock.proceedToPaddock(self.id);
+        Paddock.proceedToPaddock(this.id);
 
-        RacingTrack.proceedToStartLine(self.id);
+        RacingTrack.proceedToStartLine(this.id);
 
-        while (!RacingTrack.hasFinishLineBeenCrossed(self.id))
-            RacingTrack.makeAMove(self.id, self.makeAStep());
+        while (!RacingTrack.hasFinishLineBeenCrossed(this.id))
+            RacingTrack.makeAMove(this.id, makeAStep());
 
-        Stable.proceedToStable(self.id);
+        Stable.proceedToStable(this.id);
     }
-
-
 }
