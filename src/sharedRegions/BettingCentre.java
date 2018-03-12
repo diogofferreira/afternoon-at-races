@@ -1,5 +1,7 @@
 package sharedRegions;
 
+import utils.Bet;
+
 public class BettingCentre {
 
     /* FIFO with pending bets */
@@ -18,8 +20,9 @@ public class BettingCentre {
         /* spectator wait */
     }
 
-    public void existPendingBets() {
+    public boolean existPendingBets() {
         // returns true if there pending bets in FIFO
+        return false;
     }
 
     public void validateBet() {
@@ -29,12 +32,13 @@ public class BettingCentre {
             /* broker wait */
     }
 
-    public void areThereAnyWinners(int[] raceWinners) {
+    public boolean areThereAnyWinners() {
         /* save horses winners */
         /* creates FIFO for the number of winning bets */
-        if (FIFO.length) // if there are winners
+        if (FIFO.length){} // if there are winners
             /* broker wait */
             /* waits for the winners */
+        return false;
     }
 
     public void goCollectTheGains(int spectatorID) {
@@ -43,7 +47,7 @@ public class BettingCentre {
         /* spectator waits */
     }
 
-    public void honorTheBets() {
+    public void honourTheBets() {
         /* honor pending FIFO's head gains */
         /* notify spectator */
         if (!acceptedCollections.isFull())

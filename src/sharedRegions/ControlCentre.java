@@ -2,19 +2,23 @@ package sharedRegions;
 
 public class ControlCentre {
 
+    private int raceNumber;
+
     public void summonHorsesToPaddock(int raceNumber) {
+        this.raceNumber = raceNumber;
         /* broker wait */
     }
 
-    public void waitForNextRace(int spectatorId) {
+    public boolean waitForNextRace(int spectatorId) {
         /* spectators wait */
+        return false;
     }
 
     public void proceedToPaddock() {
         /* notify all spectators */
     }
 
-    public void goCheckHorses(int raceNumber) {
+    public void goCheckHorses() {
         /* notify broker */
     }
 
@@ -26,16 +30,17 @@ public class ControlCentre {
         /* broker wait */
     }
 
-    public void reportResulst() {
+    public void reportResults() {
         /* save horses winners */
         /* notify all spectators */
     }
 
-    public void areThereAnyWinners() {
+    public boolean areThereAnyWinners() {
         /* notify all spectators */
+        return false;
     }
 
-    public void haveIWon(int spectatorID) {
+    public boolean haveIWon(int horseID) {
         /* checks if winner is the one he/she bet */
     }
 
@@ -45,6 +50,10 @@ public class ControlCentre {
 
     public void relaxABit(int spectatorID) {
         /* just relax, end the afternoon */
+    }
+
+    public int getRaceNumber() {
+        return this.raceNumber;
     }
 
 }

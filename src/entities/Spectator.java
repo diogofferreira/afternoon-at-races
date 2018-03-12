@@ -1,8 +1,9 @@
 package entities;
 
-import sharedRegions.BettingCentre;
-import sharedRegions.ControlCentre;
-import sharedRegions.Paddock;
+import sharedRegions.*;
+import states.SpectatorState;
+import utils.Bet;
+import utils.State;
 
 
 public class Spectator {
@@ -11,24 +12,41 @@ public class Spectator {
     private int id;
     private double wallet;
 
+    private int bettedHorse;
+
+    private Paddock paddock;
+    private ControlCentre controlCentre;
+    private BettingCentre bettingCentre;
+
+    public Spectator(int id, double wallet, Paddock paddock,
+                     ControlCentre controlCentre, BettingCentre bettingCentre) {
+        this.state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
+        this.id = id;
+        this.wallet = wallet;
+        this.bettedHorse = -1;
+        this.paddock = paddock;
+        this.controlCentre = controlCentre;
+        this.bettingCentre = bettingCentre;
+    }
+
     private Bet getBet() {
         // return a bet, value and horse
     }
 
     public void run() {
-        while(ControlCentre.waitForNextRace(this.id)) {
+        while(controlCentre.waitForNextRace(this.id)) {
             // goCheckHorses
-            ControlCentre.goCheckHorses();
-            Paddock.goCheckHorses();
+            controlCentre.goCheckHorses();
+            paddock.goCheckHorses(controlCentre.getRaceNumber());
 
-            BettingCentre.placeABet(getBet());
+            bettingCentre.placeABet(getBet());
 
-            ControlCentre.goWatchTheRace(self.id);
+            controlCentre.goWatchTheRace(this.id);
 
-            if (ControlCentre.haveIWon(bettedHorse))
-                BettingCentre.goCollectGains(self.id);
+            if (controlCentre.haveIWon(this.bettedHorse))
+                bettingCentre.goCollectTheGains(this.id);
         }
 
-        ControlCentre.relaxABit(this.id);
+        controlCentre.relaxABit(this.id);
     }
 }

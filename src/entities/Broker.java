@@ -1,37 +1,54 @@
 package entities;
 
+import main.EventVariables;
 import sharedRegions.BettingCentre;
 import sharedRegions.ControlCentre;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
+import states.BrokerState;
+import utils.State;
 
 public class Broker {
 
     private State state;
 
+    private Stable stable;
+    private RacingTrack racingTrack;
+    private ControlCentre controlCentre;
+    private BettingCentre bettingCentre;
+
+    public Broker(Stable stable, RacingTrack racingTrack,
+                  ControlCentre controlCentre, BettingCentre bettingCentre) {
+        this.state = BrokerState.OPENING_THE_EVENT;
+        this.stable = stable;
+        this.controlCentre = controlCentre;
+        this.bettingCentre = bettingCentre;
+        this.racingTrack = racingTrack;
+    }
+
     public void run() {
-        for (int i = 0; i < NUMBER_OF_RACES; i++) {
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
 
             // summonHorsesToPaddock()
-            Stable.summonHorsesToPaddock(i);
-            ControlCentre.summonHorsesToPaddock(i);
+            stable.summonHorsesToPaddock(i);
+            controlCentre.summonHorsesToPaddock(i);
 
             // acceptsBets
-            BettingCentre.acceptBets();
-            while (BettingCentre.existPendingBets())
-                BettingCentre.validateBet();
+            bettingCentre.acceptBets(i);
+            while (bettingCentre.existPendingBets())
+                bettingCentre.validateBet();
 
             // startTheRace
-            RacingTrack.startTheRace();
-            ControlCentre.startTheRace();
+            racingTrack.startTheRace();
+            controlCentre.startTheRace();
 
             // reportResults
-            ControlCentre.reportResults();
+            controlCentre.reportResults();
 
-            if (BettingCentre.areThereAnyWinners())
-                BettingCentre.honorBets();
+            if (bettingCentre.areThereAnyWinners())
+                bettingCentre.honourTheBets();
         }
 
-        ControlCentre.entertainTheGuests();
+        controlCentre.entertainTheGuests();
     }
 }
