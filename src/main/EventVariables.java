@@ -7,5 +7,8 @@ public class EventVariables {
 
     public static final int NUMBER_OF_HORSES_PER_RACE = 4;
 
-    public static final int numHorses = NUMBER_OF_HORSES_PER_RACE * NUMBER_OF_RACES;
+    public static final int NUMBER_OF_HORSES =
+            NUMBER_OF_HORSES_PER_RACE * NUMBER_OF_RACES;
+
+    public static final int RACING_TRACK_LENGTH = 25;
 }

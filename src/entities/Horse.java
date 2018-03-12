@@ -1,9 +1,11 @@
 package entities;
 
+import main.EventVariables;
 import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
-import utils.State;
+import states.HorseState;
+import states.State;
 
 public class Horse {
     private State state;
@@ -14,24 +16,36 @@ public class Horse {
     private Paddock paddock;
     private RacingTrack racingTrack;
 
-    public Horse() {
-        
+    public Horse(int id, int agility, Stable s, Paddock p, RacingTrack r) {
+        if (id < 0)
+            throw new IllegalArgumentException("Invalid Horse ID.");
+        if (agility < 0)
+            throw new IllegalArgumentException("Invalid Horse agility.");
+        if (s == null || p == null || r == null)
+            throw new IllegalArgumentException("Invalid shared region reference.");
+
+        this.state = HorseState.AT_THE_STABLE;
+        this.id = id;
+        this.agility = agility;
+        this.stable = s;
+        this.paddock = p;
+        this.racingTrack = r;
     }
 
     private int makeAStep() {
-        // calculate step
+        return EventVariables.RACING_TRACK_SIZE / 5;
     }
 
     public void run() {
-        Stable.proceedToStable(this.id);
+        stable.proceedToStable(this.id);
 
-        Paddock.proceedToPaddock(this.id);
+        paddock.proceedToPaddock(this.id);
 
-        RacingTrack.proceedToStartLine(this.id);
+        racingTrack.proceedToStartLine(this.id);
 
-        while (!RacingTrack.hasFinishLineBeenCrossed(this.id))
-            RacingTrack.makeAMove(this.id, makeAStep());
+        while (!racingTrack.hasFinishLineBeenCrossed(this.id))
+            racingTrack.makeAMove(this.id, makeAStep());
 
-        Stable.proceedToStable(this.id);
+        stable.proceedToStable(this.id);
     }
 }

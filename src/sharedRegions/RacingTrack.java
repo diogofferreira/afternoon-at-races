@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import main.EventVariables;
 import utils.Racer;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class RacingTrack {
         // add horse to arrival list
         horses.add(new Racer(horseId));
         // last horse notify all spectators
-        if (horses.size() == NUMBER_OF_HORSES)
+        if (horses.size() == EventVariables.NUMBER_OF_HORSES)
             Paddock.proceedToStartLine();
         // horse wait for race start
         try {
@@ -63,9 +64,10 @@ public class RacingTrack {
             stepNumber++;
     }
 
-    public void hasFinishLineBeenCrossed(int horseId) {
+    public boolean hasFinishLineBeenCrossed(int horseId) {
         // horse wait if has crossed finish line
-        if (horses.get(horseId).getCurrentPosition() >= RACE_LENGTH) {
+        if (horses.get(horseId).getCurrentPosition() >=
+                EventVariables.RACING_TRACK_LENGTH) {
             try {
                 inFinishLine.wait();
             } catch (InterruptedException ignored){}
