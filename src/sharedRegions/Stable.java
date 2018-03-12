@@ -21,16 +21,16 @@ public class Stable {
 
     private Lock mutex;
     private Condition inStable;
-    private Horse[][] raceLineups =
-            new Horse[EventVariables.getNumRaces()][EventVariables.getNumHorsesPerRace()];
+    private int[][] raceLineups =
+            new int[EventVariables.getNumRaces()][EventVariables.getNumHorsesPerRace()];
 
-    private void generateLineup(Horse[] horses) {
+    private void generateLineup(int[] horses) {
         // Shuffle array
         Random rnd = ThreadLocalRandom.current();
         for (int i = horses.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
             // Simple swap
-            Horse h = horses[index];
+            int h = horses[index];
             horses[index] = horses[i];
             horses[i] = h;
         }
@@ -40,8 +40,8 @@ public class Stable {
                     [i % EventVariables.getNumRaces()] = horses[i];
     }
 
-    public Stable(Horse[] horses) {
-        if (horses == null || horses.length != EventVariables.getNumHorses())
+    public Stable(int[] horsesID) {
+        if (horsesID == null || horsesID.length != EventVariables.getNumHorses())
             throw new IllegalArgumentException("Null or invalid horses array");
 
         this.mutex = new ReentrantLock();

@@ -1,25 +1,11 @@
 package main;
 
 public class EventVariables {
-    private static int numSpectators = 4;
-    private static int numRaces = 5;
-    private static int numHorsesPerRace = 4;
-    private static int numHorses = numHorsesPerRace * numRaces;
+    public static final int NUMBER_OF_SPECATORS = 4;
 
-    public static int getNumSpectators() {
-        return numSpectators;
-    }
+    public static final int NUMBER_OF_RACES = 5;
 
-    public static int getNumRaces() {
-        return numRaces;
-    }
+    public static final int NUMBER_OF_HORSES_PER_RACE = 4;
 
-    public static int getNumHorsesPerRace() {
-        return numHorsesPerRace;
-    }
-
-    public static int getNumHorses() {
-        assert numHorses >= numHorsesPerRace * numRaces;
-        return numHorses;
-    }
+    public static final int numHorses = NUMBER_OF_HORSES_PER_RACE * NUMBER_OF_RACES;
 }

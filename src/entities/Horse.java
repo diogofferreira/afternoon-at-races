@@ -3,12 +3,20 @@ package entities;
 import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
+import utils.State;
 
 public class Horse {
-
     private State state;
     private int id;
     private double agility;
+
+    private Stable stable;
+    private Paddock paddock;
+    private RacingTrack racingTrack;
+
+    public Horse() {
+        
+    }
 
     private int makeAStep() {
         // calculate step
