@@ -33,7 +33,7 @@ public class Horse {
     }
 
     private int makeAStep() {
-        return EventVariables.RACING_TRACK_SIZE / 5;
+        return EventVariables.RACING_TRACK_LENGTH / 5;
     }
 
     public void run() {

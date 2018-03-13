@@ -4,7 +4,9 @@ import entities.Horse;
 import main.EventVariables;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
@@ -21,8 +23,9 @@ public class Stable {
 
     private Lock mutex;
     private Condition inStable;
-    private int[][] raceLineups =
-            new int[EventVariables.getNumRaces()][EventVariables.getNumHorsesPerRace()];
+    private List<List<Integer>> raceLineups;
+
+    private ControlCentre controlCentre;
 
     private void generateLineup(int[] horses) {
         // Shuffle array
@@ -36,16 +39,22 @@ public class Stable {
         }
 
         for (int i = 0; i < horses.length; i++)
-            this.raceLineups[i / EventVariables.getNumRaces()]
-                    [i % EventVariables.getNumRaces()] = horses[i];
+            this.raceLineups.get(i / EventVariables.NUMBER_OF_RACES).add(horses[i]);
     }
 
-    public Stable(int[] horsesID) {
-        if (horsesID == null || horsesID.length != EventVariables.getNumHorses())
+    public Stable(int[] horsesID, ControlCentre c) {
+        if (horsesID == null || horsesID.length != EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Null or invalid horses array");
+        if (c == null)
+            throw new IllegalArgumentException("Invalid Control Centre.");
 
         this.mutex = new ReentrantLock();
         this.inStable = this.mutex.newCondition();
+        this.raceLineups = new ArrayList<List<Integer>>(EventVariables.NUMBER_OF_RACES);
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
+            this.raceLineups.add(new ArrayList<Integer>(
+                    EventVariables.NUMBER_OF_HORSES_PER_RACE));
+        this.controlCentre = c;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
@@ -53,10 +62,13 @@ public class Stable {
         inStable.notifyAll();
     }
 
-    public void proceedToStable(int horseId) {
+    public void proceedToStable(int horseID) {
         // horse wait in stable
-        try {
-            inStable.wait();
-        } catch (InterruptedException ignored){}
+        while (raceLineups.get(controlCentre.getRaceNumber()).contains(horseID)) {
+            try {
+                inStable.wait();
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 }

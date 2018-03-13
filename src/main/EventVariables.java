@@ -1,7 +1,7 @@
 package main;
 
 public class EventVariables {
-    public static final int NUMBER_OF_SPECATORS = 4;
+    public static final int NUMBER_OF_SPECTATORS = 4;
 
     public static final int NUMBER_OF_RACES = 5;
 

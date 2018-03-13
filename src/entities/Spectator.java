@@ -3,7 +3,6 @@ package entities;
 import sharedRegions.*;
 import states.SpectatorState;
 import utils.Bet;
-import utils.State;
 
 
 public class Spectator {

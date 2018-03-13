@@ -30,6 +30,10 @@ public class ControlCentre {
         /* broker wait */
     }
 
+    public void finishTheRace() {
+        this.raceFinished = true;
+    }
+
     public void reportResults() {
         /* save horses winners */
         /* notify all spectators */
