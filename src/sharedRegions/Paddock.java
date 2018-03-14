@@ -2,6 +2,7 @@ package sharedRegions;
 
 import main.EventVariables;
 
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,25 +15,29 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Paddock {
 
-    private int horsesInPaddock;
-    private int spectatorsInPaddock;
+    private Stable stable;
+    private ControlCentre controlCentre;
+
     private Lock mutex;
     private Condition horses, spectators;
 
-    private ControlCentre controlCentre;
+    private int horsesInPaddock;
+    private int spectatorsInPaddock;
 
-    public Paddock(ControlCentre c) {
-        if (c == null)
-            throw new IllegalArgumentException("Invalid Control Centre.");
+    public Paddock(Stable s, ControlCentre c) {
+        if (s == null || c == null)
+            throw new IllegalArgumentException("Invalid shared region reference.");
 
-        this.horsesInPaddock = 0;
-        this.mutex = new ReentrantLock();
-        horses = this.mutex.newCondition();
-        spectators = this.mutex.newCondition();
+        this.stable = s;
         this.controlCentre = c;
+        this.mutex = new ReentrantLock();
+        this.horses = this.mutex.newCondition();
+        this.spectators = this.mutex.newCondition();
+        this.horsesInPaddock = 0;
+        this.spectatorsInPaddock = 0;
     }
 
-    public void proceedToPaddock(int horseId) {
+    public void proceedToPaddock() {
         mutex.lock();
         // last horse notify spectators
         if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
@@ -46,7 +51,7 @@ public class Paddock {
         mutex.unlock();
     }
 
-    public void goCheckHorses(int spectatorId) {
+    public List<Integer> goCheckHorses() {
         mutex.lock();
 
         // last spectator notify all horses */
@@ -59,6 +64,8 @@ public class Paddock {
         } catch (InterruptedException ignored){}
 
         mutex.unlock();
+
+        return stable.getCurrentLineup(controlCentre.getRaceNumber());
     }
 
     public void proceedToStartLine() {
@@ -66,6 +73,7 @@ public class Paddock {
 
         this.horsesInPaddock = 0;
         this.spectatorsInPaddock = 0;
+
         // notify all spectators
         spectators.signalAll();
 

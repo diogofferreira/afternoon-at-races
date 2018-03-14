@@ -6,11 +6,10 @@ import sharedRegions.ControlCentre;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.BrokerState;
-import states.State;
 
-public class Broker {
+public class Broker extends Thread {
 
-    private State state;
+    private states.State state;
 
     private Stable stable;
     private RacingTrack racingTrack;
@@ -48,5 +47,9 @@ public class Broker {
         }
 
         controlCentre.entertainTheGuests();
+    }
+
+    public states.State getCurrentState() {
+        return state;
     }
 }

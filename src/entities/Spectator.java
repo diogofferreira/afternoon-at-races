@@ -1,17 +1,22 @@
 package entities;
 
+import main.EventVariables;
 import sharedRegions.*;
 import states.SpectatorState;
-import states.State;
 import utils.Bet;
 
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class Spectator {
 
-    private State state;
+public class Spectator extends Thread {
+
+    private states.State state;
     private int id;
     private double wallet;
 
+    private List<Integer> horsesToBet;
     private int bettedHorse;
 
     private Paddock paddock;
@@ -28,26 +33,52 @@ public class Spectator {
         this.controlCentre = controlCentre;
         this.bettingCentre = bettingCentre;
     }
-
-    private Bet getBet() {
-        // return a bet, value and horse
-        return null;
-    }
-
+    
     public void run() {
-        while(controlCentre.waitForNextRace(this.id)) {
+        while(controlCentre.waitForNextRace()) {
             // goCheckHorses
             controlCentre.goCheckHorses();
-            paddock.goCheckHorses(controlCentre.getRaceNumber());
+            horsesToBet = paddock.goCheckHorses();
 
             while(!bettingCentre.placeABet(getBet()));
 
-            controlCentre.goWatchTheRace(this.id);
+            controlCentre.goWatchTheRace();
 
             if (controlCentre.haveIWon(this.bettedHorse))
-                bettingCentre.goCollectTheGains(this.id);
+                wallet += bettingCentre.goCollectTheGains(this.id);
         }
 
         controlCentre.relaxABit(this.id);
+    }
+
+    private Bet getBet() {
+        double betValue;
+
+        Random rnd = ThreadLocalRandom.current();
+
+        // pick random horse to bet
+        bettedHorse = horsesToBet.get(rnd.nextInt(horsesToBet.size()));
+
+        // pick a random bet value, with a max of (wallet * number_of_races)
+        // to avoid bankruptcy
+        betValue = rnd.nextDouble() *
+                (wallet / EventVariables.NUMBER_OF_RACES - 1) + 1;
+
+        // update wallet
+        wallet -= betValue;
+
+        return new Bet(this.id, bettedHorse, betValue);
+    }
+
+    public states.State getCurrentState() {
+        return state;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public double getWallet() {
+        return wallet;
     }
 }

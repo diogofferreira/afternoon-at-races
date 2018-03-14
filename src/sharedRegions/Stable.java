@@ -1,9 +1,7 @@
 package sharedRegions;
 
-import entities.Horse;
 import main.EventVariables;
 
-import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
@@ -21,7 +19,7 @@ public class Stable {
     private Lock mutex;
     private Condition inStable;
     private List<List<Integer>> raceLineups;
-    private HashMap<Integer, Integer> horseAgilities;
+    private Map<Integer, Integer> horsesAgility;
 
     private ControlCentre controlCentre;
 
@@ -48,11 +46,11 @@ public class Stable {
 
         this.mutex = new ReentrantLock();
         this.inStable = this.mutex.newCondition();
-        this.raceLineups = new ArrayList<List<Integer>>(EventVariables.NUMBER_OF_RACES);
+        this.raceLineups = new ArrayList<>(EventVariables.NUMBER_OF_RACES);
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
-            this.raceLineups.add(new ArrayList<Integer>(
+            this.raceLineups.add(new ArrayList<>(
                     EventVariables.NUMBER_OF_HORSES_PER_RACE));
-        this.horseAgilities = new HashMap<>();
+        this.horsesAgility = new HashMap<>();
         this.controlCentre = c;
     }
 
@@ -60,28 +58,34 @@ public class Stable {
         return raceLineups;
     }
 
-    public HashMap<Integer, Integer> getHorseAgilities() {
-        return horseAgilities;
+    public Map<Integer, Integer> getHorsesAgility() {
+        return horsesAgility;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
-        // notify all horses
         mutex.lock();
+        
+        // notify all horses
         inStable.signalAll();
+        
         mutex.unlock();
     }
 
     public void proceedToStable(int horseID, int horseAgility) {
-        // horse wait in stable
         mutex.lock();
-
-        horseAgilities.put(horseID, horseAgility);
+        
+        // horse wait in stable
+        horsesAgility.put(horseID, horseAgility);
         while (raceLineups.get(controlCentre.getRaceNumber()).contains(horseID)) {
             try {
                 inStable.await();
-            } catch (InterruptedException ignored) {
-            }
+            } catch (InterruptedException ignored) {}
         }
+        
         mutex.unlock();
+    }
+
+    public List<Integer> getCurrentLineup(int raceNumber) {
+        return raceLineups.get(raceNumber-1);
     }
 }

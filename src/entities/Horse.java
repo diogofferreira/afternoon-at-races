@@ -5,12 +5,11 @@ import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.HorseState;
-import states.State;
 
 import java.util.Random;
 
-public class Horse {
-    private State state;
+public class Horse extends Thread {
+    private states.State state;
     private int id;
     private int agility;
 
@@ -34,7 +33,25 @@ public class Horse {
         this.racingTrack = r;
     }
 
-    public State getState() {
+    private int makeAStep() {
+        Random rnd = new Random();
+        return (int)(rnd.nextGaussian() * 5);
+    }
+
+    public void run() {
+        stable.proceedToStable(this.id, this.agility);
+
+        paddock.proceedToPaddock();
+
+        racingTrack.proceedToStartLine(this.id);
+
+        while (!racingTrack.hasFinishLineBeenCrossed())
+            racingTrack.makeAMove(makeAStep());
+
+        stable.proceedToStable(this.id, this.agility);
+    }
+
+    public states.State getCurrentState() {
         return state;
     }
 
@@ -44,23 +61,5 @@ public class Horse {
 
     public int getAgility() {
         return agility;
-    }
-
-    private int makeAStep() {
-        Random rnd = new Random();
-        return (int)(rnd.nextGaussian() * 5);
-    }
-
-    public void run() {
-        stable.proceedToStable(this.id, this.agility);
-
-        paddock.proceedToPaddock(this.id);
-
-        racingTrack.proceedToStartLine(this.id);
-
-        while (!racingTrack.hasFinishLineBeenCrossed())
-            racingTrack.makeAMove(makeAStep());
-
-        stable.proceedToStable(this.id, this.agility);
     }
 }

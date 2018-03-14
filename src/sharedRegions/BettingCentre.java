@@ -1,12 +1,8 @@
 package sharedRegions;
 
-import entities.Horse;
 import main.EventVariables;
-import states.State;
 import utils.Bet;
-import utils.Racer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,16 +21,16 @@ public class BettingCentre {
 
     private ConcurrentHashMap<Integer, Double> raceOdds;
 
-    /* FIFO with pending bets */
-    /* FIFO with accepted bets */
+    // queue with pending bets
+    // queue with accepted bets
     private ConcurrentLinkedQueue<Bet> pendingBets, acceptedBets, rejectedBets;
 
     private int currentRaceID;
     private List<Integer> winners;
     private List<Bet> winningBets;
 
-    /* FIFO with pending collections */
-    /* FIFO with accepted collections */
+    // queue with pending honours
+    // queue with accepted honours
     private ConcurrentLinkedQueue<Integer> pendingHonours;
     private ConcurrentHashMap<Integer, Double> acceptedHonours;
 
@@ -62,13 +58,16 @@ public class BettingCentre {
 
     private void getRaceOdds() {
         double oddSum = 0.0;
-        HashMap<Integer, Integer> horseAgilities = stable.getHorseAgilities();
+        Map<Integer, Integer> horsesAgility = stable.getHorsesAgility();
 
         for (Integer horseID : stable.getRaceLineups().get(currentRaceID))
-            oddSum += horseAgilities.get(horseID);
+            oddSum += horsesAgility.get(horseID);
+
+        // clear odds registry
+        raceOdds.clear();
 
         for (Integer horseID : stable.getRaceLineups().get(currentRaceID))
-            raceOdds.put(horseID, oddSum / horseAgilities.get(horseID));
+            raceOdds.put(horseID, oddSum / horsesAgility.get(horseID));
     }
 
     public void acceptTheBets(int raceID) {
@@ -78,30 +77,31 @@ public class BettingCentre {
         currentRaceID = raceID;
         getRaceOdds();
 
-        /* broker wait */
+        // broker wait */
         while (acceptedBets.size() < EventVariables.NUMBER_OF_SPECTATORS) {
             try {
                 waitingForBet.await();
             } catch (InterruptedException ignored){}
 
-            /* validate all pending bet */
+            // validate all pending bet
             validatePendingBets();
 
-            /* notify spectator */
+            // notify spectator
             waitingForValidation.signalAll();
         }
 
         mutex.unlock();
     }
 
-    public void validatePendingBets() {
-        /* validate pending FIFO's bets */
+    private void validatePendingBets() {
+
+        // validate pending FIFO's bets */
 
         while (pendingBets.size() > 0) {
             Bet bet = pendingBets.peek();
             pendingBets.remove(bet);
 
-            // Considering the bet value is valid since spectator cannot bet over a certain ammount
+            // Considering the bet value is valid since spectator cannot bet over a certain amount
             if (!stable.getRaceLineups().get(currentRaceID).contains(bet.getHorseID()))
                 rejectedBets.add(bet);
             else
@@ -114,13 +114,13 @@ public class BettingCentre {
 
         mutex.lock();
 
-        /* add to waiting FIFO */
+        // add to waiting bets queue
         pendingBets.add(bet);
 
-        /* notify broker */
+        // notify broker
         waitingForBet.signal();
 
-        /* spectator wait */
+        // spectator wait
         while (!(acceptedBets.contains(bet) || rejectedBets.contains(bet))) {
             try {
                 waitingForValidation.await();
@@ -128,6 +128,7 @@ public class BettingCentre {
         }
 
         validBet = acceptedBets.contains(bet);
+
         mutex.unlock();
 
         return validBet;
@@ -138,14 +139,19 @@ public class BettingCentre {
 
         mutex.lock();
 
-        /* save horses winners */
+        // save horses winners
         winners = racingTrack.getWinners();
 
-        /* creates FIFO for the number of winning bets */
+        // create queue for the winning bets
         winningBets = acceptedBets.stream().filter(b -> winners.contains(
                 b.getHorseID())).collect(Collectors.toList());
 
+        // clear accepted and rejected bets list
+        acceptedBets.clear();
+        rejectedBets.clear();
+
         areThereWinners = !winningBets.isEmpty();
+
         mutex.unlock();
 
         return areThereWinners;
@@ -157,13 +163,11 @@ public class BettingCentre {
         while (acceptedHonours.size() < winningBets.size()) {
             try {
                 waitingForHonours.await();
-            } catch (InterruptedException e) {
-            }
-
+            } catch (InterruptedException ignored) {}
 
             while (pendingHonours.size() > 0) {
                 int spectatorID
-                        = pendingHonours.peek();
+                        = pendingHonours.poll();
                 Bet bet = (Bet) winningBets.stream().filter(
                         b -> b.getSpectatorID() == spectatorID).toArray()[0];
 
@@ -176,23 +180,31 @@ public class BettingCentre {
         mutex.unlock();
     }
 
-    public void goCollectTheGains(int spectatorID) {
+    public double goCollectTheGains(int spectatorID) {
+        double winningValue;
+
         mutex.lock();
 
-        /* add to pending collections FIFO */
+        // add to pending collections queue
         pendingHonours.add(spectatorID);
 
-        /* notify broker */
+        // notify broker queue
         waitingForHonours.signal();
 
-        /* spectator waits */
+        // spectator waits queue
         while (!acceptedHonours.containsKey(spectatorID)) {
             try {
                 waitingForCash.await();
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException ignored) {}
         }
 
+        // get winning value
+        winningValue = acceptedHonours.get(spectatorID);
+        // clean honour entry
+        acceptedHonours.remove(spectatorID);
+
         mutex.unlock();
+
+        return winningValue;
     }
 }

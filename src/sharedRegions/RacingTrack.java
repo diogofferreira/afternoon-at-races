@@ -32,14 +32,14 @@ public class RacingTrack {
     // step number
     private int stepNumber;
 
-
-
     public RacingTrack(ControlCentre c, Paddock p) {
         if (c == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
         if (p == null)
             throw new IllegalArgumentException("Invalid Paddock.");
 
+        this.paddock = p;
+        this.controlCentre = c;
         this.mutex = new ReentrantLock();
         this.inStartingLine = this.mutex.newCondition();
         this.inMovement = this.mutex.newCondition();
@@ -109,8 +109,7 @@ public class RacingTrack {
         Racer racer;
 
         racer = horses.get(horseTurn);
-        if (racer.getCurrentPosition() <
-                EventVariables.RACING_TRACK_LENGTH) {
+        if (racer.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH) {
             try {
                 inMovement.await();
                 return false;
@@ -123,8 +122,16 @@ public class RacingTrack {
             winners.add(racer);
 
         // last horse notify broker */
-        if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE)
+        if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             controlCentre.finishTheRace();
+
+            // reset empty track variables
+            this.horses.clear();
+            this.horseTurn = 0;
+            this.winners.clear();
+            this.stepNumber = 0;
+            this.finishes = 0;
+        }
 
         mutex.unlock();
 
