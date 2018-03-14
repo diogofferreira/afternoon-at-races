@@ -2,6 +2,7 @@ package entities;
 
 import sharedRegions.*;
 import states.SpectatorState;
+import states.State;
 import utils.Bet;
 
 
@@ -30,6 +31,7 @@ public class Spectator {
 
     private Bet getBet() {
         // return a bet, value and horse
+        return null;
     }
 
     public void run() {
@@ -38,7 +40,7 @@ public class Spectator {
             controlCentre.goCheckHorses();
             paddock.goCheckHorses(controlCentre.getRaceNumber());
 
-            bettingCentre.placeABet(getBet());
+            while(!bettingCentre.placeABet(getBet()));
 
             controlCentre.goWatchTheRace(this.id);
 

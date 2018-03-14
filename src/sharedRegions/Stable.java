@@ -4,10 +4,7 @@ import entities.Horse;
 import main.EventVariables;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -24,6 +21,7 @@ public class Stable {
     private Lock mutex;
     private Condition inStable;
     private List<List<Integer>> raceLineups;
+    private HashMap<Integer, Integer> horseAgilities;
 
     private ControlCentre controlCentre;
 
@@ -54,21 +52,36 @@ public class Stable {
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
             this.raceLineups.add(new ArrayList<Integer>(
                     EventVariables.NUMBER_OF_HORSES_PER_RACE));
+        this.horseAgilities = new HashMap<>();
         this.controlCentre = c;
+    }
+
+    public List<List<Integer>> getRaceLineups() {
+        return raceLineups;
+    }
+
+    public HashMap<Integer, Integer> getHorseAgilities() {
+        return horseAgilities;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
         // notify all horses
-        inStable.notifyAll();
+        mutex.lock();
+        inStable.signalAll();
+        mutex.unlock();
     }
 
-    public void proceedToStable(int horseID) {
+    public void proceedToStable(int horseID, int horseAgility) {
         // horse wait in stable
+        mutex.lock();
+
+        horseAgilities.put(horseID, horseAgility);
         while (raceLineups.get(controlCentre.getRaceNumber()).contains(horseID)) {
             try {
-                inStable.wait();
+                inStable.await();
             } catch (InterruptedException ignored) {
             }
         }
+        mutex.unlock();
     }
 }

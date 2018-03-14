@@ -33,34 +33,42 @@ public class Paddock {
     }
 
     public void proceedToPaddock(int horseId) {
-
+        mutex.lock();
         // last horse notify spectators
         if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
             controlCentre.proceedToPaddock();
 
         // horse wait in paddock
         try {
-            horses.wait();
+            horses.await();
         } catch (InterruptedException ignored){}
 
+        mutex.unlock();
     }
 
     public void goCheckHorses(int spectatorId) {
-        // last spectator notify all horses */
+        mutex.lock();
 
+        // last spectator notify all horses */
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS)
             controlCentre.goCheckHorses();
 
         // spectator wait in paddock
         try {
-            spectators.wait();
+            spectators.await();
         } catch (InterruptedException ignored){}
+
+        mutex.unlock();
     }
 
     public void proceedToStartLine() {
+        mutex.lock();
+
         this.horsesInPaddock = 0;
         this.spectatorsInPaddock = 0;
         // notify all spectators
-        spectators.notifyAll();
+        spectators.signalAll();
+
+        mutex.unlock();
     }
 }

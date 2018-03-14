@@ -6,7 +6,7 @@ import sharedRegions.ControlCentre;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.BrokerState;
-import utils.State;
+import states.State;
 
 public class Broker {
 
@@ -34,9 +34,7 @@ public class Broker {
             controlCentre.summonHorsesToPaddock(i);
 
             // acceptsBets
-            bettingCentre.acceptBets(i);
-            while (bettingCentre.existPendingBets())
-                bettingCentre.validateBet();
+            bettingCentre.acceptTheBets(i);
 
             // startTheRace
             racingTrack.startTheRace();

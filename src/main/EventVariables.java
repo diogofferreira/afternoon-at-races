@@ -11,4 +11,6 @@ public class EventVariables {
             NUMBER_OF_HORSES_PER_RACE * NUMBER_OF_RACES;
 
     public static final int RACING_TRACK_LENGTH = 25;
+
+    public static final int HORSE_MAX_STEP = 5;
 }

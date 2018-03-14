@@ -7,10 +7,12 @@ import sharedRegions.Stable;
 import states.HorseState;
 import states.State;
 
+import java.util.Random;
+
 public class Horse {
     private State state;
     private int id;
-    private double agility;
+    private int agility;
 
     private Stable stable;
     private Paddock paddock;
@@ -19,7 +21,7 @@ public class Horse {
     public Horse(int id, int agility, Stable s, Paddock p, RacingTrack r) {
         if (id < 0)
             throw new IllegalArgumentException("Invalid Horse ID.");
-        if (agility < 0)
+        if (agility < 0 || agility > EventVariables.HORSE_MAX_STEP)
             throw new IllegalArgumentException("Invalid Horse agility.");
         if (s == null || p == null || r == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
@@ -32,20 +34,33 @@ public class Horse {
         this.racingTrack = r;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public int getAgility() {
+        return agility;
+    }
+
     private int makeAStep() {
-        return EventVariables.RACING_TRACK_LENGTH / 5;
+        Random rnd = new Random();
+        return (int)(rnd.nextGaussian() * 5);
     }
 
     public void run() {
-        stable.proceedToStable(this.id);
+        stable.proceedToStable(this.id, this.agility);
 
         paddock.proceedToPaddock(this.id);
 
         racingTrack.proceedToStartLine(this.id);
 
-        while (!racingTrack.hasFinishLineBeenCrossed(this.id))
-            racingTrack.makeAMove(this.id, makeAStep());
+        while (!racingTrack.hasFinishLineBeenCrossed())
+            racingTrack.makeAMove(makeAStep());
 
-        stable.proceedToStable(this.id);
+        stable.proceedToStable(this.id, this.agility);
     }
 }

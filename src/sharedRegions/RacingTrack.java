@@ -50,7 +50,16 @@ public class RacingTrack {
         this.finishes = 0;
     }
 
+    public List<Integer> getWinners() {
+        List<Integer> w = new ArrayList<>();
+        for (Racer winner : winners)
+            w.add(winner.getId());
+        return w;
+    }
+
     public void proceedToStartLine(int horseID) {
+        mutex.lock();
+
         // add horse to arrival list
         horses.add(new Racer(horseID));
         // last horse notify all spectators
@@ -60,18 +69,26 @@ public class RacingTrack {
         while (horses.get(horseTurn).getId() != horseID) {
             // horse wait for race start
             try {
-                inStartingLine.wait();
+                inStartingLine.await();
             } catch (InterruptedException ignored) {
             }
         }
+
+        mutex.unlock();
     }
 
     public void startTheRace() {
+        mutex.lock();
+
         // notify all horses for race start
         inStartingLine.notifyAll();
+
+        mutex.unlock();
     }
 
-    public void makeAMove(int horseId, int step) {
+    public void makeAMove(int step) {
+        mutex.lock();
+
         // notify next horse in FIFO
         // update current position
         horses.get(horseTurn).setCurrentPosition(step);
@@ -81,9 +98,13 @@ public class RacingTrack {
             stepNumber++;
 
         horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
+
+        mutex.unlock();
     }
 
-    public boolean hasFinishLineBeenCrossed(int horseId) {
+    public boolean hasFinishLineBeenCrossed() {
+        mutex.lock();
+
         // horse wait if has crossed finish line
         Racer racer;
 
@@ -91,7 +112,8 @@ public class RacingTrack {
         if (racer.getCurrentPosition() <
                 EventVariables.RACING_TRACK_LENGTH) {
             try {
-                inMovement.wait();
+                inMovement.await();
+                return false;
             } catch (InterruptedException ignored){}
         }
 
@@ -103,5 +125,9 @@ public class RacingTrack {
         // last horse notify broker */
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE)
             controlCentre.finishTheRace();
+
+        mutex.unlock();
+
+        return true;
     }
 }
