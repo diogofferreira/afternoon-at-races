@@ -1,17 +1,17 @@
 package utils;
 
 public class Racer {
-    private int id;
+    private int idx;
     private int currentPosition;
     private int currentStep;
 
-    public Racer(int id) {
-        this.id = id;
+    public Racer(int idx) {
+        this.idx = idx;
         this.currentPosition = 0;
         this.currentStep = 0;
     }
 
-    public int getId() { return this.id; }
+    public int getIdx() { return this.idx; }
 
     public int getCurrentPosition() {
         return this.currentPosition;

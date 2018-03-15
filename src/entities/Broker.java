@@ -1,5 +1,6 @@
 package entities;
 
+import generalRepository.GeneralRepository;
 import main.EventVariables;
 import sharedRegions.BettingCentre;
 import sharedRegions.ControlCentre;
@@ -17,18 +18,19 @@ public class Broker extends Thread {
     private ControlCentre controlCentre;
     private BettingCentre bettingCentre;
 
-    public Broker(Stable stable, RacingTrack racingTrack,
-                  ControlCentre controlCentre, BettingCentre bettingCentre) {
+    public Broker(Stable s, RacingTrack r, ControlCentre c, BettingCentre b) {
+        if (s == null || r == null || c == null || b == null)
+            throw new IllegalArgumentException("Invalid shared region reference.");
+
         this.state = BrokerState.OPENING_THE_EVENT;
-        this.stable = stable;
-        this.controlCentre = controlCentre;
-        this.bettingCentre = bettingCentre;
-        this.racingTrack = racingTrack;
+        this.stable = s;
+        this.controlCentre = c;
+        this.bettingCentre = b;
+        this.racingTrack = r;
     }
 
     public void run() {
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
-
             // summonHorsesToPaddock()
             stable.summonHorsesToPaddock(i);
             controlCentre.summonHorsesToPaddock(i);
@@ -51,7 +53,7 @@ public class Broker extends Thread {
     }
 
     public states.State getBrokerState() {
-        return state;
+        return this.state;
     }
 
     public void setBrokerState(states.State state) {

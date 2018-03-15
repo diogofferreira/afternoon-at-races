@@ -1,7 +1,11 @@
 package sharedRegions;
 
+import entities.Broker;
 import entities.Horse;
+import generalRepository.GeneralRepository;
 import main.EventVariables;
+import states.BrokerState;
+import states.HorseState;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,31 +22,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Stable {
 
     private Lock mutex;
-    private Condition inStable;
-    private List<List<Integer>> raceLineups;
-    private Map<Integer, Integer> horsesAgility;
+    private Condition[] inStable;
+    private int[][] horsesAgility;
+    private GeneralRepository generalRepository;
 
-    private ControlCentre controlCentre;
+    public static int[][] generateLineup(int[] horses) {
+        int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
-    public Stable(int[] horsesID, ControlCentre c) {
-        if (horsesID == null || horsesID.length != EventVariables.NUMBER_OF_RACES)
-            throw new IllegalArgumentException("Null or invalid horses array");
-        if (c == null)
-            throw new IllegalArgumentException("Invalid Control Centre.");
-
-        this.mutex = new ReentrantLock();
-        this.inStable = this.mutex.newCondition();
-        this.raceLineups = new ArrayList<>(EventVariables.NUMBER_OF_RACES);
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
-            this.raceLineups.add(new ArrayList<>(
-                    EventVariables.NUMBER_OF_HORSES_PER_RACE));
-        generateLineup(horsesID);
-
-        this.horsesAgility = new HashMap<>();
-        this.controlCentre = c;
-    }
-
-    private void generateLineup(int[] horses) {
         // Shuffle array
         Random rnd = ThreadLocalRandom.current();
         for (int i = horses.length - 1; i > 0; i--) {
@@ -54,42 +41,68 @@ public class Stable {
         }
 
         for (int i = 0; i < horses.length; i++)
-            this.raceLineups.get(i / EventVariables.NUMBER_OF_RACES).add(horses[i]);
-    }
+            raceLineups[i / EventVariables.NUMBER_OF_RACES]
+                    [i % EventVariables.NUMBER_OF_RACES] = horses[i];
 
-    public List<List<Integer>> getRaceLineups() {
         return raceLineups;
     }
 
-    public List<Integer> getCurrentLineup(int raceNumber) {
-        return raceLineups.get(raceNumber-1);
+    public Stable(GeneralRepository generalRepository) {
+        if (generalRepository == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
+
+        this.generalRepository = generalRepository;
+        this.mutex = new ReentrantLock();
+
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
+            this.inStable[i] = this.mutex.newCondition();
+
+        this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
-    public Map<Integer, Integer> getHorsesAgility() {
-        return horsesAgility;
-    }
+    public int[][] getHorsesAgility() {
+        int[][] toRtn;
 
-    public void summonHorsesToPaddock(int raceNumber) {
         mutex.lock();
-        
+
+        toRtn = this.horsesAgility;
+
+        mutex.unlock();
+        return toRtn;
+    }
+
+    public void summonHorsesToPaddock(int raceID) {
+        Broker b;
+
+        mutex.lock();
+
+        b = (Broker)(Thread.currentThread());
+        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+
         // notify all horses
-        inStable.signalAll();
+        inStable[raceID].signalAll();
         
         mutex.unlock();
     }
 
-    public void proceedToStable(int horseID, int horseAgility) {
+    public void proceedToStable() {
+        Horse h;
+
         mutex.lock();
 
-        (Horse)(Thread.currentThread()).set
+        h = (Horse)(Thread.currentThread());
+        h.setHorseState(HorseState.AT_THE_STABLE);
+        generalRepository.setHorseState(h.getRaceIdx(),
+                HorseState.AT_THE_STABLE);
 
         // horse wait in stable
-        horsesAgility.put(horseID, horseAgility);
-        while (raceLineups.get(controlCentre.getRaceNumber()).contains(horseID)) {
-            try {
-                inStable.await();
-            } catch (InterruptedException ignored) {}
-        }
+        horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
+        generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
+        try {
+            inStable[h.getRaceID()].await();
+        } catch (InterruptedException ignored) {}
         
         mutex.unlock();
     }
