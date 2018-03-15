@@ -51,7 +51,7 @@ public class Broker extends Thread {
     }
 
     public states.State getBrokerState() {
-        return state;
+        return this.state;
     }
 
     public void setBrokerState(states.State state) {

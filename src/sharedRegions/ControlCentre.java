@@ -1,10 +1,16 @@
 package sharedRegions;
 
+import entities.Broker;
+import entities.Horse;
+import entities.Spectator;
 import main.EventVariables;
+import states.BrokerState;
+import states.SpectatorState;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.IntStream;
 
 public class ControlCentre {
 
@@ -14,7 +20,8 @@ public class ControlCentre {
     private Condition horsesInPaddock, waitForRace, watchingRace, startingRace;
 
     private int raceNumber;
-    private boolean raceFinished;
+
+    private int[] winners;
 
     public ControlCentre(RacingTrack r) {
         this.racingTrack = r;
@@ -23,11 +30,14 @@ public class ControlCentre {
         this.waitForRace = this.mutex.newCondition();
         this.watchingRace = this.mutex.newCondition();
         this.startingRace = this.mutex.newCondition();
-        this.raceFinished = false;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
+        Broker b;
         mutex.lock();
+
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         this.raceNumber = raceNumber;
         // broker wait
@@ -39,9 +49,13 @@ public class ControlCentre {
     }
 
     public boolean waitForNextRace() {
+        Spectator s;
         boolean toRtn;
 
         mutex.lock();
+
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
         // spectators wait
         try {
@@ -65,7 +79,11 @@ public class ControlCentre {
     }
 
     public void goCheckHorses() {
+        Spectator s;
         mutex.lock();
+
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
         // notify broker
         horsesInPaddock.signal();
@@ -74,7 +92,11 @@ public class ControlCentre {
     }
 
     public void goWatchTheRace() {
+        Spectator s;
         mutex.lock();
+
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
 
         // spectators wait
         try {
@@ -89,7 +111,6 @@ public class ControlCentre {
 
         // broker wait
         try {
-            raceFinished = false;
             startingRace.await();
         } catch (InterruptedException ignored) {}
 
@@ -97,11 +118,22 @@ public class ControlCentre {
     }
 
     public void finishTheRace() {
-        this.raceFinished = true;
+        mutex.lock();
+
+        // notify broker
+        startingRace.signalAll();
+
+        mutex.unlock();
     }
 
     public void reportResults() {
+        Broker b;
         mutex.lock();
+
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+
+        winners = racingTrack.getWinners();
 
         // notify all spectators
         watchingRace.signalAll();
@@ -111,11 +143,14 @@ public class ControlCentre {
 
     public boolean haveIWon(int horseID) {
         boolean won;
-
+        Spectator s;
         mutex.lock();
 
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
+
         // checks if winner is the one he/she bet
-        won = racingTrack.getWinners().contains(horseID);
+        won = IntStream.of(winners).anyMatch(w -> w == horseID);
 
         mutex.unlock();
 
@@ -123,17 +158,24 @@ public class ControlCentre {
     }
 
     public void entertainTheGuests() {
+        Broker b;
+        mutex.lock();
+
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
         /* broker just playing host, end the afternoon */
-        // TODO: update state
+
+        mutex.unlock();
     }
 
-    public void relaxABit(int spectatorID) {
+    public void relaxABit() {
+        Spectator s;
+        mutex.lock();
+
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.CELEBRATING);
         /* just relax, end the afternoon */
-        // TODO: update state
-    }
 
-    public int getRaceNumber() {
-        return this.raceNumber;
+        mutex.unlock();
     }
-
 }

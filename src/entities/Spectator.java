@@ -17,7 +17,6 @@ public class Spectator extends Thread {
     private int id;
     private double wallet;
 
-    private List<Integer> horsesToBet;
     private int bettedHorse;
 
     private Paddock paddock;
@@ -40,7 +39,7 @@ public class Spectator extends Thread {
 
             // goCheckHorses
             controlCentre.goCheckHorses();
-            horsesToBet = paddock.goCheckHorses();
+            paddock.goCheckHorses();
 
             while(!bettingCentre.placeABet(getBet()));
 
@@ -51,7 +50,7 @@ public class Spectator extends Thread {
 
         }
 
-        controlCentre.relaxABit(this.id);
+        controlCentre.relaxABit();
     }
 
     private Bet getBet() {
@@ -60,7 +59,7 @@ public class Spectator extends Thread {
         Random rnd = ThreadLocalRandom.current();
 
         // pick random horse to bet
-        bettedHorse = horsesToBet.get(rnd.nextInt(horsesToBet.size()));
+        bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
 
         // pick a random bet value, with a max of (wallet * number_of_races)
         // to avoid bankruptcy

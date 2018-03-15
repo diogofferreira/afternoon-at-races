@@ -1,6 +1,10 @@
 package sharedRegions;
 
+import entities.Horse;
+import entities.Spectator;
 import main.EventVariables;
+import states.HorseState;
+import states.SpectatorState;
 
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -38,7 +42,12 @@ public class Paddock {
     }
 
     public void proceedToPaddock() {
+        Horse h;
         mutex.lock();
+
+        h = (Horse)Thread.currentThread();
+        h.setHorseState(HorseState.AT_THE_PADDOCK);
+
         // last horse notify spectators
         if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
             controlCentre.proceedToPaddock();
@@ -51,8 +60,12 @@ public class Paddock {
         mutex.unlock();
     }
 
-    public List<Integer> goCheckHorses() {
+    public void goCheckHorses() {
+        Spectator s;
         mutex.lock();
+
+        //s = (Spectator)Thread.currentThread();
+        //s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
         // last spectator notify all horses */
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS)
@@ -64,13 +77,12 @@ public class Paddock {
         } catch (InterruptedException ignored){}
 
         mutex.unlock();
-
-        return stable.getCurrentLineup(controlCentre.getRaceNumber());
     }
 
     public void proceedToStartLine() {
         mutex.lock();
 
+        // Restart the variables
         this.horsesInPaddock = 0;
         this.spectatorsInPaddock = 0;
 
