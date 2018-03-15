@@ -1,13 +1,11 @@
 package entities;
 
-import generalRepository.GeneralRepository;
+import sharedRegions.GeneralRepository;
 import main.EventVariables;
 import sharedRegions.*;
 import states.SpectatorState;
-import states.State;
 import utils.Bet;
 
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 

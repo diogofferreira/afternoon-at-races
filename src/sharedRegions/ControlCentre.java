@@ -1,9 +1,7 @@
 package sharedRegions;
 
 import entities.Broker;
-import entities.Horse;
 import entities.Spectator;
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -15,7 +13,6 @@ import java.util.stream.IntStream;
 
 public class ControlCentre {
 
-    private RacingTrack racingTrack;
     private GeneralRepository generalRepository;
 
     private Lock mutex;
@@ -25,14 +22,11 @@ public class ControlCentre {
 
     private int[] winners;
 
-    public ControlCentre(RacingTrack r, GeneralRepository gr) {
-        if (r == null)
-            throw new IllegalArgumentException("Invalid Racing Track.");
+    public ControlCentre(GeneralRepository gr) {
         if (gr == null)
             throw new IllegalArgumentException("Invalid General Repository.");
 
         this.generalRepository = gr;
-        this.racingTrack = r;
         this.mutex = new ReentrantLock();
         this.horsesInPaddock = this.mutex.newCondition();
         this.waitForRace = this.mutex.newCondition();
@@ -128,8 +122,10 @@ public class ControlCentre {
         mutex.unlock();
     }
 
-    public void finishTheRace() {
+    public void finishTheRace(int[] winners) {
         mutex.lock();
+
+        this.winners = winners;
 
         // Notify general repository to clear all horse related info
         generalRepository.resetRace();
@@ -147,8 +143,6 @@ public class ControlCentre {
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
-
-        winners = racingTrack.getWinners();
 
         // notify all spectators
         watchingRace.signalAll();
@@ -197,9 +191,5 @@ public class ControlCentre {
         /* just relax, end the afternoon */
 
         mutex.unlock();
-    }
-
-    public void setRacingTrack(RacingTrack racingTrack) {
-        this.racingTrack = racingTrack;
     }
 }

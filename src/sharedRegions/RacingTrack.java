@@ -2,14 +2,11 @@ package sharedRegions;
 
 import entities.Broker;
 import entities.Horse;
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
-import sun.awt.windows.ThemeReader;
 import utils.Racer;
 
-import javax.naming.ldap.Control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -39,17 +36,17 @@ public class RacingTrack {
     // step number
     private int stepNumber;
 
-    public RacingTrack(ControlCentre c, Paddock p, GeneralRepository gr) {
+    public RacingTrack(GeneralRepository gr, ControlCentre c, Paddock p) {
+        if (gr == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
         if (c == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
         if (p == null)
             throw new IllegalArgumentException("Invalid Paddock.");
-        if (gr == null)
-            throw new IllegalArgumentException("Invalid General Repository.");
 
+        this.generalRepository = gr;
         this.paddock = p;
         this.controlCentre = c;
-        this.generalRepository = gr;
         this.mutex = new ReentrantLock();
         this.inStartingLine = this.mutex.newCondition();
         this.inMovement = this.mutex.newCondition();
@@ -82,7 +79,7 @@ public class RacingTrack {
         h.setHorseState(HorseState.AT_THE_START_LINE);
         generalRepository.setHorseState(h.getRaceIdx(),
                 HorseState.AT_THE_START_LINE);
-        generalRepository.setHorsePosition(h.getRaceIdx(), 0);
+        generalRepository.setHorsePosition(h.getRaceIdx(), 0, 0);
 
         // add horse to arrival list
         horses.add(new Racer(h.getRaceIdx()));
@@ -170,7 +167,7 @@ public class RacingTrack {
 
         // last horse notify broker */
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            controlCentre.finishTheRace();
+            controlCentre.finishTheRace(getWinners());
 
             // reset empty track variables
             this.horses.clear();

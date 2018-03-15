@@ -2,7 +2,6 @@ package sharedRegions;
 
 import entities.Broker;
 import entities.Horse;
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -41,8 +40,8 @@ public class Stable {
         }
 
         for (int i = 0; i < horses.length; i++)
-            raceLineups[i / EventVariables.NUMBER_OF_RACES]
-                    [i % EventVariables.NUMBER_OF_RACES] = horses[i];
+            raceLineups[i / EventVariables.NUMBER_OF_HORSES_PER_RACE]
+                    [i % EventVariables.NUMBER_OF_HORSES_PER_RACE] = horses[i];
 
         return raceLineups;
     }
@@ -53,6 +52,7 @@ public class Stable {
 
         this.generalRepository = generalRepository;
         this.mutex = new ReentrantLock();
+        this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
             this.inStable[i] = this.mutex.newCondition();

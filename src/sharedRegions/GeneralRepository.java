@@ -1,4 +1,4 @@
-package generalRepository;
+package sharedRegions;
 
 import main.EventVariables;
 import states.BrokerState;

@@ -20,24 +20,19 @@ public class Horse extends Thread {
     private Paddock paddock;
     private RacingTrack racingTrack;
 
-    public Horse(int id, int agility, int raceID, int raceIdx,
-                 Stable s, Paddock p, RacingTrack r) {
+    public Horse(int id, int agility, Stable s, Paddock p, RacingTrack r) {
         if (id < 0)
             throw new IllegalArgumentException("Invalid Horse ID.");
         if (agility < 0 || agility > EventVariables.HORSE_MAX_STEP)
             throw new IllegalArgumentException("Invalid Horse agility.");
-        if (raceID >= EventVariables.NUMBER_OF_RACES)
-            throw new IllegalArgumentException("Invalid Race ID.");
-        if (raceIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-            throw new IllegalArgumentException("Invalid Horse race index.");
         if (s == null || p == null || r == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
         this.state = HorseState.AT_THE_STABLE;
         this.id = id;
         this.agility = agility;
-        this.raceID = raceID;
-        this.raceIdx = raceIdx;
+        this.raceID = -1;
+        this.raceIdx = -1;
         this.stable = s;
         this.paddock = p;
         this.racingTrack = r;
@@ -45,7 +40,7 @@ public class Horse extends Thread {
 
     private int makeAStep() {
         Random rnd = new Random();
-        return (int)(rnd.nextGaussian() * 5);
+        return rnd.nextInt(agility) + 1;
     }
 
     public void run() {
@@ -62,11 +57,25 @@ public class Horse extends Thread {
     }
 
     public void setHorseState(states.State state) {
+        if (state == null)
+            throw new IllegalArgumentException("Invalid Horse state");
         this.state = state;
     }
 
     public states.State getHorseState() {
         return state;
+    }
+
+    public void setRaceID(int raceID) {
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid Race ID");
+        this.raceID = raceID;
+    }
+
+    public void setRaceIdx(int raceIdx) {
+        if (raceIdx < 0 || raceIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid Horse race index.");
+        this.raceIdx = raceIdx;
     }
 
     public int getID() {

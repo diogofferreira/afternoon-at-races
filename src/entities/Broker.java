@@ -1,13 +1,11 @@
 package entities;
 
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import sharedRegions.BettingCentre;
 import sharedRegions.ControlCentre;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.BrokerState;
-import states.State;
 
 public class Broker extends Thread {
 

@@ -2,12 +2,10 @@ package sharedRegions;
 
 import entities.Horse;
 import entities.Spectator;
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.HorseState;
 import states.SpectatorState;
 
-import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

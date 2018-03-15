@@ -2,14 +2,12 @@ package sharedRegions;
 
 import entities.Broker;
 import entities.Spectator;
-import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
 import utils.Bet;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
@@ -78,7 +76,7 @@ public class BettingCentre {
             raceOdds[i] = horsesAgility[currentRaceID][i] / oddSum;
         }
 
-        generalRepository.setHorsesOdd(odds);
+        generalRepository.setHorsesOdd(raceOdds);
     }
 
     private void validatePendingBets() {
@@ -91,7 +89,7 @@ public class BettingCentre {
             if (bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
                 rejectedBets.add(bet);
                 generalRepository.setSpectatorsBet(bet.getSpectatorID(),
-                        bet.getHorseID(), bet.getValue());
+                        bet.getValue(), bet.getHorseID());
             } else
                 acceptedBets.add(bet);
         }
