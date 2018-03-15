@@ -2,6 +2,7 @@ package sharedRegions;
 
 import entities.Horse;
 import entities.Spectator;
+import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.HorseState;
 import states.SpectatorState;
@@ -19,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Paddock {
 
-    private Stable stable;
+    private GeneralRepository generalRepository;
     private ControlCentre controlCentre;
 
     private Lock mutex;
@@ -28,11 +29,11 @@ public class Paddock {
     private int horsesInPaddock;
     private int spectatorsInPaddock;
 
-    public Paddock(Stable s, ControlCentre c) {
-        if (s == null || c == null)
+    public Paddock(GeneralRepository gr, ControlCentre c) {
+        if (gr == null || c == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
-        this.stable = s;
+        this.generalRepository = gr;
         this.controlCentre = c;
         this.mutex = new ReentrantLock();
         this.horses = this.mutex.newCondition();
@@ -47,6 +48,8 @@ public class Paddock {
 
         h = (Horse)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_PADDOCK);
+        generalRepository.setHorseState(h.getRaceIdx(),
+                HorseState.AT_THE_PADDOCK);
 
         // last horse notify spectators
         if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
@@ -64,8 +67,11 @@ public class Paddock {
         Spectator s;
         mutex.lock();
 
-        //s = (Spectator)Thread.currentThread();
-        //s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
+        s = (Spectator)Thread.currentThread();
+        s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.APPRAISING_THE_HORSES);
+
 
         // last spectator notify all horses */
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS)

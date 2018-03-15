@@ -2,6 +2,7 @@ package sharedRegions;
 
 import entities.Broker;
 import entities.Spectator;
+import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -23,8 +24,9 @@ public class BettingCentre {
     private Condition waitingForBet, waitingForValidation, waitingForHonours, waitingForCash;
     private Stable stable;
     private RacingTrack racingTrack;
+    private GeneralRepository generalRepository;
 
-    private ConcurrentHashMap<Integer, Double> raceOdds;
+    private double[] raceOdds;
 
     // queue with pending bets
     // queue with accepted bets
@@ -39,7 +41,9 @@ public class BettingCentre {
     private ConcurrentLinkedQueue<Integer> pendingHonours;
     private ConcurrentHashMap<Integer, Double> acceptedHonours;
 
-    public BettingCentre(Stable s, RacingTrack r) {
+    public BettingCentre(GeneralRepository gr, Stable s, RacingTrack r) {
+        if (gr == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
         if (s == null)
             throw new IllegalArgumentException("Invalid Stable.");
         if (r == null)
@@ -51,28 +55,30 @@ public class BettingCentre {
         this.waitingForHonours = this.mutex.newCondition();
         this.waitingForCash = this.mutex.newCondition();
 
-        this.raceOdds = new ConcurrentHashMap<>();
         this.pendingBets = new ConcurrentLinkedQueue<>();
         this.acceptedBets = new ConcurrentLinkedQueue<>();
         this.rejectedBets = new ConcurrentLinkedQueue<>();
         this.pendingHonours = new ConcurrentLinkedQueue<>();
         this.acceptedHonours = new ConcurrentHashMap<>();
+        this.generalRepository = gr;
         this.stable = s;
         this.racingTrack = r;
     }
 
     private void getRaceOdds() {
         double oddSum = 0.0;
+        raceOdds = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         int[][] horsesAgility = stable.getHorsesAgility();
 
         for (int i = 0; i < horsesAgility[currentRaceID].length; i++)
             oddSum += horsesAgility[currentRaceID][i];
 
-        // clear odds registry
-        raceOdds.clear();
 
-        for (int i = 0; i < horsesAgility[currentRaceID].length; i++)
-            raceOdds.put(i, horsesAgility[currentRaceID][i] / oddSum);
+        for (int i = 0; i < horsesAgility[currentRaceID].length; i++) {
+            raceOdds[i] = horsesAgility[currentRaceID][i] / oddSum;
+        }
+
+        generalRepository.setHorsesOdd(odds);
     }
 
     private void validatePendingBets() {
@@ -82,9 +88,11 @@ public class BettingCentre {
             pendingBets.remove(bet);
 
             // Considering the bet value is valid since spectator cannot bet over a certain amount
-            if (bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            if (bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
                 rejectedBets.add(bet);
-            else
+                generalRepository.setSpectatorsBet(bet.getSpectatorID(),
+                        bet.getHorseID(), bet.getValue());
+            } else
                 acceptedBets.add(bet);
         }
     }
@@ -95,6 +103,7 @@ public class BettingCentre {
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.WAITING_FOR_BETS);
+        generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
 
         // Update raceID and start accepting bets
         currentRaceID = raceID;
@@ -124,6 +133,8 @@ public class BettingCentre {
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.PLACING_A_BET);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.PLACING_A_BET);
 
         // add to waiting bets queue
         pendingBets.add(bet);
@@ -191,7 +202,7 @@ public class BettingCentre {
                         bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
                 acceptedHonours.put(spectatorID,
-                        bet.getValue() * raceOdds.get(bet.getHorseID()));
+                        bet.getValue() * raceOdds[bet.getHorseID()]);
             }
 
         }

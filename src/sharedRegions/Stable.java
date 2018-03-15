@@ -2,6 +2,7 @@ package sharedRegions;
 
 import entities.Broker;
 import entities.Horse;
+import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -23,6 +24,7 @@ public class Stable {
     private Lock mutex;
     private Condition[] inStable;
     private int[][] horsesAgility;
+    private GeneralRepository generalRepository;
 
     public static int[][] generateLineup(int[] horses) {
         int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
@@ -45,10 +47,11 @@ public class Stable {
         return raceLineups;
     }
 
-    public Stable() {
-        if (c == null)
-            throw new IllegalArgumentException("Invalid Control Centre.");
+    public Stable(GeneralRepository generalRepository) {
+        if (generalRepository == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
 
+        this.generalRepository = generalRepository;
         this.mutex = new ReentrantLock();
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
@@ -76,6 +79,7 @@ public class Stable {
 
         b = (Broker)(Thread.currentThread());
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         // notify all horses
         inStable[raceID].signalAll();
@@ -90,9 +94,12 @@ public class Stable {
 
         h = (Horse)(Thread.currentThread());
         h.setHorseState(HorseState.AT_THE_STABLE);
+        generalRepository.setHorseState(h.getRaceIdx(),
+                HorseState.AT_THE_STABLE);
 
         // horse wait in stable
         horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
+        generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
         try {
             inStable[h.getRaceID()].await();
         } catch (InterruptedException ignored) {}

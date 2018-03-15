@@ -3,6 +3,7 @@ package sharedRegions;
 import entities.Broker;
 import entities.Horse;
 import entities.Spectator;
+import generalRepository.GeneralRepository;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -15,6 +16,7 @@ import java.util.stream.IntStream;
 public class ControlCentre {
 
     private RacingTrack racingTrack;
+    private GeneralRepository generalRepository;
 
     private Lock mutex;
     private Condition horsesInPaddock, waitForRace, watchingRace, startingRace;
@@ -23,7 +25,13 @@ public class ControlCentre {
 
     private int[] winners;
 
-    public ControlCentre(RacingTrack r) {
+    public ControlCentre(RacingTrack r, GeneralRepository gr) {
+        if (r == null)
+            throw new IllegalArgumentException("Invalid Racing Track.");
+        if (gr == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
+
+        this.generalRepository = gr;
         this.racingTrack = r;
         this.mutex = new ReentrantLock();
         this.horsesInPaddock = this.mutex.newCondition();
@@ -36,8 +44,11 @@ public class ControlCentre {
         Broker b;
         mutex.lock();
 
+        generalRepository.setRaceNumber(raceNumber);
+
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         this.raceNumber = raceNumber;
         // broker wait
@@ -56,6 +67,8 @@ public class ControlCentre {
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.WAITING_FOR_A_RACE_TO_START);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
         // spectators wait
         try {
@@ -79,11 +92,7 @@ public class ControlCentre {
     }
 
     public void goCheckHorses() {
-        Spectator s;
         mutex.lock();
-
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
         // notify broker
         horsesInPaddock.signal();
@@ -97,6 +106,8 @@ public class ControlCentre {
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.WATCHING_A_RACE);
 
         // spectators wait
         try {
@@ -120,6 +131,9 @@ public class ControlCentre {
     public void finishTheRace() {
         mutex.lock();
 
+        // Notify general repository to clear all horse related info
+        generalRepository.resetRace();
+
         // notify broker
         startingRace.signalAll();
 
@@ -132,6 +146,7 @@ public class ControlCentre {
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
         winners = racingTrack.getWinners();
 
@@ -148,6 +163,8 @@ public class ControlCentre {
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.WATCHING_A_RACE);
 
         // checks if winner is the one he/she bet
         won = IntStream.of(winners).anyMatch(w -> w == horseID);
@@ -163,6 +180,7 @@ public class ControlCentre {
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
         /* broker just playing host, end the afternoon */
 
         mutex.unlock();
@@ -174,6 +192,8 @@ public class ControlCentre {
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.CELEBRATING);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.CELEBRATING);
         /* just relax, end the afternoon */
 
         mutex.unlock();
