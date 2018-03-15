@@ -39,6 +39,8 @@ public class ControlCentre {
     }
 
     public boolean waitForNextRace() {
+        boolean toRtn;
+
         mutex.lock();
 
         // spectators wait
@@ -46,9 +48,11 @@ public class ControlCentre {
             waitForRace.await();
         } catch (InterruptedException ignored) {}
 
+        toRtn = raceNumber < EventVariables.NUMBER_OF_RACES;
+
         mutex.unlock();
 
-        return raceNumber < EventVariables.NUMBER_OF_RACES;
+        return toRtn;
     }
 
     public void proceedToPaddock() {

@@ -3,6 +3,7 @@ package entities;
 import main.EventVariables;
 import sharedRegions.*;
 import states.SpectatorState;
+import states.State;
 import utils.Bet;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class Spectator extends Thread {
     
     public void run() {
         while(controlCentre.waitForNextRace()) {
+
             // goCheckHorses
             controlCentre.goCheckHorses();
             horsesToBet = paddock.goCheckHorses();
@@ -46,6 +48,7 @@ public class Spectator extends Thread {
 
             if (controlCentre.haveIWon(this.bettedHorse))
                 wallet += bettingCentre.goCollectTheGains(this.id);
+
         }
 
         controlCentre.relaxABit(this.id);
@@ -70,7 +73,11 @@ public class Spectator extends Thread {
         return new Bet(this.id, bettedHorse, betValue);
     }
 
-    public states.State getCurrentState() {
+    public void setSpectatorState(states.State state) {
+        this.state = state;
+    }
+
+    public states.State getSpectatorState() {
         return state;
     }
 

@@ -5,6 +5,7 @@ import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.HorseState;
+import states.State;
 
 import java.util.Random;
 
@@ -51,7 +52,11 @@ public class Horse extends Thread {
         stable.proceedToStable(this.id, this.agility);
     }
 
-    public states.State getCurrentState() {
+    public void setHorseState(states.State state) {
+        this.state = state;
+    }
+
+    public states.State getHorseState() {
         return state;
     }
 

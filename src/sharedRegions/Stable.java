@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import entities.Horse;
 import main.EventVariables;
 
 import java.util.*;
@@ -23,6 +24,24 @@ public class Stable {
 
     private ControlCentre controlCentre;
 
+    public Stable(int[] horsesID, ControlCentre c) {
+        if (horsesID == null || horsesID.length != EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Null or invalid horses array");
+        if (c == null)
+            throw new IllegalArgumentException("Invalid Control Centre.");
+
+        this.mutex = new ReentrantLock();
+        this.inStable = this.mutex.newCondition();
+        this.raceLineups = new ArrayList<>(EventVariables.NUMBER_OF_RACES);
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
+            this.raceLineups.add(new ArrayList<>(
+                    EventVariables.NUMBER_OF_HORSES_PER_RACE));
+        generateLineup(horsesID);
+
+        this.horsesAgility = new HashMap<>();
+        this.controlCentre = c;
+    }
+
     private void generateLineup(int[] horses) {
         // Shuffle array
         Random rnd = ThreadLocalRandom.current();
@@ -38,24 +57,12 @@ public class Stable {
             this.raceLineups.get(i / EventVariables.NUMBER_OF_RACES).add(horses[i]);
     }
 
-    public Stable(int[] horsesID, ControlCentre c) {
-        if (horsesID == null || horsesID.length != EventVariables.NUMBER_OF_RACES)
-            throw new IllegalArgumentException("Null or invalid horses array");
-        if (c == null)
-            throw new IllegalArgumentException("Invalid Control Centre.");
-
-        this.mutex = new ReentrantLock();
-        this.inStable = this.mutex.newCondition();
-        this.raceLineups = new ArrayList<>(EventVariables.NUMBER_OF_RACES);
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
-            this.raceLineups.add(new ArrayList<>(
-                    EventVariables.NUMBER_OF_HORSES_PER_RACE));
-        this.horsesAgility = new HashMap<>();
-        this.controlCentre = c;
-    }
-
     public List<List<Integer>> getRaceLineups() {
         return raceLineups;
+    }
+
+    public List<Integer> getCurrentLineup(int raceNumber) {
+        return raceLineups.get(raceNumber-1);
     }
 
     public Map<Integer, Integer> getHorsesAgility() {
@@ -73,7 +80,9 @@ public class Stable {
 
     public void proceedToStable(int horseID, int horseAgility) {
         mutex.lock();
-        
+
+        (Horse)(Thread.currentThread()).set
+
         // horse wait in stable
         horsesAgility.put(horseID, horseAgility);
         while (raceLineups.get(controlCentre.getRaceNumber()).contains(horseID)) {
@@ -83,9 +92,5 @@ public class Stable {
         }
         
         mutex.unlock();
-    }
-
-    public List<Integer> getCurrentLineup(int raceNumber) {
-        return raceLineups.get(raceNumber-1);
     }
 }

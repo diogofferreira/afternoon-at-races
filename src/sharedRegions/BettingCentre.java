@@ -70,6 +70,22 @@ public class BettingCentre {
             raceOdds.put(horseID, oddSum / horsesAgility.get(horseID));
     }
 
+    private void validatePendingBets() {
+
+        // validate pending FIFO's bets */
+
+        while (pendingBets.size() > 0) {
+            Bet bet = pendingBets.peek();
+            pendingBets.remove(bet);
+
+            // Considering the bet value is valid since spectator cannot bet over a certain amount
+            if (!stable.getRaceLineups().get(currentRaceID).contains(bet.getHorseID()))
+                rejectedBets.add(bet);
+            else
+                acceptedBets.add(bet);
+        }
+    }
+
     public void acceptTheBets(int raceID) {
         mutex.lock();
 
@@ -91,22 +107,6 @@ public class BettingCentre {
         }
 
         mutex.unlock();
-    }
-
-    private void validatePendingBets() {
-
-        // validate pending FIFO's bets */
-
-        while (pendingBets.size() > 0) {
-            Bet bet = pendingBets.peek();
-            pendingBets.remove(bet);
-
-            // Considering the bet value is valid since spectator cannot bet over a certain amount
-            if (!stable.getRaceLineups().get(currentRaceID).contains(bet.getHorseID()))
-                rejectedBets.add(bet);
-            else
-                acceptedBets.add(bet);
-        }
     }
 
     public boolean placeABet(Bet bet) {
