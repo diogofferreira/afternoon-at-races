@@ -16,8 +16,8 @@ public class ControlCentre {
     private int raceNumber;
     private boolean raceFinished;
 
-    public ControlCentre(RacingTrack r) {
-        this.racingTrack = r;
+    public ControlCentre() {
+        this.racingTrack = null;
         this.mutex = new ReentrantLock();
         this.horsesInPaddock = this.mutex.newCondition();
         this.waitForRace = this.mutex.newCondition();
@@ -136,4 +136,7 @@ public class ControlCentre {
         return this.raceNumber;
     }
 
+    public void setRacingTrack(RacingTrack racingTrack) {
+        this.racingTrack = racingTrack;
+    }
 }

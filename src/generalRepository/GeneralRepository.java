@@ -118,57 +118,57 @@ public class GeneralRepository {
         mutex.unlock();
     }
 
-    public void setSpectatorsBettedHorse(int spectatorId, int spectatorBettedHorse) {
-        mutex.lock();
 
-        this.spectatorsBettedHorse[spectatorId] = spectatorBettedHorse;
-        printState();
-
-        mutex.unlock();
-    }
-
-    public void setSpectatorsBet(int spectatorId, double spectatorBet) {
+    public void setSpectatorsBet(int spectatorId, double spectatorBet,
+                                 int spectatorBettedHorse) {
         mutex.lock();
 
         this.spectatorsBet[spectatorId] = spectatorBet;
+        this.spectatorsBettedHorse[spectatorId] = spectatorBettedHorse;
+
         printState();
 
         mutex.unlock();
     }
 
-    public void setHorseOdd(int horseIdx, double horseOdd) {
+    public void setHorsesOdd(double [] horsesOdd) {
         mutex.lock();
 
-        this.horsesOdd[horseIdx] = horseOdd;
+        this.horsesOdd = horsesOdd;
 
         mutex.unlock();
     }
 
-    public void setHorseStep(int horseIdx, int horseStep) {
-        mutex.lock();
 
-        this.horsesStep[horseIdx] = horseStep;
-        printState();
-
-        mutex.unlock();
-    }
-
-    public void setHorsePosition(int horseIdx, int horsePosition) {
+    public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
         mutex.lock();
 
         this.horsesPosition[horseIdx] = horsePosition;
+        this.horsesStep[horseIdx] = horseStep;
+
         printState();
 
         mutex.unlock();
     }
 
-    public void setHorseEnded(int horseIdx, boolean horseEnded) {
+    public void setHorseEnded(int horseIdx) {
         mutex.lock();
 
-        this.horsesEnded[horseIdx] = horseEnded;
+        this.horsesEnded[horseIdx] = true;
         printState();
 
         mutex.unlock();
+    }
+
+    public void resetRace() {
+        this.raceNumber = 0;
+        this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
+        this.spectatorsBet = new double[EventVariables.NUMBER_OF_SPECTATORS];
+        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesEnded = new boolean[EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
     private void printHeader() {
