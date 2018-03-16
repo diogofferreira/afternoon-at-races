@@ -7,6 +7,7 @@ import states.BrokerState;
 import states.HorseState;
 import utils.Racer;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,14 +25,15 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RacingTrack {
 
     private Lock mutex;
-    private Queue<Condition> inMovement;
+    private Condition[] inMovement;
     private ControlCentre controlCentre;
     private Paddock paddock;
     private GeneralRepository generalRepository;
 
     // list with arrival order
-    private Queue<Racer> racers;
+    private Racer[] racers;
     private List<Racer> winners;
+    private int horseTurn;
     private int finishes;
 
 
@@ -47,10 +49,11 @@ public class RacingTrack {
         this.paddock = p;
         this.controlCentre = c;
         this.mutex = new ReentrantLock();
-        this.inMovement = new LinkedList<>();
-        this.racers = new LinkedList<>();
+        this.inMovement = new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.winners = new ArrayList<>();
         this.finishes = 0;
+        this.horseTurn = 0;
     }
 
     public int[] getWinners() {
@@ -69,6 +72,7 @@ public class RacingTrack {
 
     public void proceedToStartLine() {
         Horse h;
+        int i;
         mutex.lock();
 
         h = (Horse)Thread.currentThread();
@@ -78,16 +82,18 @@ public class RacingTrack {
         generalRepository.setHorsePosition(h.getRaceIdx(), 0, 0);
 
         // add horse to arrival list
-        Condition cond = mutex.newCondition();
-        inMovement.add(cond);
-        racers.add(new Racer(h.getRaceIdx()));
+        i = 0;
+        while (inMovement[i] != null) i++;
+
+        inMovement[i] = mutex.newCondition();
+        racers[i] = new Racer(h.getRaceIdx());
 
         // last horse notify all spectators
-        if (inMovement.size() == EventVariables.NUMBER_OF_HORSES_PER_RACE)
+        if (i == EventVariables.NUMBER_OF_HORSES_PER_RACE - 1)
             paddock.proceedToStartLine();
 
         try {
-            cond.await();
+            inMovement[i].await();
         } catch (InterruptedException ignored) { }
 
         mutex.unlock();
@@ -101,49 +107,43 @@ public class RacingTrack {
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
-        // notify all horses for race start
-        inMovement.peek().signal();
+        // notify first horse for race start
+        inMovement[horseTurn].signal();
 
         mutex.unlock();
     }
 
     public void makeAMove(int step) {
         Horse h;
-        Racer r;
-        Condition c;
+        int currentTurn;
         mutex.lock();
 
+        currentTurn = horseTurn;
         h = (Horse)Thread.currentThread();
         h.setHorseState(HorseState.RUNNING);
         generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
 
-        r = racers.poll();
-        c = inMovement.poll();
-
         // notify next horse in FIFO
         // update current position
-        r.setCurrentPosition(step);
+        racers[horseTurn].setCurrentPosition(step);
         generalRepository.setHorsePosition(h.getRaceIdx(),
-                r.getCurrentPosition(), r.getCurrentStep());
-
-
-        System.out.println("HORSE IDX = " + h.getRaceIdx());
-        System.out.println("HORSE POS = " + r.getCurrentPosition());
+                racers[horseTurn].getCurrentPosition(),
+                racers[horseTurn].getCurrentStep());
 
         // Signal next horse
-        if (inMovement.size() > 0)
-            inMovement.peek().signal();
+        do {
+            horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
+        } while (racers[horseTurn] == null);
 
-        // Add elements to end of FIFO
-        racers.add(r);
-        inMovement.add(c);
+        if (horseTurn != currentTurn) {
+            // Signal next horse
+            inMovement[horseTurn].signal();
 
-        // wait for its turn
-        try {
-            c.await();
-        } catch (InterruptedException ignored) { }
-
-        System.out.println("WAKE UP NOW: " + h.getRaceIdx());
+            // wait for next turn
+            try {
+                inMovement[currentTurn].await();
+            } catch (InterruptedException ignored) { }
+        }
 
         mutex.unlock();
     }
@@ -151,26 +151,18 @@ public class RacingTrack {
     public boolean hasFinishLineBeenCrossed() {
         Horse h;
         Racer racer;
-        Condition c;
-        boolean notfinishedRace;
+        int currentTurn;
         mutex.lock();
 
+        currentTurn = horseTurn;
         h = (Horse)Thread.currentThread();
+        racer = racers[horseTurn];
 
-        // if has crossed finish line
-        racer = racers.peek();
-
-        System.out.println(inMovement);
-        System.out.println(racers);
-
-        notfinishedRace = racer.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH;
-        if (notfinishedRace) {
+        if (racer.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH) {
             mutex.unlock();
             return false;
         }
 
-        racer = racers.poll();
-        c = inMovement.poll();
         System.out.println("RACER HAS FINISHED: " + racer.getIdx());
 
         //System.out.println(racers.peek());
@@ -194,17 +186,25 @@ public class RacingTrack {
             controlCentre.finishTheRace(getWinners());
 
             // reset empty track variables
-            this.racers.clear();
-            this.inMovement.clear();
+            this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+            this.inMovement =
+                    new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
             this.winners.clear();
             this.finishes = 0;
+        } else {
+            // Signal next horse
+            do {
+                horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
+            } while (racers[horseTurn] == null);
+
+            // Remove current racer from the race
+            racers[currentTurn] = null;
+            inMovement[currentTurn] = null;
+
+            // Signal next horse
+            if (horseTurn != currentTurn)
+                inMovement[horseTurn].signal();
         }
-
-
-        System.out.println("HORSE TO WAKE: " + inMovement.peek());
-        inMovement.peek().signal();
-
-
         mutex.unlock();
 
         return true;
