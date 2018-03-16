@@ -1,7 +1,7 @@
 package states;
 
 public enum SpectatorState implements State {
-    WAITING_FOR_A_RACE_TO_START("WFRT"),
+    WAITING_FOR_A_RACE_TO_START("WRS"),
     APPRAISING_THE_HORSES("ATH"),
     PLACING_A_BET("PAB"),
     WATCHING_A_RACE("WAR"),

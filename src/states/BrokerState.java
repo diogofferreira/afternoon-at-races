@@ -1,7 +1,7 @@
 package states;
 
 public enum BrokerState implements State {
-    OPENING_THE_EVENT("OTV"),
+    OPENING_THE_EVENT("OTE"),
     ANNOUNCING_NEXT_RACE("ANR"),
     WAITING_FOR_BETS("WFB"),
     SUPERVISING_THE_RACE("STR"),

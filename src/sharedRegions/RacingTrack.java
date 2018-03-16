@@ -96,6 +96,9 @@ public class RacingTrack {
             inMovement[i].await();
         } catch (InterruptedException ignored) { }
 
+        h.setHorseState(HorseState.RUNNING);
+        generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
+
         mutex.unlock();
     }
 
@@ -120,8 +123,6 @@ public class RacingTrack {
 
         currentTurn = horseTurn;
         h = (Horse)Thread.currentThread();
-        h.setHorseState(HorseState.RUNNING);
-        generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
 
         // notify next horse in FIFO
         // update current position
@@ -162,11 +163,6 @@ public class RacingTrack {
             mutex.unlock();
             return false;
         }
-
-        System.out.println("RACER HAS FINISHED: " + racer.getIdx());
-
-        //System.out.println(racers.peek());
-        //System.out.println(inMovement.peek());
 
         generalRepository.setHorseEnded(h.getRaceIdx());
         h.setHorseState(HorseState.AT_THE_FINISH_LINE);
