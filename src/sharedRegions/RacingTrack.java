@@ -131,7 +131,8 @@ public class RacingTrack {
         System.out.println("HORSE POS = " + r.getCurrentPosition());
 
         // Signal next horse
-        inMovement.peek().signal();
+        if (inMovement.size() > 0)
+            inMovement.peek().signal();
 
         // Add elements to end of FIFO
         racers.add(r);
@@ -142,7 +143,7 @@ public class RacingTrack {
             c.await();
         } catch (InterruptedException ignored) { }
 
-        System.out.println("WAKE UP" + h.getRaceIdx());
+        System.out.println("WAKE UP NOW: " + h.getRaceIdx());
 
         mutex.unlock();
     }
@@ -151,23 +152,26 @@ public class RacingTrack {
         Horse h;
         Racer racer;
         Condition c;
+        boolean notfinishedRace;
         mutex.lock();
 
         h = (Horse)Thread.currentThread();
 
         // if has crossed finish line
         racer = racers.peek();
-        System.out.println("WAKE UP" + racer.getIdx());
 
         System.out.println(inMovement);
         System.out.println(racers);
 
-        if (racer.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH)
+        notfinishedRace = racer.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH;
+        if (notfinishedRace) {
+            mutex.unlock();
             return false;
+        }
 
         racer = racers.poll();
         c = inMovement.poll();
-        System.out.println("RACER HAS FINISHED? " + racer.getIdx());
+        System.out.println("RACER HAS FINISHED: " + racer.getIdx());
 
         //System.out.println(racers.peek());
         //System.out.println(inMovement.peek());
@@ -184,7 +188,8 @@ public class RacingTrack {
 
         System.out.println(winners);
 
-        // last horse notify broker */
+        // last horse notify broker
+        System.out.println(finishes);
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             controlCentre.finishTheRace(getWinners());
 
@@ -195,7 +200,9 @@ public class RacingTrack {
             this.finishes = 0;
         }
 
-        inMovement.peek().signalAll();
+
+        System.out.println("HORSE TO WAKE: " + inMovement.peek());
+        inMovement.peek().signal();
 
 
         mutex.unlock();

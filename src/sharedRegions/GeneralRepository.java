@@ -201,6 +201,7 @@ public class GeneralRepository {
 
     private void printState() {
         mutex.lock();
+        // addiconar um na corrida
 
         try {
             pw = new PrintWriter(new FileWriter(filename, true));
