@@ -5,9 +5,7 @@ import states.BrokerState;
 import states.SpectatorState;
 import states.State;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class GeneralRepository {
 
     private PrintWriter pw;
-    private File file;
+    private String filename;
 
     private Lock mutex;
 
@@ -60,9 +58,8 @@ public class GeneralRepository {
         // Log file settings
         Date today = Calendar.getInstance().getTime();
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMddhhmmss");
-        String filename = "AfternoonAtRaces_" + date.format(today) + ".log";
-
-        this.file = new File(filename);
+        filename = EventVariables.LOG_FILEPATH + "_" +
+                date.format(today) + ".log";
 
         printHeader();
     }
@@ -175,8 +172,8 @@ public class GeneralRepository {
         mutex.lock();
 
         try {
-            pw = new PrintWriter(file);
-        } catch (FileNotFoundException e) {
+            pw = new PrintWriter(new FileWriter(filename, true));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -196,6 +193,7 @@ public class GeneralRepository {
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" Od%d N%d Ps%d SD%s ", i, i, i, i);
         pw.println();
+        pw.close();
         printState();
 
         mutex.unlock();
@@ -204,20 +202,27 @@ public class GeneralRepository {
     private void printState() {
         mutex.lock();
 
+        try {
+            pw = new PrintWriter(new FileWriter(filename, true));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         pw.printf("  %4s", brokerState);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" %3s %4f", spectatorsState[i], spectatorsWallet[i]);
-        pw.printf("%1d", raceNumber);
+            pw.printf(" %3s %3.1f", spectatorsState[i], spectatorsWallet[i]);
+        pw.printf(" %1d", raceNumber);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" %3s %2d", horsesState[i], horsesAgility[i]);
         pw.println();
         pw.printf(" %1d %2d", raceNumber, EventVariables.RACING_TRACK_LENGTH);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" %1d %4f", spectatorsBettedHorse[i], spectatorsBet[i]);
+            pw.printf(" %1d %3.1f", spectatorsBettedHorse[i], spectatorsBet[i]);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
-            pw.printf(" %4f %2d %2d %1s", horsesOdd[i], horsesStep[i],
+            pw.printf(" %3.1f %2d %2d %1s", horsesOdd[i], horsesStep[i],
                     horsesPosition[i], horsesEnded[i]);
         pw.println();
+        pw.close();
 
         mutex.unlock();
     }

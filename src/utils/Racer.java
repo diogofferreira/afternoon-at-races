@@ -25,4 +25,9 @@ public class Racer {
         this.currentPosition += step;
         this.currentStep++;
     }
+
+    @Override
+    public String toString() {
+        return "Racer IDX: " + this.getIdx();
+    }
 }

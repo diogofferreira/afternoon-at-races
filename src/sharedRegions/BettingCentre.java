@@ -87,11 +87,11 @@ public class BettingCentre {
 
             // Considering the bet value is valid since spectator cannot bet over a certain amount
             if (bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-                rejectedBets.add(bet);
+                acceptedBets.add(bet);
                 generalRepository.setSpectatorsBet(bet.getSpectatorID(),
                         bet.getValue(), bet.getHorseID());
             } else
-                acceptedBets.add(bet);
+                rejectedBets.add(bet);
         }
     }
 

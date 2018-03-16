@@ -62,7 +62,6 @@ public class AnAfternoonAtTheRaces {
 
 
         /* start of the simulation */
-        broker.start();
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
         {
@@ -73,6 +72,8 @@ public class AnAfternoonAtTheRaces {
         {
             spectators[i].start();
         }
+
+        broker.start();
 
         /* wait for the end of the simulation */
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
@@ -91,6 +92,12 @@ public class AnAfternoonAtTheRaces {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            broker.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
     }

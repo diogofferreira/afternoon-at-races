@@ -1,0 +1,246 @@
+AFTERNOON AT THE RACE TRACK - Description of the internal state of the problem
+
+MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race 0
+ Stat St0 Am0  St1 Am1  St2 Am2  St3 Am3 RN St0 Len0  St1 Len1  St2 Len2  St3 Len3 
+			Race 0 Status
+ RN Dist BS0 BA0  BS1 BA1  BS2 BA2  BS3 BA3  Od0 N0 Ps0 SD0  Od1 N1 Ps1 SD1  Od2 N2 Ps2 SD2  Od3 N3 Ps3 SD3 
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 null  0 null  0 null  0
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  0 null  0 null  0
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  2 null  0 ATS  0
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  2 null  0 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  4 ATS  0 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  4 ATS  3 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  4 ATS  5 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 null  0 ATS  4 ATS  1 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  0 ATS  4 ATS  1 ATS  4
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  4 ATS  1 ATS  4
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  4
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  2
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  2 ATS  2 ATS  1 ATS  2
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  2 ATS  2 ATS  3 ATS  2
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  2 ATS  2 ATS  3 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  3 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  1
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  5 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   OTV WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  5 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  4 ATS  2 ATS  1 ATS  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  4 ATS  2 ATS  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATS  4 ATS  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATP  4 ATS  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR WFRT 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 WFRT 500.0 WFRT 500.0 WFRT 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 ATH 500.0 WFRT 500.0 WFRT 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 ATH 500.0 ATH 500.0 WFRT 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATP  1 ATP  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATP  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   ANR ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATP  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATP  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false 0.0  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATP  4 ATP  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATP  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATP  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB ATH 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 ATH 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 PAB 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 0 0.0 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 PAB 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 0 0.0 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 PAB 500.0 ATH 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 PAB 500.0 PAB 500.0 ATH 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB PAB 500.0 PAB 500.0 PAB 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 PAB 500.0 PAB 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 WAR 500.0 PAB 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 0 0.0 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 WAR 500.0 PAB 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 2 99.2 0 0.0 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 WAR 500.0 PAB 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 WAR 500.0 WAR 500.0 PAB 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   WFB WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 ATSL  1 ATSL  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 ATSL  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  0 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 ATSL  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  0 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATSL  4 ATSL  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 ATSL  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  0 false 0.2  0  0 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 ATSL  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  0 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  0 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  0  3 false 0.1  0  1 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  0  3 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  0  3 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  0  3 false 0.2  0  2 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  0  2 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  0  2 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  1  4 false 0.1  1  2 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  1  4 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  1  4 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  1  6 false 0.2  1  4 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  1  4 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  1  4 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  2  7 false 0.1  2  3 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  2  7 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  2  7 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  2  9 false 0.2  2  6 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  2  6 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  2  6 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  3  8 false 0.1  3  4 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  3  8 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  3  8 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  3 13 false 0.2  3  7 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  3  7 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  3  7 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  4 11 false 0.1  4  5 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  4 11 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  4 11 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  4 17 false 0.2  4  9 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  4  9 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  4  9 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  5 12 false 0.1  5  6 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  5 12 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  5 12 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  5 22 false 0.2  5 10 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  5 10 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  5 10 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  6 11 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  6 11 false 0.3  6 15 false 0.1  6  7 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  6 11 false 0.3  6 15 false 0.1  7  8 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  6 11 false 0.3  6 15 false 0.1  7  8 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 false 0.2  6 11 false 0.3  7 18 false 0.1  7  8 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 RUN  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 true 0.2  6 11 false 0.3  7 18 false 0.1  7  8 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATFL  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 true 0.2  6 11 false 0.3  7 18 false 0.1  7  8 false
+   STR WAR 500.0 WAR 500.0 WAR 500.0 WAR 500.0 0 ATS  4 RUN  2 RUN  1 RUN  3
+ 0 25 3 96.4 3 4.6 2 99.2 2 60.4 0.5  6 25 true 0.2  6 11 false 0.3  7 18 false 0.1  7  8 false
