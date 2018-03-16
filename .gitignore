@@ -4,3 +4,4 @@
 # User-specific stuff:
 .idea/
 *.iml
+logs/*
