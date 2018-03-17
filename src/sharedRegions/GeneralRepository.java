@@ -1,5 +1,8 @@
 package sharedRegions;
 
+import entities.Broker;
+import entities.Horse;
+import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -208,6 +211,18 @@ public class GeneralRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            Horse h = (Horse) (Thread.currentThread());
+            pw.println("HORSE ID: " + h.getRaceIdx());
+        } catch (ClassCastException e) { }
+        try {
+            Broker h = (Broker) (Thread.currentThread());
+            pw.println("BROKER");
+        } catch (ClassCastException e) { }
+        try {
+            Spectator h = (Spectator) (Thread.currentThread());
+            pw.println("SPECTATOR ID: " + h.getID());
+        } catch (ClassCastException e) { }
 
         pw.printf("  %4s ", brokerState);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)

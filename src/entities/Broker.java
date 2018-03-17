@@ -16,6 +16,8 @@ public class Broker extends Thread {
     private ControlCentre controlCentre;
     private BettingCentre bettingCentre;
 
+    private int[] winners;
+
     public Broker(Stable s, RacingTrack r, ControlCentre c, BettingCentre b) {
         if (s == null || r == null || c == null || b == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
@@ -41,9 +43,9 @@ public class Broker extends Thread {
             controlCentre.startTheRace();
 
             // reportResults
-            controlCentre.reportResults();
+            winners = controlCentre.reportResults();
 
-            if (bettingCentre.areThereAnyWinners())
+            if (bettingCentre.areThereAnyWinners(winners))
                 bettingCentre.honourTheBets();
         }
 

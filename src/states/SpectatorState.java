@@ -5,7 +5,7 @@ public enum SpectatorState implements State {
     APPRAISING_THE_HORSES("ATH"),
     PLACING_A_BET("PAB"),
     WATCHING_A_RACE("WAR"),
-    COLLECT_THE_GAINS("CTG"),
+    COLLECTING_THE_GAINS("CTG"),
     CELEBRATING("CEL");
 
     private final String logRepresentation;

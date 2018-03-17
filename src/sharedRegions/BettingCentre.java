@@ -7,7 +7,10 @@ import states.BrokerState;
 import states.SpectatorState;
 import utils.Bet;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
@@ -28,7 +31,7 @@ public class BettingCentre {
 
     // queue with pending bets
     // queue with accepted bets
-    private ConcurrentLinkedQueue<Bet> pendingBets, acceptedBets, rejectedBets;
+    private Queue<Bet> pendingBets, acceptedBets, rejectedBets;
 
     private int currentRaceID;
     private int[] winners;
@@ -36,8 +39,8 @@ public class BettingCentre {
 
     // queue with pending honours
     // queue with accepted honours
-    private ConcurrentLinkedQueue<Integer> pendingHonours;
-    private ConcurrentHashMap<Integer, Double> acceptedHonours;
+    private Queue<Integer> pendingHonours;
+    private HashMap<Integer, Double> acceptedHonours;
 
     public BettingCentre(GeneralRepository gr, Stable s, RacingTrack r) {
         if (gr == null)
@@ -53,11 +56,11 @@ public class BettingCentre {
         this.waitingForHonours = this.mutex.newCondition();
         this.waitingForCash = this.mutex.newCondition();
 
-        this.pendingBets = new ConcurrentLinkedQueue<>();
-        this.acceptedBets = new ConcurrentLinkedQueue<>();
-        this.rejectedBets = new ConcurrentLinkedQueue<>();
-        this.pendingHonours = new ConcurrentLinkedQueue<>();
-        this.acceptedHonours = new ConcurrentHashMap<>();
+        this.pendingBets = new LinkedList<>();
+        this.acceptedBets = new LinkedList<>();
+        this.rejectedBets = new LinkedList<>();
+        this.pendingHonours = new LinkedList<>();
+        this.acceptedHonours = new HashMap<>();
         this.generalRepository = gr;
         this.stable = s;
         this.racingTrack = r;
@@ -154,22 +157,24 @@ public class BettingCentre {
         return validBet;
     }
 
-    public boolean areThereAnyWinners() {
-        Broker b;
+    public boolean areThereAnyWinners(int[] winners) {
+        //Broker b;
         boolean areThereWinners;
 
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        //b = (Broker)Thread.currentThread();
+        //b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
         // save horses winners
-        winners = racingTrack.getWinners();
+        this.winners = winners;
 
         // create queue for the winning bets
         winningBets = acceptedBets.stream().filter(bet ->
                 IntStream.of(winners).anyMatch(x -> x == bet.getHorseID()))
                 .collect(Collectors.toList());
+
+        System.out.println("WINNING BETS: " + winningBets);
 
         // clear accepted and rejected bets list
         acceptedBets.clear();
@@ -188,20 +193,36 @@ public class BettingCentre {
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
+        generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
 
-        while (acceptedHonours.size() < winningBets.size()) {
+        while (true) {
+
+            System.out.println("ACCEPT SIZE: " + acceptedHonours.size());
+            System.out.println("WINNING SIZE: " + winningBets.size());
+
+            System.out.println("WAITING FOR HONORS");
+
+            if(!(acceptedHonours.size() < winningBets.size())) break;
+
+            waitingForHonours.signalAll();
+
             try {
+                System.out.println("BROKER BLOQUEIA");
                 waitingForHonours.await();
             } catch (InterruptedException ignored) {}
 
-            while (pendingHonours.size() > 0) {
-                int spectatorID = pendingHonours.peek();
+            if (pendingHonours.size() > 0) {
+                int spectatorID = pendingHonours.poll();
                 Bet bet = (Bet) winningBets.stream().filter(
                         bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
+
                 acceptedHonours.put(spectatorID,
                         bet.getValue() * raceOdds[bet.getHorseID()]);
+
             }
+
+            System.out.println("WAITING HONORS: " + pendingHonours);
 
         }
 
@@ -215,20 +236,27 @@ public class BettingCentre {
         mutex.lock();
 
         s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.COLLECT_THE_GAINS);
+        s.setSpectatorState(SpectatorState.COLLECTING_THE_GAINS);
+        generalRepository.setSpectatorState(s.getID(),
+                SpectatorState.COLLECTING_THE_GAINS);
 
         // add to pending collections queue
         pendingHonours.add(spectatorID);
 
-        // notify broker queue
-        waitingForHonours.signal();
+
 
         // spectator waits queue
-        while (!acceptedHonours.containsKey(spectatorID)) {
+        do {
+            // notify broker queue
+            waitingForHonours.signal();
+
             try {
+                System.out.println("SPEC " + s.getID() + " BLOQUEIA");
                 waitingForCash.await();
             } catch (InterruptedException ignored) {}
-        }
+        } while (!acceptedHonours.containsKey(spectatorID));
+
+        System.out.println("SPEC " + s.getID() + " ACORDA");
 
         // get winning value
         winningValue = acceptedHonours.get(spectatorID);

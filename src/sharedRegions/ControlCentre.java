@@ -35,14 +35,14 @@ public class ControlCentre {
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
-        Broker b;
+        //Broker b;
         mutex.lock();
 
         generalRepository.setRaceNumber(raceNumber);
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
-        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        //b = (Broker)Thread.currentThread();
+        //b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        //generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         this.raceNumber = raceNumber;
         // broker wait
@@ -108,6 +108,8 @@ public class ControlCentre {
             watchingRace.await();
         } catch (InterruptedException ignored) {}
 
+        System.out.println("Spectator " + s.getID() + " woke up!");
+
         mutex.unlock();
     }
 
@@ -136,18 +138,20 @@ public class ControlCentre {
         mutex.unlock();
     }
 
-    public void reportResults() {
-        Broker b;
+    public int[] reportResults() {
+        //Broker b;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
-        generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        //b = (Broker)Thread.currentThread();
+        //b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        //generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
         // notify all spectators
         watchingRace.signalAll();
 
         mutex.unlock();
+
+        return this.winners;
     }
 
     public boolean haveIWon(int horseID) {
@@ -156,12 +160,13 @@ public class ControlCentre {
         mutex.lock();
 
         s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
-        generalRepository.setSpectatorState(s.getID(),
-                SpectatorState.WATCHING_A_RACE);
+        //s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
+        //generalRepository.setSpectatorState(s.getID(),
+        //        SpectatorState.WATCHING_A_RACE);
 
         // checks if winner is the one he/she bet
         won = IntStream.of(winners).anyMatch(w -> w == horseID);
+        System.out.println("Spectator " + s.getID() + " bet on horse " + horseID);
 
         mutex.unlock();
 
