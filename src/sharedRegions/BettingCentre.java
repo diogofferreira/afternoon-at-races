@@ -91,6 +91,7 @@ public class BettingCentre {
             // Considering the bet value is valid since spectator cannot bet over a certain amount
             if (bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
                 acceptedBets.add(bet);
+                System.out.println("ACCEPTED " + bet.getSpectatorID());
                 generalRepository.setSpectatorsBet(bet.getSpectatorID(),
                         bet.getValue(), bet.getHorseID());
             } else
@@ -110,8 +111,9 @@ public class BettingCentre {
         currentRaceID = raceID;
         getRaceOdds();
 
-        // broker wait */
+        // broker wait
         while (acceptedBets.size() < EventVariables.NUMBER_OF_SPECTATORS) {
+
             try {
                 waitingForBet.await();
             } catch (InterruptedException ignored){}
@@ -119,7 +121,7 @@ public class BettingCentre {
             // validate all pending bet
             validatePendingBets();
 
-            // notify spectator
+            // notify spectators
             waitingForValidation.signalAll();
         }
 
@@ -151,6 +153,7 @@ public class BettingCentre {
         }
 
         validBet = acceptedBets.contains(bet);
+        System.out.println(s.getID() + " BET = " + validBet);
 
         mutex.unlock();
 
@@ -174,8 +177,6 @@ public class BettingCentre {
                 IntStream.of(winners).anyMatch(x -> x == bet.getHorseID()))
                 .collect(Collectors.toList());
 
-        System.out.println("WINNING BETS: " + winningBets);
-
         // clear accepted and rejected bets list
         acceptedBets.clear();
         rejectedBets.clear();
@@ -197,17 +198,11 @@ public class BettingCentre {
 
         while (true) {
 
-            System.out.println("ACCEPT SIZE: " + acceptedHonours.size());
-            System.out.println("WINNING SIZE: " + winningBets.size());
-
-            System.out.println("WAITING FOR HONORS");
-
             if(!(acceptedHonours.size() < winningBets.size())) break;
 
-            waitingForHonours.signalAll();
+            waitingForCash.signalAll();
 
             try {
-                System.out.println("BROKER BLOQUEIA");
                 waitingForHonours.await();
             } catch (InterruptedException ignored) {}
 
@@ -216,15 +211,22 @@ public class BettingCentre {
                 Bet bet = (Bet) winningBets.stream().filter(
                         bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
-
                 acceptedHonours.put(spectatorID,
                         bet.getValue() * raceOdds[bet.getHorseID()]);
-
             }
-
-            System.out.println("WAITING HONORS: " + pendingHonours);
-
         }
+
+        // signal last spectator
+        waitingForCash.signalAll();
+
+        // wait for next spectator to collect te gains
+        try {
+            waitingForHonours.await();
+        } catch (InterruptedException ignored) {}
+
+        // clean betting queues
+        pendingHonours.clear();
+        acceptedHonours.clear();
 
         mutex.unlock();
     }
@@ -243,25 +245,24 @@ public class BettingCentre {
         // add to pending collections queue
         pendingHonours.add(spectatorID);
 
-
-
         // spectator waits queue
         do {
             // notify broker queue
-            waitingForHonours.signal();
+            waitingForHonours.signalAll();
 
             try {
-                System.out.println("SPEC " + s.getID() + " BLOQUEIA");
                 waitingForCash.await();
             } catch (InterruptedException ignored) {}
         } while (!acceptedHonours.containsKey(spectatorID));
 
-        System.out.println("SPEC " + s.getID() + " ACORDA");
-
         // get winning value
         winningValue = acceptedHonours.get(spectatorID);
+
         // clean honour entry
-        acceptedHonours.remove(spectatorID);
+        //acceptedHonours.remove(spectatorID);
+
+        // notify broker queue
+        waitingForHonours.signalAll();
 
         mutex.unlock();
 

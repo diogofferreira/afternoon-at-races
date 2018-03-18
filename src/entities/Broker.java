@@ -50,6 +50,8 @@ public class Broker extends Thread {
         }
 
         controlCentre.entertainTheGuests();
+        stable.entertainTheGuests();
+
     }
 
     public states.State getBrokerState() {

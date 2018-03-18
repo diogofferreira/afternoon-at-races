@@ -45,7 +45,7 @@ public class Horse extends Thread {
 
     public void run() {
         stable.proceedToStable();
-
+        System.out.println("INDO PARA O PADDOCK CAVALO " + id);
         paddock.proceedToPaddock();
 
         racingTrack.proceedToStartLine();

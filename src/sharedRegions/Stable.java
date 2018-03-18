@@ -83,7 +83,7 @@ public class Stable {
 
         // notify all horses
         inStable[raceID].signalAll();
-        
+
         mutex.unlock();
     }
 
@@ -97,13 +97,30 @@ public class Stable {
         generalRepository.setHorseState(h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
 
+        // set horse agility
+        if (horsesAgility[h.getRaceID()][h.getRaceIdx()] != 0) {
+            horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
+            generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
+        }
+
         // horse wait in stable
-        horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
-        generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
         try {
+            System.out.println("RACE " + h.getRaceID() + " CAVALO " + h.getID() + " VAI DORMIR");
             inStable[h.getRaceID()].await();
         } catch (InterruptedException ignored) {}
-        
+        System.out.println("INDO EMBORA CAVALO " + h.getID());
+
+        mutex.unlock();
+    }
+
+    public void entertainTheGuests() {
+        mutex.lock();
+
+        System.out.println("VOU ACORDAR OS CAVALOS TODOS");
+        // notify all horses
+        for (Condition horsesInRace : inStable)
+            horsesInRace.signalAll();
+
         mutex.unlock();
     }
 }

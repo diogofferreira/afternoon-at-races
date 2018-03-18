@@ -57,14 +57,13 @@ public class Spectator extends Thread {
                 b = getBet();
             } while(!bettingCentre.placeABet(b));
 
-            // Update wallet
+            // update wallet
             wallet -= b.getValue();
-
+            System.out.println("GO WATCH THE RACE " + id);
             controlCentre.goWatchTheRace();
 
             if (controlCentre.haveIWon(this.bettedHorse))
                 wallet += bettingCentre.goCollectTheGains(this.id);
-
         }
 
         controlCentre.relaxABit();

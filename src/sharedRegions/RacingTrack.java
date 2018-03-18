@@ -174,10 +174,7 @@ public class RacingTrack {
                 winners.get(0).getCurrentStep() == racer.getCurrentStep())
             winners.add(racer);
 
-        System.out.println(winners);
-
         // last horse notify broker
-        System.out.println(finishes);
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             controlCentre.finishTheRace(getWinners());
 

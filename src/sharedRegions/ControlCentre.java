@@ -20,6 +20,8 @@ public class ControlCentre {
 
     private int raceNumber;
 
+    private boolean raceEnded;
+
     private int[] winners;
 
     public ControlCentre(GeneralRepository gr) {
@@ -32,6 +34,8 @@ public class ControlCentre {
         this.waitForRace = this.mutex.newCondition();
         this.watchingRace = this.mutex.newCondition();
         this.startingRace = this.mutex.newCondition();
+        this.raceNumber = 0;
+        this.raceEnded = false;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
@@ -55,7 +59,7 @@ public class ControlCentre {
 
     public boolean waitForNextRace() {
         Spectator s;
-        boolean toRtn;
+        boolean continueRace;
 
         mutex.lock();
 
@@ -69,11 +73,11 @@ public class ControlCentre {
             waitForRace.await();
         } catch (InterruptedException ignored) {}
 
-        toRtn = raceNumber < EventVariables.NUMBER_OF_RACES;
+        continueRace = !raceEnded;
 
         mutex.unlock();
 
-        return toRtn;
+        return continueRace;
     }
 
     public void proceedToPaddock() {
@@ -107,8 +111,6 @@ public class ControlCentre {
         try {
             watchingRace.await();
         } catch (InterruptedException ignored) {}
-
-        System.out.println("Spectator " + s.getID() + " woke up!");
 
         mutex.unlock();
     }
@@ -166,7 +168,6 @@ public class ControlCentre {
 
         // checks if winner is the one he/she bet
         won = IntStream.of(winners).anyMatch(w -> w == horseID);
-        System.out.println("Spectator " + s.getID() + " bet on horse " + horseID);
 
         mutex.unlock();
 
@@ -177,10 +178,16 @@ public class ControlCentre {
         Broker b;
         mutex.lock();
 
+        // race is over
+        raceEnded = true;
+
+        // notify all spectators
+        waitForRace.signalAll();
+
+        // broker just playing host, end the afternoon
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
         generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
-        /* broker just playing host, end the afternoon */
 
         mutex.unlock();
     }
@@ -189,11 +196,11 @@ public class ControlCentre {
         Spectator s;
         mutex.lock();
 
+        /// just relax, end the afternoon
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.CELEBRATING);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.CELEBRATING);
-        /* just relax, end the afternoon */
 
         mutex.unlock();
     }

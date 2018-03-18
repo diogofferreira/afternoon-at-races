@@ -73,8 +73,8 @@ public class Paddock {
 
         // last spectator notify all horses
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS) {
-            horses.signalAll();
             controlCentre.goCheckHorses();
+            horses.signalAll();
         }
 
         // spectator wait in paddock

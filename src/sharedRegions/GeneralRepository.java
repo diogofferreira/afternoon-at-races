@@ -189,7 +189,7 @@ public class GeneralRepository {
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" St%d Len%d", i, i);
         pw.println();
-        pw.printf("\t\t\t\t\t\t\t\t\t\t\tRace %d Status\n", raceNumber + 1);
+        pw.printf("\t\t\t\t\t\t\t\t\t\t\tRace %d Status\n", raceNumber);
         pw.print(" RN Dist");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" BS%d  BA%d", i, i);

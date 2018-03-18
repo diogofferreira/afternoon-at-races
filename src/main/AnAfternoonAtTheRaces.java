@@ -14,35 +14,40 @@ public class AnAfternoonAtTheRaces {
     {
         Random rnd = new Random();
         int agility;
-        Stable stable = null;
-        Paddock paddock = null;
-        RacingTrack racingTrack = null;
-        ControlCentre controlCentre = null;
-        BettingCentre bettingCentre = null;
-        GeneralRepository generalRepository = new GeneralRepository();
+        Stable stable;
+        Paddock paddock;
+        RacingTrack racingTrack;
+        ControlCentre controlCentre;
+        BettingCentre bettingCentre;
+        GeneralRepository generalRepository;
 
+
+        // shared regions initialization
+        generalRepository = new GeneralRepository();
         controlCentre = new ControlCentre(generalRepository);
         stable = new Stable(generalRepository);
         paddock = new Paddock(generalRepository, controlCentre);
         racingTrack = new RacingTrack(generalRepository, controlCentre, paddock);
         bettingCentre = new BettingCentre(generalRepository, stable, racingTrack);
 
-
-
-
+        // entities initialization
         Broker broker = new Broker(stable, racingTrack, controlCentre, bettingCentre);
         Horse [] horses = new Horse[EventVariables.NUMBER_OF_HORSES];
         Spectator[] spectators = new Spectator[EventVariables.NUMBER_OF_SPECTATORS];
 
-        /* problem initialization */
-
-        /* Initialize horses with lineups */
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
         {
             agility = rnd.nextInt(EventVariables.HORSE_MAX_STEP) + 1;
             horses[i] = new Horse(i, agility, stable, paddock, racingTrack);
         }
 
+        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
+        {
+            spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET,
+                    paddock, controlCentre, bettingCentre, generalRepository);
+        }
+
+        // generate races lineup
         int[] horsesIdx = Arrays.stream(horses).mapToInt(Horse::getID).toArray();
         int[][] raceLineups = Stable.generateLineup(horsesIdx);
 
@@ -53,29 +58,17 @@ public class AnAfternoonAtTheRaces {
             }
         }
 
-        /* Initialize spectators */
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-        {
-            spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET,
-                    paddock, controlCentre, bettingCentre, generalRepository);
-        }
-
-
-        /* start of the simulation */
+        // start of the simulation
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
-        {
             horses[i].start();
-        }
 
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-        {
             spectators[i].start();
-        }
 
         broker.start();
 
-        /* wait for the end of the simulation */
+        /// end of the simulation */
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
         {
             try {
@@ -99,6 +92,5 @@ public class AnAfternoonAtTheRaces {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 }
