@@ -16,11 +16,12 @@ public class ControlCentre {
     private GeneralRepository generalRepository;
 
     private Lock mutex;
-    private Condition horsesInPaddock, waitForRace, watchingRace, startingRace;
+    private Condition horsesInPaddock, waitForRace, watchingRace, startingRace,
+            waitForCelebrate;
 
-    private int raceNumber;
+    private int wantToCelebrate;
 
-    private boolean raceEnded;
+    private boolean racesEnded;
 
     private int[] winners;
 
@@ -34,8 +35,9 @@ public class ControlCentre {
         this.waitForRace = this.mutex.newCondition();
         this.watchingRace = this.mutex.newCondition();
         this.startingRace = this.mutex.newCondition();
-        this.raceNumber = 0;
-        this.raceEnded = false;
+        this.waitForCelebrate = this.mutex.newCondition();
+        this.wantToCelebrate = 0;
+        this.racesEnded = false;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
@@ -47,12 +49,13 @@ public class ControlCentre {
         //b = (Broker)Thread.currentThread();
         //b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         //generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        System.out.println("BROKER VAI DORMIR");
 
-        this.raceNumber = raceNumber;
         // broker wait
         try {
             horsesInPaddock.await();
         } catch (InterruptedException ignored) {}
+        System.out.println("BROKER VOU-ME EMBORA");
 
         mutex.unlock();
     }
@@ -70,10 +73,15 @@ public class ControlCentre {
 
         // spectators wait
         try {
+            System.out.println("SPEC " + s.getID() + " VAI DORMIR");
             waitForRace.await();
         } catch (InterruptedException ignored) {}
+        System.out.println("SPEC " + s.getID() + " ACORDOU");
 
-        continueRace = !raceEnded;
+        continueRace = !racesEnded;
+
+        if (!continueRace && ++wantToCelebrate == EventVariables.NUMBER_OF_SPECTATORS)
+            waitForCelebrate.signal();
 
         mutex.unlock();
 
@@ -92,6 +100,7 @@ public class ControlCentre {
     public void goCheckHorses() {
         mutex.lock();
 
+        System.out.println("WAKING UP BROKER");
         // notify broker
         horsesInPaddock.signal();
 
@@ -179,10 +188,15 @@ public class ControlCentre {
         mutex.lock();
 
         // race is over
-        raceEnded = true;
+        racesEnded = true;
 
         // notify all spectators
         waitForRace.signalAll();
+
+        // wait for all spectators want to celebrate
+        try {
+            waitForCelebrate.await();
+        } catch (InterruptedException ignored) {}
 
         // broker just playing host, end the afternoon
         b = (Broker)Thread.currentThread();

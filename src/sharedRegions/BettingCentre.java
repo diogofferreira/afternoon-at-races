@@ -83,7 +83,7 @@ public class BettingCentre {
     }
 
     private void validatePendingBets() {
-        // validate pending FIFO's bets */
+        // validate pending FIFO's bets
         while (pendingBets.size() > 0) {
             Bet bet = pendingBets.peek();
             pendingBets.remove(bet);
@@ -112,17 +112,20 @@ public class BettingCentre {
         getRaceOdds();
 
         // broker wait
-        while (acceptedBets.size() < EventVariables.NUMBER_OF_SPECTATORS) {
-
-            try {
-                waitingForBet.await();
-            } catch (InterruptedException ignored){}
+        while (true) {
 
             // validate all pending bet
             validatePendingBets();
 
             // notify spectators
             waitingForValidation.signalAll();
+
+            if (acceptedBets.size() == EventVariables.NUMBER_OF_SPECTATORS)
+                break;
+
+            try {
+                waitingForBet.await();
+            } catch (InterruptedException ignored){}
         }
 
         mutex.unlock();

@@ -70,7 +70,6 @@ public class Paddock {
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.APPRAISING_THE_HORSES);
 
-
         // last spectator notify all horses
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS) {
             controlCentre.goCheckHorses();

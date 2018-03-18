@@ -33,7 +33,9 @@ public class Broker extends Thread {
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock()
             stable.summonHorsesToPaddock(i);
+            System.out.println("BROKER VAI PARA O CC");
             controlCentre.summonHorsesToPaddock(i);
+            System.out.println("BROKER SAIU DO CC");
 
             // acceptsBets
             bettingCentre.acceptTheBets(i);
@@ -47,11 +49,11 @@ public class Broker extends Thread {
 
             if (bettingCentre.areThereAnyWinners(winners))
                 bettingCentre.honourTheBets();
+            System.out.println("ACABOU CORRIDA "  + i);
         }
 
-        controlCentre.entertainTheGuests();
         stable.entertainTheGuests();
-
+        controlCentre.entertainTheGuests();
     }
 
     public states.State getBrokerState() {

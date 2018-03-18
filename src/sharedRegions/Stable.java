@@ -21,9 +21,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Stable {
 
     private Lock mutex;
+    private Condition allHorsesInStable;
     private Condition[] inStable;
+
     private int[][] horsesAgility;
     private GeneralRepository generalRepository;
+    private int horsesInStable;
 
     public static int[][] generateLineup(int[] horses) {
         int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
@@ -53,6 +56,9 @@ public class Stable {
         this.generalRepository = generalRepository;
         this.mutex = new ReentrantLock();
         this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
+        this.horsesInStable = 0;
+
+        this.allHorsesInStable = this.mutex.newCondition();
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
             this.inStable[i] = this.mutex.newCondition();
@@ -81,6 +87,7 @@ public class Stable {
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
+        System.out.println("CHAMANDO OS CAVALOS TODOS");
         // notify all horses
         inStable[raceID].signalAll();
 
@@ -98,10 +105,14 @@ public class Stable {
                 HorseState.AT_THE_STABLE);
 
         // set horse agility
-        if (horsesAgility[h.getRaceID()][h.getRaceIdx()] != 0) {
+        if (horsesAgility[h.getRaceID()][h.getRaceIdx()] == 0) {
             horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
             generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
         }
+
+        // notify broker for an horse arrival
+        horsesInStable++;
+        allHorsesInStable.signal();
 
         // horse wait in stable
         try {
@@ -110,13 +121,24 @@ public class Stable {
         } catch (InterruptedException ignored) {}
         System.out.println("INDO EMBORA CAVALO " + h.getID());
 
+        // horse departure
+        if (--horsesInStable == 0)
+            allHorsesInStable.signal();
+
         mutex.unlock();
     }
 
     public void entertainTheGuests() {
         mutex.lock();
 
-        System.out.println("VOU ACORDAR OS CAVALOS TODOS");
+        // wait for all horses arrive to stable
+        while (horsesInStable < EventVariables.NUMBER_OF_HORSES &&
+                horsesInStable > 0) {
+            try {
+                allHorsesInStable.await();
+            } catch (InterruptedException ignored) {}
+        }
+
         // notify all horses
         for (Condition horsesInRace : inStable)
             horsesInRace.signalAll();

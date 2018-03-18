@@ -95,6 +95,7 @@ public class GeneralRepository {
 
     public void setRaceNumber(int raceNumber) {
         mutex.lock();
+        System.out.println("RACE NUMBER = " + raceNumber);
 
         this.raceNumber = raceNumber;
 
@@ -181,7 +182,7 @@ public class GeneralRepository {
         }
 
         pw.println("AFTERNOON AT THE RACE TRACK - Description of the internal state of the problem\n");
-        pw.printf("MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race %d\n", raceNumber);
+        pw.printf("MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race %d\n", raceNumber + 1);
         pw.print("  Stat ");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" St%d   Am%d", i, i);
@@ -189,7 +190,7 @@ public class GeneralRepository {
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" St%d Len%d", i, i);
         pw.println();
-        pw.printf("\t\t\t\t\t\t\t\t\t\t\tRace %d Status\n", raceNumber);
+        pw.printf("\t\t\t\t\t\t\t\t\t\t\tRace %d Status\n", raceNumber + 1);
         pw.print(" RN Dist");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" BS%d  BA%d", i, i);
@@ -232,7 +233,7 @@ public class GeneralRepository {
             pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
                     horsesAgility[i]);
         pw.println();
-        pw.printf("  %1d  %2d ", raceNumber, EventVariables.RACING_TRACK_LENGTH);
+        pw.printf("  %1d  %2d ", raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf("  %1d  %4.1f", spectatorsBettedHorse[i], spectatorsBet[i]);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
