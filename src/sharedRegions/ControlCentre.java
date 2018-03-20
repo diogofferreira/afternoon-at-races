@@ -26,7 +26,7 @@ public class ControlCentre {
 
     private boolean spectatorsCanProceed;
 
-    private boolean racesEnded;
+    private boolean raceFinished, racesEnded;
 
     private int[] winners;
 
@@ -48,6 +48,7 @@ public class ControlCentre {
         this.wantToCelebrate = 0;
         this.spectatorsCanProceed = false;
         this.racesEnded = false;
+        this.raceFinished = false;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
@@ -152,12 +153,16 @@ public class ControlCentre {
 
         spectatorsReady = 0;
 
-        /*System.out.println("Broker supervises the race in control centre");
+        System.out.println("Broker supervises the race in control centre");
+
         // broker wait
-        try {
-            startingRace.await();
-        } catch (InterruptedException ignored) {}
-        */
+        while (!raceFinished) {
+            try {
+                startingRace.await();
+            } catch (InterruptedException ignored) { }
+        }
+
+        raceFinished = false;
         mutex.unlock();
     }
 
@@ -174,7 +179,8 @@ public class ControlCentre {
         this.spectatorsCanProceed = false;
 
         // notify broker
-        //startingRace.signal();
+        raceFinished = true;
+        startingRace.signal();
 
         mutex.unlock();
     }

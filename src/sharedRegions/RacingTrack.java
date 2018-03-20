@@ -25,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RacingTrack {
 
     private Lock mutex;
-    private Condition startingTheRace;
     private Condition[] inMovement;
     private ControlCentre controlCentre;
     private Paddock paddock;
@@ -50,7 +49,6 @@ public class RacingTrack {
         this.paddock = p;
         this.controlCentre = c;
         this.mutex = new ReentrantLock();
-        this.startingTheRace = this.mutex.newCondition();
         this.inMovement = new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.winners = new ArrayList<>();
@@ -126,16 +124,6 @@ public class RacingTrack {
         // notify first horse for race start
         inMovement[horseTurn].signal();
 
-        controlCentre.startTheRace();
-
-        System.out.println("Broker supervises the race in racing track");
-        // broker wait
-        try {
-            startingTheRace.await();
-        } catch (InterruptedException ignored) {}
-
-
-
         mutex.unlock();
     }
 
@@ -210,7 +198,6 @@ public class RacingTrack {
             this.finishes = 0;
 
             controlCentre.finishTheRace(raceWinners);
-            startingTheRace.signal();
 
 
         } else {

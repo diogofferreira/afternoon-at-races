@@ -12,6 +12,7 @@ public class EventVariables {
 
     public static final int RACING_TRACK_LENGTH = 25;
 
+
     public static final int HORSE_MAX_STEP = 5;
 
     public static final double INITIAL_WALLET = 500.0;
