@@ -137,9 +137,12 @@ public class ControlCentre {
                 SpectatorState.WATCHING_A_RACE);
 
         // spectators wait
+        System.out.println("Spectator " + s.getID() + " watching a race and sleeps");
         try {
             watchingRace.await();
         } catch (InterruptedException ignored) {}
+
+        System.out.println("Spectator " + s.getID() + " wakes up after watching a race");
 
         mutex.unlock();
     }
@@ -149,26 +152,29 @@ public class ControlCentre {
 
         spectatorsReady = 0;
 
+        /*System.out.println("Broker supervises the race in control centre");
         // broker wait
         try {
             startingRace.await();
         } catch (InterruptedException ignored) {}
-
+        */
         mutex.unlock();
     }
 
     public void finishTheRace(int[] winners) {
         mutex.lock();
 
+        System.out.println("Updating winners");
         this.winners = winners;
 
         // Notify general repository to clear all horse related info
         generalRepository.resetRace();
 
+        System.out.println("Waking up broker");
         this.spectatorsCanProceed = false;
 
         // notify broker
-        startingRace.signalAll();
+        //startingRace.signal();
 
         mutex.unlock();
     }
@@ -181,6 +187,7 @@ public class ControlCentre {
         //b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         //generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
+        System.out.println("Waking up spectators");
         // notify all spectators
         watchingRace.signalAll();
 

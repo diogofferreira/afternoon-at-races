@@ -42,7 +42,7 @@ public class Broker extends Thread {
 
             // startTheRace
             racingTrack.startTheRace();
-            controlCentre.startTheRace();
+            //controlCentre.startTheRace();
 
             // reportResults
             winners = controlCentre.reportResults();

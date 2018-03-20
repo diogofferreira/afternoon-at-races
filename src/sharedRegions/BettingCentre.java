@@ -29,6 +29,9 @@ public class BettingCentre {
 
     private double[] raceOdds;
 
+    private boolean acceptingBets;
+    private boolean acceptingHonours;
+
     // queue with pending bets
     // queue with accepted bets
     private Queue<Bet> pendingBets, acceptedBets, rejectedBets;
@@ -55,6 +58,9 @@ public class BettingCentre {
         this.waitingForValidation = this.mutex.newCondition();
         this.waitingForHonours = this.mutex.newCondition();
         this.waitingForCash = this.mutex.newCondition();
+
+        this.acceptingBets = false;
+        this.acceptingHonours = false;
 
         this.pendingBets = new LinkedList<>();
         this.acceptedBets = new LinkedList<>();
@@ -107,9 +113,19 @@ public class BettingCentre {
         b.setBrokerState(BrokerState.WAITING_FOR_BETS);
         generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
 
+        // clear accepted and rejected bets list
+        acceptedBets.clear();
+        rejectedBets.clear();
+
+        // clear betting queues
+        pendingHonours.clear();
+        acceptedHonours.clear();
+
         // Update raceID and start accepting bets
         currentRaceID = raceID;
         getRaceOdds();
+
+        acceptingBets = true;
 
         // broker wait
         while (true) {
@@ -128,6 +144,8 @@ public class BettingCentre {
             } catch (InterruptedException ignored){}
         }
 
+        acceptingBets = false;
+
         mutex.unlock();
     }
 
@@ -141,6 +159,16 @@ public class BettingCentre {
         s.setSpectatorState(SpectatorState.PLACING_A_BET);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.PLACING_A_BET);
+
+        // If it's still not accepting bets, wait
+        if (!acceptingBets) {
+            try {
+                waitingForValidation.await();
+            } catch (InterruptedException ignored){}
+        }
+
+        System.out.println("Spectator " + s.getID() + " waiting for broker " +
+                "to arrive to betting centre.");
 
         // add to waiting bets queue
         pendingBets.add(bet);
@@ -182,13 +210,7 @@ public class BettingCentre {
                 IntStream.of(winners).anyMatch(x -> x == bet.getHorseID()))
                 .collect(Collectors.toList());
 
-        // clear accepted and rejected bets list
-        acceptedBets.clear();
-        rejectedBets.clear();
 
-        // clear betting queues
-        pendingHonours.clear();
-        acceptedHonours.clear();
 
         areThereWinners = !winningBets.isEmpty();
 
@@ -204,6 +226,8 @@ public class BettingCentre {
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
         generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
+
+        acceptingHonours = true;
 
         while (true) {
 
@@ -228,6 +252,8 @@ public class BettingCentre {
             }
         }
 
+        acceptingHonours = false;
+
         mutex.unlock();
     }
 
@@ -241,6 +267,14 @@ public class BettingCentre {
         s.setSpectatorState(SpectatorState.COLLECTING_THE_GAINS);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.COLLECTING_THE_GAINS);
+
+        if (!acceptingHonours) {
+            try {
+                System.out.println("Espetador" + s.getID() + " espera para o" +
+                        " broker chegar ao betting centre");
+                waitingForCash.await();
+            } catch (InterruptedException ignored) {}
+        }
 
         // add to pending collections queue
         pendingHonours.add(spectatorID);

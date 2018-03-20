@@ -28,6 +28,7 @@ public class Stable {
     private GeneralRepository generalRepository;
     private int horsesInStable;
     private boolean canCelebrate;
+    private boolean[] canProceed;
 
     public static int[][] generateLineup(int[] horses) {
         int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
@@ -59,6 +60,7 @@ public class Stable {
         this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
         this.horsesInStable = 0;
         this.canCelebrate = false;
+        this.canProceed = new boolean[EventVariables.NUMBER_OF_RACES];
 
         this.allHorsesInStable = this.mutex.newCondition();
 
@@ -92,6 +94,7 @@ public class Stable {
         System.out.println("CHAMANDO OS CAVALOS TODOS");
 
         // notify all horses
+        canProceed[raceID] = true;
         inStable[raceID].signalAll();
 
         mutex.unlock();
@@ -117,7 +120,7 @@ public class Stable {
         //horsesInStable++;
         //allHorsesInStable.signal();
 
-        if (!canCelebrate) {
+        if (!(canCelebrate || canProceed[h.getRaceID()])) {
             // horse wait in stable
             try {
                 System.out.println("RACE " + h.getRaceID() + " CAVALO " + h.getID() + " VAI DORMIR");

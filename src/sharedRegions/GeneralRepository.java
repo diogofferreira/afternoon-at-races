@@ -162,7 +162,7 @@ public class GeneralRepository {
     }
 
     public void resetRace() {
-        this.raceNumber = 0;
+        //this.raceNumber = 0;
         this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new double[EventVariables.NUMBER_OF_SPECTATORS];
@@ -229,7 +229,7 @@ public class GeneralRepository {
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" %3s %4.1f", spectatorsState[i], spectatorsWallet[i]);
         pw.printf("  %1d", raceNumber + 1);
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
                     horsesAgility[i]);
         pw.println();

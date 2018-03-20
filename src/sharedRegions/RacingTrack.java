@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RacingTrack {
 
     private Lock mutex;
+    private Condition startingTheRace;
     private Condition[] inMovement;
     private ControlCentre controlCentre;
     private Paddock paddock;
@@ -49,6 +50,7 @@ public class RacingTrack {
         this.paddock = p;
         this.controlCentre = c;
         this.mutex = new ReentrantLock();
+        this.startingTheRace = this.mutex.newCondition();
         this.inMovement = new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.winners = new ArrayList<>();
@@ -92,9 +94,13 @@ public class RacingTrack {
         if (i == EventVariables.NUMBER_OF_HORSES_PER_RACE - 1)
             paddock.proceedToStartLine();
 
+        System.out.println("Horse " + h.getRaceIdx() + " waits for its turn");
+
         try {
             inMovement[i].await();
         } catch (InterruptedException ignored) { }
+
+        System.out.println("Horse " + h.getRaceIdx() + " wakes up for its turn");
 
         h.setHorseState(HorseState.RUNNING);
         generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
@@ -110,8 +116,25 @@ public class RacingTrack {
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
+        System.out.println("Broker starting the race - notifies first horses");
+        System.out.println("RACERS:");
+        for (int i = 0; i < racers.length; i++)
+            System.out.println(racers[i]);
+
+        horseTurn = 0;
+
         // notify first horse for race start
         inMovement[horseTurn].signal();
+
+        controlCentre.startTheRace();
+
+        System.out.println("Broker supervises the race in racing track");
+        // broker wait
+        try {
+            startingTheRace.await();
+        } catch (InterruptedException ignored) {}
+
+
 
         mutex.unlock();
     }
@@ -176,7 +199,8 @@ public class RacingTrack {
 
         // last horse notify broker
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            controlCentre.finishTheRace(getWinners());
+            System.out.println("Race has ended - all horses arrived.");
+            int[] raceWinners = getWinners();
 
             // reset empty track variables
             this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -184,6 +208,11 @@ public class RacingTrack {
                     new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
             this.winners.clear();
             this.finishes = 0;
+
+            controlCentre.finishTheRace(raceWinners);
+            startingTheRace.signal();
+
+
         } else {
             // Signal next horse
             do {
