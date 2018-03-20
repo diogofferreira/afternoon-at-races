@@ -50,8 +50,10 @@ public class Paddock {
                 HorseState.AT_THE_PADDOCK);
 
         // last horse notify spectators
-        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
+        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+            //while(controlCentre.getSpectatorsReady() != EventVariables.NUMBER_OF_SPECTATORS);
             controlCentre.proceedToPaddock();
+        }
 
         // horse wait in paddock
         try {

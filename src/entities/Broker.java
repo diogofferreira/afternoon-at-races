@@ -32,7 +32,7 @@ public class Broker extends Thread {
     public void run() {
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock()
-            stable.summonHorsesToPaddock(i);
+            // stable.summonHorsesToPaddock(i);
             System.out.println("BROKER VAI PARA O CC");
             controlCentre.summonHorsesToPaddock(i);
             System.out.println("BROKER SAIU DO CC");
@@ -53,7 +53,7 @@ public class Broker extends Thread {
         }
 
         stable.entertainTheGuests();
-        controlCentre.entertainTheGuests();
+        //controlCentre.entertainTheGuests();
     }
 
     public states.State getBrokerState() {

@@ -84,7 +84,7 @@ public class BettingCentre {
 
     private void validatePendingBets() {
         // validate pending FIFO's bets
-        while (pendingBets.size() > 0) {
+        if (pendingBets.size() > 0) {
             Bet bet = pendingBets.peek();
             pendingBets.remove(bet);
 
@@ -145,11 +145,13 @@ public class BettingCentre {
         // add to waiting bets queue
         pendingBets.add(bet);
 
-        // notify broker
-        waitingForBet.signal();
-
         // spectator wait
-        while (!(acceptedBets.contains(bet) || rejectedBets.contains(bet))) {
+        while (true) {
+            // notify broker
+            waitingForBet.signal();
+
+            if (acceptedBets.contains(bet) || rejectedBets.contains(bet)) break;
+
             try {
                 waitingForValidation.await();
             } catch (InterruptedException ignored){}
@@ -184,6 +186,10 @@ public class BettingCentre {
         acceptedBets.clear();
         rejectedBets.clear();
 
+        // clear betting queues
+        pendingHonours.clear();
+        acceptedHonours.clear();
+
         areThereWinners = !winningBets.isEmpty();
 
         mutex.unlock();
@@ -201,13 +207,16 @@ public class BettingCentre {
 
         while (true) {
 
-            if(!(acceptedHonours.size() < winningBets.size())) break;
-
             waitingForCash.signalAll();
 
+            if (acceptedHonours.size() >= winningBets.size()) break;
+
             try {
+                System.out.println("Broker espera para pagar aos espetadores");
                 waitingForHonours.await();
             } catch (InterruptedException ignored) {}
+
+            System.out.println("Broker acorda para pagar a um espetador");
 
             if (pendingHonours.size() > 0) {
                 int spectatorID = pendingHonours.poll();
@@ -218,18 +227,6 @@ public class BettingCentre {
                         bet.getValue() * raceOdds[bet.getHorseID()]);
             }
         }
-
-        // signal last spectator
-        waitingForCash.signalAll();
-
-        // wait for next spectator to collect te gains
-        try {
-            waitingForHonours.await();
-        } catch (InterruptedException ignored) {}
-
-        // clean betting queues
-        pendingHonours.clear();
-        acceptedHonours.clear();
 
         mutex.unlock();
     }
@@ -249,23 +246,25 @@ public class BettingCentre {
         pendingHonours.add(spectatorID);
 
         // spectator waits queue
-        do {
+        while (true) {
             // notify broker queue
             waitingForHonours.signalAll();
 
+            if (acceptedHonours.containsKey(spectatorID)) break;
+
             try {
+                System.out.println("Espetador espera para receber dinheiro");
                 waitingForCash.await();
             } catch (InterruptedException ignored) {}
-        } while (!acceptedHonours.containsKey(spectatorID));
+
+            System.out.println("Espetador acorda para receber dinheiro");
+        }
 
         // get winning value
         winningValue = acceptedHonours.get(spectatorID);
 
         // clean honour entry
         //acceptedHonours.remove(spectatorID);
-
-        // notify broker queue
-        waitingForHonours.signalAll();
 
         mutex.unlock();
 

@@ -27,6 +27,7 @@ public class Stable {
     private int[][] horsesAgility;
     private GeneralRepository generalRepository;
     private int horsesInStable;
+    private boolean canCelebrate;
 
     public static int[][] generateLineup(int[] horses) {
         int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
@@ -57,6 +58,7 @@ public class Stable {
         this.mutex = new ReentrantLock();
         this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
         this.horsesInStable = 0;
+        this.canCelebrate = false;
 
         this.allHorsesInStable = this.mutex.newCondition();
 
@@ -83,11 +85,12 @@ public class Stable {
 
         mutex.lock();
 
-        b = (Broker)(Thread.currentThread());
-        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
-        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        //b = (Broker)(Thread.currentThread());
+        //b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        //generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         System.out.println("CHAMANDO OS CAVALOS TODOS");
+
         // notify all horses
         inStable[raceID].signalAll();
 
@@ -111,26 +114,41 @@ public class Stable {
         }
 
         // notify broker for an horse arrival
-        horsesInStable++;
-        allHorsesInStable.signal();
+        //horsesInStable++;
+        //allHorsesInStable.signal();
 
-        // horse wait in stable
-        try {
-            System.out.println("RACE " + h.getRaceID() + " CAVALO " + h.getID() + " VAI DORMIR");
-            inStable[h.getRaceID()].await();
-        } catch (InterruptedException ignored) {}
-        System.out.println("INDO EMBORA CAVALO " + h.getID());
-
+        if (!canCelebrate) {
+            // horse wait in stable
+            try {
+                System.out.println("RACE " + h.getRaceID() + " CAVALO " + h.getID() + " VAI DORMIR");
+                inStable[h.getRaceID()].await();
+            } catch (InterruptedException ignored) {
+            }
+            System.out.println("INDO EMBORA CAVALO " + h.getID());
+        }
         // horse departure
-        if (--horsesInStable == 0)
+        /*if (--horsesInStable == 0)
             allHorsesInStable.signal();
-
+        */
         mutex.unlock();
     }
 
     public void entertainTheGuests() {
+        Broker b;
+
         mutex.lock();
 
+        // broker just playing host, end the afternoon
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+
+        canCelebrate = true;
+        // notify all horses
+        for (Condition horsesInRace : inStable)
+            horsesInRace.signalAll();
+
+        /*
         // wait for all horses arrive to stable
         while (horsesInStable < EventVariables.NUMBER_OF_HORSES &&
                 horsesInStable > 0) {
@@ -142,6 +160,7 @@ public class Stable {
         // notify all horses
         for (Condition horsesInRace : inStable)
             horsesInRace.signalAll();
+        */
 
         mutex.unlock();
     }

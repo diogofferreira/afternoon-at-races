@@ -48,7 +48,9 @@ public class Spectator extends Thread {
         Bet b;
 
         generalRepository.setSpectatorWallet(id, wallet);
-        while(controlCentre.waitForNextRace()) {
+        //while(controlCentre.waitForNextRace()) {
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
+            controlCentre.waitForNextRace();
 
             // goCheckHorses
             paddock.goCheckHorses();

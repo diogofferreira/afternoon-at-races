@@ -24,8 +24,8 @@ public class AnAfternoonAtTheRaces {
 
         // shared regions initialization
         generalRepository = new GeneralRepository();
-        controlCentre = new ControlCentre(generalRepository);
         stable = new Stable(generalRepository);
+        controlCentre = new ControlCentre(generalRepository, stable);
         paddock = new Paddock(generalRepository, controlCentre);
         racingTrack = new RacingTrack(generalRepository, controlCentre, paddock);
         bettingCentre = new BettingCentre(generalRepository, stable, racingTrack);

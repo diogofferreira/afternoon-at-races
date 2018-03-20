@@ -19,37 +19,49 @@ public class ControlCentre {
     private Condition horsesInPaddock, waitForRace, watchingRace, startingRace,
             waitForCelebrate;
 
+    private Stable stable;
+
+    private int spectatorsReady;
     private int wantToCelebrate;
+
+    private boolean spectatorsCanProceed;
 
     private boolean racesEnded;
 
     private int[] winners;
 
-    public ControlCentre(GeneralRepository gr) {
+    public ControlCentre(GeneralRepository gr, Stable s) {
         if (gr == null)
             throw new IllegalArgumentException("Invalid General Repository.");
+        if (s == null)
+            throw new IllegalArgumentException("Invalid Stable.");
 
         this.generalRepository = gr;
+        this.stable = s;
         this.mutex = new ReentrantLock();
         this.horsesInPaddock = this.mutex.newCondition();
         this.waitForRace = this.mutex.newCondition();
         this.watchingRace = this.mutex.newCondition();
         this.startingRace = this.mutex.newCondition();
         this.waitForCelebrate = this.mutex.newCondition();
+        this.spectatorsReady = 0;
         this.wantToCelebrate = 0;
+        this.spectatorsCanProceed = false;
         this.racesEnded = false;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
-        //Broker b;
+        Broker b;
         mutex.lock();
 
         generalRepository.setRaceNumber(raceNumber);
 
-        //b = (Broker)Thread.currentThread();
-        //b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
-        //generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         System.out.println("BROKER VAI DORMIR");
+
+        stable.summonHorsesToPaddock(raceNumber);
 
         // broker wait
         try {
@@ -71,27 +83,35 @@ public class ControlCentre {
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
-        // spectators wait
-        try {
-            System.out.println("SPEC " + s.getID() + " VAI DORMIR");
-            waitForRace.await();
-        } catch (InterruptedException ignored) {}
-        System.out.println("SPEC " + s.getID() + " ACORDOU");
+        if (!spectatorsCanProceed) {
+            // spectators wait
+            try {
+                System.out.println("SPEC " + s.getID() + " VAI DORMIR");
+                //spectatorsReady++;
+                waitForRace.await();
+            } catch (InterruptedException ignored) {}
+            System.out.println("SPEC " + s.getID() + " ACORDOU");
+        }
 
+        /*
         continueRace = !racesEnded;
 
         if (!continueRace && ++wantToCelebrate == EventVariables.NUMBER_OF_SPECTATORS)
             waitForCelebrate.signal();
-
+        */
         mutex.unlock();
 
-        return continueRace;
+        return false;//continueRace;
     }
 
     public void proceedToPaddock() {
         mutex.lock();
 
+        // wait for all spectators to arrive
+
         // notify all spectators
+        spectatorsCanProceed = true;
+
         waitForRace.signalAll();
 
         mutex.unlock();
@@ -127,6 +147,8 @@ public class ControlCentre {
     public void startTheRace() {
         mutex.lock();
 
+        spectatorsReady = 0;
+
         // broker wait
         try {
             startingRace.await();
@@ -142,6 +164,8 @@ public class ControlCentre {
 
         // Notify general repository to clear all horse related info
         generalRepository.resetRace();
+
+        this.spectatorsCanProceed = false;
 
         // notify broker
         startingRace.signalAll();
@@ -167,10 +191,10 @@ public class ControlCentre {
 
     public boolean haveIWon(int horseID) {
         boolean won;
-        Spectator s;
+        //Spectator s;
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        //s = (Spectator)Thread.currentThread();
         //s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
         //generalRepository.setSpectatorState(s.getID(),
         //        SpectatorState.WATCHING_A_RACE);
@@ -190,18 +214,19 @@ public class ControlCentre {
         // race is over
         racesEnded = true;
 
-        // notify all spectators
-        waitForRace.signalAll();
-
         // wait for all spectators want to celebrate
-        try {
-            waitForCelebrate.await();
-        } catch (InterruptedException ignored) {}
+        do {
+            waitForRace.signalAll();
+
+            try {
+                waitForCelebrate.await();
+            } catch (InterruptedException ignored) {}
+        } while (spectatorsReady != EventVariables.NUMBER_OF_SPECTATORS);
 
         // broker just playing host, end the afternoon
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
-        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        //b = (Broker)Thread.currentThread();
+        //b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        //generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
 
         mutex.unlock();
     }
@@ -217,5 +242,9 @@ public class ControlCentre {
                 SpectatorState.CELEBRATING);
 
         mutex.unlock();
+    }
+
+    public int getSpectatorsReady() {
+        return spectatorsReady;
     }
 }
