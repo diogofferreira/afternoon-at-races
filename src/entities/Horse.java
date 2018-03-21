@@ -20,12 +20,13 @@ public class Horse extends Thread {
     private Paddock paddock;
     private RacingTrack racingTrack;
 
-    public Horse(int id, int agility, Stable s, Paddock p, RacingTrack r) {
+    public Horse(int id, int agility, Stable stable, Paddock paddock,
+                 RacingTrack racingTrack) {
         if (id < 0)
             throw new IllegalArgumentException("Invalid Horse ID.");
         if (agility < 0 || agility > EventVariables.HORSE_MAX_STEP)
             throw new IllegalArgumentException("Invalid Horse agility.");
-        if (s == null || p == null || r == null)
+        if (stable == null || paddock == null || racingTrack == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
         this.state = HorseState.AT_THE_STABLE;
@@ -33,9 +34,9 @@ public class Horse extends Thread {
         this.agility = agility;
         this.raceID = -1;
         this.raceIdx = -1;
-        this.stable = s;
-        this.paddock = p;
-        this.racingTrack = r;
+        this.stable = stable;
+        this.paddock = paddock;
+        this.racingTrack = racingTrack;
     }
 
     private int makeAStep() {
@@ -45,9 +46,9 @@ public class Horse extends Thread {
 
     public void run() {
         stable.proceedToStable();
-        System.out.println("INDO PARA O PADDOCK CAVALO " + id);
+
         paddock.proceedToPaddock();
-        System.out.println("INDO PARA A STARTING LINE " + id);
+
         racingTrack.proceedToStartLine();
 
         while (!racingTrack.hasFinishLineBeenCrossed())

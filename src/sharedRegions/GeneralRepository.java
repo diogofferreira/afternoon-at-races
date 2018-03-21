@@ -24,13 +24,13 @@ public class GeneralRepository {
 
     private State brokerState;
     private State[] spectatorsState;
-    private double[] spectatorsWallet;
+    private int[] spectatorsWallet;
     private int raceNumber;
     private State[] horsesState;
     private int[] horsesAgility;
     private int[] spectatorsBettedHorse;
-    private double[] spectatorsBet;
-    private double[] horsesOdd;
+    private int[] spectatorsBet;
+    private int[] horsesOdd;
     private int[] horsesStep;
     private int[] horsesPosition;
     private int[] horsesEnded;
@@ -39,13 +39,13 @@ public class GeneralRepository {
         this.mutex = new ReentrantLock();
         this.brokerState = BrokerState.OPENING_THE_EVENT;
         this.spectatorsState = new State[EventVariables.NUMBER_OF_SPECTATORS];
-        this.spectatorsWallet = new double[EventVariables.NUMBER_OF_SPECTATORS];
+        this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.raceNumber = 0;
         this.horsesState = new State[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.spectatorsBet = new double[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
+        this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -85,17 +85,16 @@ public class GeneralRepository {
         mutex.unlock();
     }
 
-    public void setSpectatorWallet(int spectatorId, double spectatorWallet) {
+    public void setSpectatorGains(int spectatorId, int amount) {
         mutex.lock();
 
-        this.spectatorsWallet[spectatorId] = spectatorWallet;
+        this.spectatorsWallet[spectatorId] += amount;
 
         mutex.unlock();
     }
 
     public void setRaceNumber(int raceNumber) {
         mutex.lock();
-        System.out.println("RACE NUMBER = " + raceNumber);
 
         this.raceNumber = raceNumber;
 
@@ -120,19 +119,20 @@ public class GeneralRepository {
     }
 
 
-    public void setSpectatorsBet(int spectatorId, double spectatorBet,
+    public void setSpectatorsBet(int spectatorId, int spectatorBet,
                                  int spectatorBettedHorse) {
         mutex.lock();
 
         this.spectatorsBet[spectatorId] = spectatorBet;
         this.spectatorsBettedHorse[spectatorId] = spectatorBettedHorse;
+        this.spectatorsWallet[spectatorId] -= spectatorBet;
 
         printState();
 
         mutex.unlock();
     }
 
-    public void setHorsesOdd(double [] horsesOdd) {
+    public void setHorsesOdd(int [] horsesOdd) {
         mutex.lock();
 
         this.horsesOdd = horsesOdd;
@@ -165,8 +165,8 @@ public class GeneralRepository {
         //this.raceNumber = 0;
         this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.spectatorsBet = new double[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
+        this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -212,6 +212,7 @@ public class GeneralRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        /*
         try {
             Horse h = (Horse) (Thread.currentThread());
             pw.println("HORSE ID: " + h.getRaceIdx());
@@ -223,11 +224,11 @@ public class GeneralRepository {
         try {
             Spectator h = (Spectator) (Thread.currentThread());
             pw.println("SPECTATOR ID: " + h.getID());
-        } catch (ClassCastException e) { }
+        } catch (ClassCastException e) { }*/
 
         pw.printf("  %4s ", brokerState);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" %3s %4.1f", spectatorsState[i], spectatorsWallet[i]);
+            pw.printf(" %3s %4d", spectatorsState[i], spectatorsWallet[i]);
         pw.printf("  %1d", raceNumber + 1);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
@@ -235,9 +236,9 @@ public class GeneralRepository {
         pw.println();
         pw.printf("  %1d  %2d ", raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf("  %1d  %4.1f", spectatorsBettedHorse[i], spectatorsBet[i]);
+            pw.printf("  %1d  %4d", spectatorsBettedHorse[i], spectatorsBet[i]);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
-            pw.printf(" %4.1f %2d  %2d  %1s", horsesOdd[i], horsesStep[i],
+            pw.printf(" %4d %2d  %2d  %1s", horsesOdd[i], horsesStep[i],
                     horsesPosition[i], horsesEnded[i]);
         pw.println();
         pw.close();

@@ -27,12 +27,13 @@ public class Paddock {
     private int horsesInPaddock;
     private int spectatorsInPaddock;
 
-    public Paddock(GeneralRepository gr, ControlCentre c) {
-        if (gr == null || c == null)
+    public Paddock(GeneralRepository generalRepository,
+                   ControlCentre controlCentre) {
+        if (generalRepository == null || controlCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
-        this.generalRepository = gr;
-        this.controlCentre = c;
+        this.generalRepository = generalRepository;
+        this.controlCentre = controlCentre;
         this.mutex = new ReentrantLock();
         this.horses = this.mutex.newCondition();
         this.spectators = this.mutex.newCondition();
@@ -50,10 +51,8 @@ public class Paddock {
                 HorseState.AT_THE_PADDOCK);
 
         // last horse notify spectators
-        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            //while(controlCentre.getSpectatorsReady() != EventVariables.NUMBER_OF_SPECTATORS);
+        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
             controlCentre.proceedToPaddock();
-        }
 
         // horse wait in paddock
         try {

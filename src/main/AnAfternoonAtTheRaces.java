@@ -28,21 +28,19 @@ public class AnAfternoonAtTheRaces {
         controlCentre = new ControlCentre(generalRepository, stable);
         paddock = new Paddock(generalRepository, controlCentre);
         racingTrack = new RacingTrack(generalRepository, controlCentre, paddock);
-        bettingCentre = new BettingCentre(generalRepository, stable, racingTrack);
+        bettingCentre = new BettingCentre(generalRepository, stable);
 
         // entities initialization
         Broker broker = new Broker(stable, racingTrack, controlCentre, bettingCentre);
         Horse [] horses = new Horse[EventVariables.NUMBER_OF_HORSES];
         Spectator[] spectators = new Spectator[EventVariables.NUMBER_OF_SPECTATORS];
 
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
-        {
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++) {
             agility = rnd.nextInt(EventVariables.HORSE_MAX_STEP) + 1;
             horses[i] = new Horse(i, agility, stable, paddock, racingTrack);
         }
 
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-        {
+        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
             spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET,
                     paddock, controlCentre, bettingCentre, generalRepository);
         }
@@ -69,8 +67,7 @@ public class AnAfternoonAtTheRaces {
         broker.start();
 
         /// end of the simulation */
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
-        {
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++) {
             try {
                 horses[i].join();
             } catch (InterruptedException e) {
@@ -78,8 +75,7 @@ public class AnAfternoonAtTheRaces {
             }
         }
 
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-        {
+        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
             try {
                 spectators[i].join();
             } catch (InterruptedException e) {

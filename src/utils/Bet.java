@@ -3,9 +3,9 @@ package utils;
 public class Bet {
     private int spectatorID;
     private int horseID;
-    private double value;
+    private int value;
 
-    public Bet(int spectatorID, int horseID, double value) {
+    public Bet(int spectatorID, int horseID, int value) {
         assert spectatorID >= 0 && horseID >= 0 && value >= 0;
         this.spectatorID = spectatorID;
         this.horseID = horseID;
@@ -20,7 +20,7 @@ public class Bet {
         return horseID;
     }
 
-    public double getValue() {
+    public int getValue() {
         return value;
     }
 

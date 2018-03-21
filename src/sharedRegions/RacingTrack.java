@@ -36,24 +36,28 @@ public class RacingTrack {
     private int horseTurn;
     private int finishes;
 
+    private boolean raceStarted;
 
-    public RacingTrack(GeneralRepository gr, ControlCentre c, Paddock p) {
-        if (gr == null)
+
+    public RacingTrack(GeneralRepository generalRepository,
+                       ControlCentre controlCentre, Paddock paddock) {
+        if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
-        if (c == null)
+        if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
-        if (p == null)
+        if (paddock == null)
             throw new IllegalArgumentException("Invalid Paddock.");
 
-        this.generalRepository = gr;
-        this.paddock = p;
-        this.controlCentre = c;
+        this.generalRepository = generalRepository;
+        this.paddock = paddock;
+        this.controlCentre = controlCentre;
         this.mutex = new ReentrantLock();
         this.inMovement = new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.racers = new Racer[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.winners = new ArrayList<>();
         this.finishes = 0;
         this.horseTurn = 0;
+        this.raceStarted = false;
     }
 
     public int[] getWinners() {
@@ -92,13 +96,12 @@ public class RacingTrack {
         if (i == EventVariables.NUMBER_OF_HORSES_PER_RACE - 1)
             paddock.proceedToStartLine();
 
-        System.out.println("Horse " + h.getRaceIdx() + " waits for its turn");
-
-        try {
-            inMovement[i].await();
-        } catch (InterruptedException ignored) { }
-
-        System.out.println("Horse " + h.getRaceIdx() + " wakes up for its turn");
+        // Horse waits if race hasn't started and if it isn't its turn
+        while (!(raceStarted && horseTurn == i)) {
+            try {
+                inMovement[i].await();
+            } catch (InterruptedException ignored) { }
+        }
 
         h.setHorseState(HorseState.RUNNING);
         generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
@@ -114,14 +117,8 @@ public class RacingTrack {
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
-        System.out.println("Broker starting the race - notifies first horses");
-        System.out.println("RACERS:");
-        for (int i = 0; i < racers.length; i++)
-            System.out.println(racers[i]);
-
-        horseTurn = 0;
-
         // notify first horse for race start
+        raceStarted = true;
         inMovement[horseTurn].signal();
 
         mutex.unlock();
@@ -147,6 +144,7 @@ public class RacingTrack {
             horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
         } while (racers[horseTurn] == null);
 
+        // if it hasn't looped wakes next horse, else continues
         if (horseTurn != currentTurn) {
             // Signal next horse
             inMovement[horseTurn].signal();
@@ -187,7 +185,6 @@ public class RacingTrack {
 
         // last horse notify broker
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            System.out.println("Race has ended - all horses arrived.");
             int[] raceWinners = getWinners();
 
             // reset empty track variables
@@ -196,6 +193,8 @@ public class RacingTrack {
                     new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
             this.winners.clear();
             this.finishes = 0;
+            horseTurn = 0;
+            raceStarted = false;
 
             controlCentre.finishTheRace(raceWinners);
 

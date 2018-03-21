@@ -16,26 +16,26 @@ public class Broker extends Thread {
     private ControlCentre controlCentre;
     private BettingCentre bettingCentre;
 
-    private int[] winners;
-
-    public Broker(Stable s, RacingTrack r, ControlCentre c, BettingCentre b) {
-        if (s == null || r == null || c == null || b == null)
+    public Broker(Stable stable, RacingTrack racingTrack,
+                  ControlCentre controlCentre, BettingCentre bettingCentre) {
+        if (stable == null || racingTrack == null ||
+                controlCentre == null || bettingCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
         this.state = BrokerState.OPENING_THE_EVENT;
-        this.stable = s;
-        this.controlCentre = c;
-        this.bettingCentre = b;
-        this.racingTrack = r;
+        this.stable = stable;
+        this.controlCentre = controlCentre;
+        this.bettingCentre = bettingCentre;
+        this.racingTrack = racingTrack;
     }
 
     public void run() {
+        int[] winners;
+
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
-            // summonHorsesToPaddock()
+            // summonHorsesToPaddock
             // stable.summonHorsesToPaddock(i);
-            System.out.println("BROKER VAI PARA O CC");
             controlCentre.summonHorsesToPaddock(i);
-            System.out.println("BROKER SAIU DO CC");
 
             // acceptsBets
             bettingCentre.acceptTheBets(i);
@@ -49,11 +49,9 @@ public class Broker extends Thread {
 
             if (bettingCentre.areThereAnyWinners(winners))
                 bettingCentre.honourTheBets();
-            System.out.println("ACABOU CORRIDA "  + i);
         }
 
         stable.entertainTheGuests();
-        //controlCentre.entertainTheGuests();
     }
 
     public states.State getBrokerState() {

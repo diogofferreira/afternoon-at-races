@@ -14,7 +14,7 @@ public class Spectator extends Thread {
 
     private states.State state;
     private int id;
-    private double wallet;
+    private int wallet;
 
     private int bettedHorse;
 
@@ -23,31 +23,31 @@ public class Spectator extends Thread {
     private BettingCentre bettingCentre;
     private GeneralRepository generalRepository;
 
-    public Spectator(int id, double wallet, Paddock p, ControlCentre c,
-                     BettingCentre b, GeneralRepository gr) {
-        if (p == null)
+    public Spectator(int id, int wallet, Paddock paddock,
+                     ControlCentre controlCentre, BettingCentre bettingCentre,
+                     GeneralRepository generalRepository) {
+        if (paddock == null)
             throw new IllegalArgumentException("Invalid Paddock.");
-        if (c == null)
+        if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
-        if (b == null)
+        if (bettingCentre == null)
             throw new IllegalArgumentException("Invalid Betting Centre.");
-        if (gr == null)
+        if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
 
         this.state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
         this.id = id;
         this.wallet = wallet;
         this.bettedHorse = -1;
-        this.paddock = p;
-        this.controlCentre = c;
-        this.bettingCentre = b;
-        this.generalRepository = gr;
+        this.paddock = paddock;
+        this.controlCentre = controlCentre;
+        this.bettingCentre = bettingCentre;
+        this.generalRepository = generalRepository;
     }
     
     public void run() {
         Bet b;
 
-        generalRepository.setSpectatorWallet(id, wallet);
         //while(controlCentre.waitForNextRace()) {
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             controlCentre.waitForNextRace();
@@ -57,11 +57,11 @@ public class Spectator extends Thread {
 
             do {
                 b = getBet();
-            } while(!bettingCentre.placeABet(b));
+            } while(!bettingCentre.placeABet(
+                    b.getSpectatorID(), b.getHorseID(), b.getValue()));
 
             // update wallet
             wallet -= b.getValue();
-            System.out.println("GO WATCH THE RACE " + id);
             controlCentre.goWatchTheRace();
 
             if (controlCentre.haveIWon(this.bettedHorse))
@@ -72,7 +72,7 @@ public class Spectator extends Thread {
     }
 
     private Bet getBet() {
-        double betValue;
+        int betValue;
 
         Random rnd = ThreadLocalRandom.current();
 
@@ -81,8 +81,7 @@ public class Spectator extends Thread {
 
         // pick a random bet value, with a max of (wallet * number_of_races)
         // to avoid bankruptcy
-        betValue = rnd.nextDouble() *
-                (wallet / EventVariables.NUMBER_OF_RACES - 1) + 1;
+        betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
 
         return new Bet(this.id, bettedHorse, betValue);
     }
