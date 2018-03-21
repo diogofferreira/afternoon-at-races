@@ -10,6 +10,7 @@ import utils.Bet;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -153,14 +154,80 @@ public class BettingCentre {
         mutex.unlock();
     }
 
-    public boolean placeABet(int spectatorID, int bettedHorse, int betValue) {
+    private Bet getBet(int spectatorID, int strategy, int wallet) {
+        int betValue = 0;
+        int bettedHorse = 0;
+
+        Random rnd = ThreadLocalRandom.current();
+
+        switch (strategy) {
+            // Half of money in smallest odd
+            case 0:
+                // pick random horse to bet
+                try {
+                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
+                            (o1, o2) -> raceOdds[o1] < raceOdds[o2] ? o1 : o2).getAsInt();
+                } catch (NoSuchElementException e) {
+                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                }
+
+                // pick a random bet value, with a max of (wallet * number_of_races)
+                // to avoid bankruptcy
+                betValue = wallet / 2;
+
+                break;
+
+            // number of races of money in smallest odd
+            case 1:
+                // pick random horse to bet
+                try {
+                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
+                            (o1, o2) -> raceOdds[o1] < raceOdds[o2] ? o1 : o2).getAsInt();
+                } catch (NoSuchElementException e) {
+                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                }
+
+                // pick a random bet value, with a max of (wallet * number_of_races)
+                // to avoid bankruptcy
+                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+
+                break;
+
+            // number of races of money in biggest odd
+            case 2:
+                // pick random horse to bet
+                try {
+                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
+                            (o1, o2) -> raceOdds[o1] > raceOdds[o2] ? o1 : o2).getAsInt();
+                } catch (NoSuchElementException e) {
+                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                }
+
+                // pick a random bet value, with a max of (wallet * number_of_races)
+                // to avoid bankruptcy
+                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+
+                break;
+
+            default:
+                // pick random horse to bet
+                bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+
+                // pick a random bet value, with a max of (wallet * number_of_races)
+                // to avoid bankruptcy
+                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+
+                break;
+        }
+
+        return new Bet(spectatorID, bettedHorse, betValue);
+    }
+
+    public int placeABet() {
         Spectator s;
         Bet bet;
-        boolean validBet;
 
         mutex.lock();
-
-        bet = new Bet(spectatorID, bettedHorse, betValue);
 
         s = (Spectator)Thread.currentThread();
         s.setSpectatorState(SpectatorState.PLACING_A_BET);
@@ -173,7 +240,9 @@ public class BettingCentre {
                 waitingForValidation.await();
             } catch (InterruptedException ignored){}
         }
+        
         // add to waiting bets queue
+        bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
         pendingBets.add(bet);
 
         // spectator wait
@@ -181,18 +250,25 @@ public class BettingCentre {
             // notify broker
             waitingForBet.signal();
 
-            if (acceptedBets.contains(bet) || rejectedBets.contains(bet)) break;
+            if (acceptedBets.contains(bet))
+                break;
+
+            if (rejectedBets.contains(bet)) {
+                bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
+                pendingBets.add(bet);
+                waitingForBet.signal();
+            }
 
             try {
                 waitingForValidation.await();
             } catch (InterruptedException ignored){}
         }
 
-        validBet = acceptedBets.contains(bet);
+        s.updateWallet(-bet.getValue());
 
         mutex.unlock();
 
-        return validBet;
+        return bet.getHorseID();
     }
 
     public boolean areThereAnyWinners(int[] winners) {

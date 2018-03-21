@@ -41,7 +41,7 @@ public class AnAfternoonAtTheRaces {
         }
 
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
-            spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET,
+            spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET, i,
                     paddock, controlCentre, bettingCentre, generalRepository);
         }
 
