@@ -21,7 +21,10 @@ import java.util.stream.Stream;
 public class BettingCentre {
 
     private Lock mutex;
-    private Condition waitingForBet, waitingForValidation, waitingForHonours, waitingForCash;
+    private Condition waitingForBet;
+    private Condition waitingForValidation;
+    private Condition waitingForHonours;
+    private Condition waitingForCash;
     private Stable stable;
     private GeneralRepository generalRepository;
 
@@ -43,6 +46,7 @@ public class BettingCentre {
     // queue with accepted honours
     private Queue<Integer> pendingHonours;
     private HashMap<Integer, Integer> acceptedHonours;
+    private Queue<Integer> rejectedHonours;
 
     public BettingCentre(GeneralRepository generalRepository, Stable stable) {
         if (generalRepository == null)
@@ -64,6 +68,7 @@ public class BettingCentre {
         this.rejectedBets = new LinkedList<>();
         this.pendingHonours = new LinkedList<>();
         this.acceptedHonours = new HashMap<>();
+        this.rejectedHonours = new LinkedList<>();
 
         this.generalRepository = generalRepository;
         this.stable = stable;
@@ -189,6 +194,7 @@ public class BettingCentre {
         // clear betting queues
         pendingHonours.clear();
         acceptedHonours.clear();
+        rejectedHonours.clear();
 
         // Update raceID and start accepting bets
         currentRaceID = raceID;
@@ -289,6 +295,7 @@ public class BettingCentre {
 
     public void honourTheBets() {
         Broker b;
+        Bet bet;
         mutex.lock();
 
         b = (Broker)Thread.currentThread();
@@ -309,13 +316,18 @@ public class BettingCentre {
 
             if (pendingHonours.size() > 0) {
                 int spectatorID = pendingHonours.poll();
-                Bet bet = (Bet) winningBets.stream().filter(
-                        bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
-                acceptedHonours.put(spectatorID,
-                        bet.getValue() * raceOdds[bet.getHorseID()]);
-                generalRepository.setSpectatorGains(spectatorID,
-                        bet.getValue() * raceOdds[bet.getHorseID()]);
+                try {
+                    bet = (Bet) winningBets.stream().filter(
+                            bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
+
+                    acceptedHonours.put(spectatorID,
+                            bet.getValue() * raceOdds[bet.getHorseID()]);
+                    generalRepository.setSpectatorGains(spectatorID,
+                            bet.getValue() * raceOdds[bet.getHorseID()]);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    rejectedHonours.add(spectatorID);
+                }
             }
         }
 
@@ -349,7 +361,8 @@ public class BettingCentre {
             // notify broker queue
             waitingForHonours.signalAll();
 
-            if (acceptedHonours.containsKey(spectatorID)) break;
+            if (acceptedHonours.containsKey(spectatorID)
+                    || rejectedHonours.contains(spectatorID)) break;
 
             try {
                 waitingForCash.await();
@@ -358,7 +371,9 @@ public class BettingCentre {
         }
 
         // get winning value
-        winningValue = acceptedHonours.get(spectatorID) / winners.length;
+        winningValue = 0;
+        if (acceptedHonours.containsKey(spectatorID))
+            winningValue = acceptedHonours.get(spectatorID) / winners.length;
 
         mutex.unlock();
 
