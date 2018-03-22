@@ -1,12 +1,9 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
-import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
+import states.HorseState;
 import states.SpectatorState;
-import states.State;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -22,11 +19,11 @@ public class GeneralRepository {
 
     private Lock mutex;
 
-    private State brokerState;
-    private State[] spectatorsState;
+    private BrokerState brokerState;
+    private SpectatorState[] spectatorsState;
     private int[] spectatorsWallet;
     private int raceNumber;
-    private State[] horsesState;
+    private HorseState[] horsesState;
     private int[][] horsesAgility;
     private int[] spectatorsBettedHorse;
     private int[] spectatorsBet;
@@ -38,10 +35,10 @@ public class GeneralRepository {
     public GeneralRepository() {
         this.mutex = new ReentrantLock();
         this.brokerState = BrokerState.OPENING_THE_EVENT;
-        this.spectatorsState = new State[EventVariables.NUMBER_OF_SPECTATORS];
+        this.spectatorsState = new SpectatorState[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.raceNumber = 0;
-        this.horsesState = new State[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesState = new HorseState[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
@@ -68,7 +65,7 @@ public class GeneralRepository {
         printHeader();
     }
 
-    public void setBrokerState(State brokerState) {
+    public void setBrokerState(BrokerState brokerState) {
         mutex.lock();
 
         this.brokerState = brokerState;
@@ -77,7 +74,7 @@ public class GeneralRepository {
         mutex.unlock();
     }
 
-    public void setSpectatorState(int spectatorId, State spectatorState) {
+    public void setSpectatorState(int spectatorId, SpectatorState spectatorState) {
         mutex.lock();
 
         this.spectatorsState[spectatorId] = spectatorState;
@@ -102,7 +99,7 @@ public class GeneralRepository {
         mutex.unlock();
     }
 
-    public void setHorseState(int horseIdx, State horseState) {
+    public void setHorseState(int horseIdx, HorseState horseState) {
         mutex.lock();
 
         this.horsesState[horseIdx] = horseState;

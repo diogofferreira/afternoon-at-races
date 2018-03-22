@@ -29,7 +29,7 @@ public class Bet {
     private BetState state;
 
     /**
-     *
+     * Creates a new instance of a Bet.
      * @param spectatorID Id of the spectator.
      * @param horseIdx Index on the race of the horse the spectator bets on.
      * @param value Value of the bet.
@@ -49,7 +49,7 @@ public class Bet {
     }
 
     /**
-     *
+     * Method to get the ID of the spectator who made the bet.
      * @return Id of the spectator.
      */
     public int getSpectatorID() {
@@ -57,7 +57,7 @@ public class Bet {
     }
 
     /**
-     *
+     * Method to get the index in the race of the horse that the spectator bet on.
      * @return Index on the race of the horse the spectator bets on.
      */
     public int getHorseIdx() {
@@ -65,7 +65,7 @@ public class Bet {
     }
 
     /**
-     *
+     * Method to get the value of the bet.
      * @return Value of the bet.
      */
     public int getValue() {
@@ -73,7 +73,7 @@ public class Bet {
     }
 
     /**
-     *
+     * Method that returns the current state of the bet.
      * @return the state of the bet.
      */
     public BetState getState() {
@@ -81,7 +81,8 @@ public class Bet {
     }
 
     /**
-     * Sets the bet state.
+     * Updates the current bet state.
+     * @param state New state of the bet.
      */
     public void setState(BetState state) {
         if (state == null)
@@ -90,6 +91,10 @@ public class Bet {
         this.state = state;
     }
 
+    /**
+     * Method that returns a String representation of the bet.
+     * @return String representation of the bet.
+     */
     @Override
     public String toString() {
         return "Bet{" +
