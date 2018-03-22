@@ -15,6 +15,8 @@ public class Horse extends Thread {
     private int agility;
     private int raceID;
     private int raceIdx;
+    private int currentPosition;
+    private int currentStep;
 
     private Stable stable;
     private Paddock paddock;
@@ -34,6 +36,8 @@ public class Horse extends Thread {
         this.agility = agility;
         this.raceID = -1;
         this.raceIdx = -1;
+        this.currentPosition = 0;
+        this.currentStep = 0;
         this.stable = stable;
         this.paddock = paddock;
         this.racingTrack = racingTrack;
@@ -93,5 +97,18 @@ public class Horse extends Thread {
 
     public int getRaceIdx() {
         return raceIdx;
+    }
+
+    public int getCurrentPosition() {
+        return this.currentPosition;
+    }
+
+    public int getCurrentStep() {
+        return this.currentStep;
+    }
+
+    public void setCurrentPosition(int step) {
+        this.currentPosition += step;
+        this.currentStep++;
     }
 }

@@ -21,11 +21,12 @@ public class ControlCentre {
     private Stable stable;
 
     private boolean spectatorsInPaddock;
-
-
     private boolean spectatorsCanProceed;
 
     private boolean raceFinished;
+    private boolean reportsPosted;
+
+    private int spectatorsLeavingRace;
 
     private int[] winners;
 
@@ -46,11 +47,17 @@ public class ControlCentre {
 
         this.spectatorsCanProceed = false;
         this.raceFinished = false;
+        this.reportsPosted = false;
+        this.spectatorsLeavingRace = 0;
     }
 
     public void summonHorsesToPaddock(int raceNumber) {
         Broker b;
         mutex.lock();
+
+        // Restart variables
+
+        reportsPosted = false;
 
         generalRepository.setRaceNumber(raceNumber);
 
@@ -82,7 +89,7 @@ public class ControlCentre {
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
-        if (!spectatorsCanProceed) {
+        while (!spectatorsCanProceed) {
             // spectators wait
             try {
                 waitForRace.await();
@@ -122,9 +129,23 @@ public class ControlCentre {
                 SpectatorState.WATCHING_A_RACE);
 
         // spectators wait
-        try {
-            watchingRace.await();
-        } catch (InterruptedException ignored) {}
+        /*while (!reportsPosted) {
+            try {
+                watchingRace.await();
+            } catch (InterruptedException ignored) { }
+        }*/
+
+
+        if (!reportsPosted) {
+            try {
+                watchingRace.await();
+            } catch (InterruptedException ignored) { }
+        }
+
+        if (++spectatorsLeavingRace == EventVariables.NUMBER_OF_SPECTATORS) {
+            reportsPosted = false;
+            spectatorsLeavingRace = 0;
+        }
 
         mutex.unlock();
     }
@@ -164,6 +185,7 @@ public class ControlCentre {
         mutex.lock();
 
         // notify all spectators
+        reportsPosted = true;
         watchingRace.signalAll();
 
         mutex.unlock();

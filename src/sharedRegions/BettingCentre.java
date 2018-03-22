@@ -109,51 +109,6 @@ public class BettingCentre {
         }
     }
 
-    public void acceptTheBets(int raceID) {
-        Broker b;
-        mutex.lock();
-
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.WAITING_FOR_BETS);
-        generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
-
-        // clear accepted and rejected bets list
-        acceptedBets.clear();
-        rejectedBets.clear();
-
-        // clear betting queues
-        pendingHonours.clear();
-        acceptedHonours.clear();
-
-        // Update raceID and start accepting bets
-        currentRaceID = raceID;
-        getRaceOdds();
-
-        // Signals spectators that now broker is accepting bets
-        acceptingBets = true;
-
-        // broker wait
-        while (true) {
-
-            // validate all pending bet
-            validatePendingBets();
-
-            // notify spectators
-            waitingForValidation.signalAll();
-
-            if (acceptedBets.size() == EventVariables.NUMBER_OF_SPECTATORS)
-                break;
-
-            try {
-                waitingForBet.await();
-            } catch (InterruptedException ignored){}
-        }
-
-        acceptingBets = false;
-
-        mutex.unlock();
-    }
-
     private Bet getBet(int spectatorID, int strategy, int wallet) {
         int betValue = 0;
         int bettedHorse = 0;
@@ -223,6 +178,51 @@ public class BettingCentre {
         return new Bet(spectatorID, bettedHorse, betValue);
     }
 
+    public void acceptTheBets(int raceID) {
+        Broker b;
+        mutex.lock();
+
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.WAITING_FOR_BETS);
+        generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
+
+        // clear accepted and rejected bets list
+        acceptedBets.clear();
+        rejectedBets.clear();
+
+        // clear betting queues
+        pendingHonours.clear();
+        acceptedHonours.clear();
+
+        // Update raceID and start accepting bets
+        currentRaceID = raceID;
+        getRaceOdds();
+
+        // Signals spectators that now broker is accepting bets
+        acceptingBets = true;
+
+        // broker wait
+        while (true) {
+
+            // validate all pending bet
+            validatePendingBets();
+
+            // notify spectators
+            waitingForValidation.signalAll();
+
+            if (acceptedBets.size() == EventVariables.NUMBER_OF_SPECTATORS)
+                break;
+
+            try {
+                waitingForBet.await();
+            } catch (InterruptedException ignored){}
+        }
+
+        acceptingBets = false;
+
+        mutex.unlock();
+    }
+
     public int placeABet() {
         Spectator s;
         Bet bet;
@@ -240,7 +240,7 @@ public class BettingCentre {
                 waitingForValidation.await();
             } catch (InterruptedException ignored){}
         }
-        
+
         // add to waiting bets queue
         bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
         pendingBets.add(bet);
