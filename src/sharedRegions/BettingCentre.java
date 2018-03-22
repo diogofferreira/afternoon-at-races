@@ -80,10 +80,6 @@ public class BettingCentre {
         oddSum = Arrays.stream(horsesAgility[currentRaceID]).reduce(
                 Integer::sum).getAsInt();
 
-        /*
-        for (int i = 0; i < horsesAgility[currentRaceID].length; i++)
-            oddSum += horsesAgility[currentRaceID][i];*/
-
         for (int i = 0; i < horsesAgility[currentRaceID].length; i++) {
             raceOdds[i] = oddSum / horsesAgility[currentRaceID][i];
         }

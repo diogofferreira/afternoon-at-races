@@ -56,9 +56,6 @@ public class ControlCentre {
         mutex.lock();
 
         // Restart variables
-
-        reportsPosted = false;
-
         generalRepository.setRaceNumber(raceNumber);
 
         b = (Broker)Thread.currentThread();
@@ -136,7 +133,7 @@ public class ControlCentre {
         }*/
 
 
-        if (!reportsPosted) {
+        while (!reportsPosted) {
             try {
                 watchingRace.await();
             } catch (InterruptedException ignored) { }

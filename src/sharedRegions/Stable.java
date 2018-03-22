@@ -23,15 +23,37 @@ public class Stable {
     private Lock mutex;
     private Condition[] inStable;
 
+    private int[][] lineups;
     private int[][] horsesAgility;
     private GeneralRepository generalRepository;
     private boolean canCelebrate;
     private boolean[] canProceed;
 
-    public static int[][] generateLineup(int[] horses) {
-        int[][] raceLineups = new int[EventVariables.NUMBER_OF_RACES]
+    public Stable(GeneralRepository generalRepository, int[] horsesIdx) {
+        if (generalRepository == null)
+            throw new IllegalArgumentException("Invalid General Repository.");
+        if (horsesIdx.length != EventVariables.NUMBER_OF_HORSES)
+            throw new IllegalArgumentException("Invalid array of horses' indexes");
+
+        this.generalRepository = generalRepository;
+        this.mutex = new ReentrantLock();
+        this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
+        this.canCelebrate = false;
+        this.canProceed = new boolean[EventVariables.NUMBER_OF_RACES];
+
+        this.lineups = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
+        generateLineup(horsesIdx);
+
+        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
+            this.inStable[i] = this.mutex.newCondition();
+
+        this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
+    }
+
+    private void generateLineup(int[] horses) {
         // Shuffle array
         Random rnd = ThreadLocalRandom.current();
         for (int i = horses.length - 1; i > 0; i--) {
@@ -43,27 +65,8 @@ public class Stable {
         }
 
         for (int i = 0; i < horses.length; i++)
-            raceLineups[i / EventVariables.NUMBER_OF_HORSES_PER_RACE]
+            lineups[i / EventVariables.NUMBER_OF_HORSES_PER_RACE]
                     [i % EventVariables.NUMBER_OF_HORSES_PER_RACE] = horses[i];
-
-        return raceLineups;
-    }
-
-    public Stable(GeneralRepository generalRepository) {
-        if (generalRepository == null)
-            throw new IllegalArgumentException("Invalid General Repository.");
-
-        this.generalRepository = generalRepository;
-        this.mutex = new ReentrantLock();
-        this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
-        this.canCelebrate = false;
-        this.canProceed = new boolean[EventVariables.NUMBER_OF_RACES];
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
-            this.inStable[i] = this.mutex.newCondition();
-
-        this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
-                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
     public int[][] getHorsesAgility() {
@@ -89,10 +92,25 @@ public class Stable {
 
     public void proceedToStable() {
         Horse h;
+        int i, j;
 
         mutex.lock();
 
-        h = (Horse)(Thread.currentThread());
+        h = (Horse) (Thread.currentThread());
+
+        j = 0;
+        for (i = 0; i < lineups.length; i++) {
+            for (j = 0; j < lineups[i].length; j++) {
+                if (lineups[i][j] == h.getID())
+                    break;
+            }
+            if (j != lineups[i].length)
+                break;
+        }
+
+        h.setRaceID(i);
+        h.setRaceIdx(j);
+
         h.setHorseState(HorseState.AT_THE_STABLE);
         generalRepository.setHorseState(h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
@@ -133,3 +151,4 @@ public class Stable {
         mutex.unlock();
     }
 }
+

@@ -10,10 +10,10 @@ import java.util.Random;
 
 public class AnAfternoonAtTheRaces {
 
-    public static void main (String [] args)
-    {
-        Random rnd = new Random();
+    public static void main (String [] args) {
+        Random rnd;
         int agility;
+        int[] horsesIdx;
         Stable stable;
         Paddock paddock;
         RacingTrack racingTrack;
@@ -21,10 +21,16 @@ public class AnAfternoonAtTheRaces {
         BettingCentre bettingCentre;
         GeneralRepository generalRepository;
 
+        rnd = new Random();
+
+        // generate races lineup
+        horsesIdx = new int[EventVariables.NUMBER_OF_HORSES];
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
+            horsesIdx[i] = i;
 
         // shared regions initialization
         generalRepository = new GeneralRepository();
-        stable = new Stable(generalRepository);
+        stable = new Stable(generalRepository, horsesIdx);
         controlCentre = new ControlCentre(generalRepository, stable);
         paddock = new Paddock(generalRepository, controlCentre);
         racingTrack = new RacingTrack(generalRepository, controlCentre, paddock);
@@ -45,17 +51,6 @@ public class AnAfternoonAtTheRaces {
                     paddock, controlCentre, bettingCentre, generalRepository);
         }
 
-        // generate races lineup
-        int[] horsesIdx = Arrays.stream(horses).mapToInt(Horse::getID).toArray();
-        int[][] raceLineups = Stable.generateLineup(horsesIdx);
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
-            for (int j = 0; j < EventVariables.NUMBER_OF_HORSES_PER_RACE; j++) {
-                horses[raceLineups[i][j]].setRaceID(i);
-                horses[raceLineups[i][j]].setRaceIdx(j);
-            }
-        }
-
         // start of the simulation
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
@@ -66,7 +61,7 @@ public class AnAfternoonAtTheRaces {
 
         broker.start();
 
-        /// end of the simulation */
+        // end of the simulation
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++) {
             try {
                 horses[i].join();

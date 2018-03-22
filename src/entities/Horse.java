@@ -72,7 +72,7 @@ public class Horse extends Thread {
     }
 
     public void setRaceID(int raceID) {
-        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+        if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Invalid Race ID");
         this.raceID = raceID;
     }
