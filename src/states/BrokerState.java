@@ -6,7 +6,7 @@ public enum BrokerState implements State {
     WAITING_FOR_BETS("WFB"),
     SUPERVISING_THE_RACE("STR"),
     SETTLING_ACCOUNTS("SA"),
-    PLAYING_HOST_AT_THE_BAR("PHAB");
+    PLAYING_HOST_AT_THE_BAR("PHB");
 
     private final String logRepresentation;
 

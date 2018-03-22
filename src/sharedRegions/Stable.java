@@ -23,7 +23,7 @@ public class Stable {
     private Lock mutex;
     private Condition[] inStable;
 
-    private int[][] lineups;
+    private int[] lineups;
     private int[][] horsesAgility;
     private GeneralRepository generalRepository;
     private boolean canCelebrate;
@@ -41,8 +41,7 @@ public class Stable {
         this.canCelebrate = false;
         this.canProceed = new boolean[EventVariables.NUMBER_OF_RACES];
 
-        this.lineups = new int[EventVariables.NUMBER_OF_RACES]
-                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.lineups = new int[EventVariables.NUMBER_OF_HORSES];
 
         generateLineup(horsesIdx);
 
@@ -65,8 +64,8 @@ public class Stable {
         }
 
         for (int i = 0; i < horses.length; i++)
-            lineups[i / EventVariables.NUMBER_OF_HORSES_PER_RACE]
-                    [i % EventVariables.NUMBER_OF_HORSES_PER_RACE] = horses[i];
+            lineups[horses[i]] = i;
+
     }
 
     public int[][] getHorsesAgility() {
@@ -92,24 +91,13 @@ public class Stable {
 
     public void proceedToStable() {
         Horse h;
-        int i, j;
 
         mutex.lock();
 
         h = (Horse) (Thread.currentThread());
 
-        j = 0;
-        for (i = 0; i < lineups.length; i++) {
-            for (j = 0; j < lineups[i].length; j++) {
-                if (lineups[i][j] == h.getID())
-                    break;
-            }
-            if (j != lineups[i].length)
-                break;
-        }
-
-        h.setRaceID(i);
-        h.setRaceIdx(j);
+        h.setRaceID(lineups[h.getID()] / EventVariables.NUMBER_OF_HORSES_PER_RACE);
+        h.setRaceIdx(lineups[h.getID()] % EventVariables.NUMBER_OF_HORSES_PER_RACE);
 
         h.setHorseState(HorseState.AT_THE_STABLE);
         generalRepository.setHorseState(h.getRaceIdx(),
@@ -118,7 +106,8 @@ public class Stable {
         // set horse agility in general repository
         if (horsesAgility[h.getRaceID()][h.getRaceIdx()] == 0) {
             horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
-            generalRepository.setHorseAgility(h.getRaceIdx(), h.getAgility());
+            generalRepository.setHorseAgility(
+                    h.getRaceID(), h.getRaceIdx(), h.getAgility());
         }
 
         // only waits if it's not time to celebrate or if broker has not notified

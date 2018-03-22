@@ -27,7 +27,7 @@ public class GeneralRepository {
     private int[] spectatorsWallet;
     private int raceNumber;
     private State[] horsesState;
-    private int[] horsesAgility;
+    private int[][] horsesAgility;
     private int[] spectatorsBettedHorse;
     private int[] spectatorsBet;
     private int[] horsesOdd;
@@ -42,7 +42,8 @@ public class GeneralRepository {
         this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.raceNumber = 0;
         this.horsesState = new State[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -110,10 +111,10 @@ public class GeneralRepository {
         mutex.unlock();
     }
 
-    public void setHorseAgility(int horseIdx, int horseAgility) {
+    public void setHorseAgility(int raceID, int horseIdx, int horseAgility) {
         mutex.lock();
 
-        this.horsesAgility[horseIdx] = horseAgility;
+        this.horsesAgility[raceID][horseIdx] = horseAgility;
 
         mutex.unlock();
     }
@@ -162,8 +163,6 @@ public class GeneralRepository {
     }
 
     public void resetRace() {
-        //this.raceNumber = 0;
-        this.horsesAgility = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -185,7 +184,7 @@ public class GeneralRepository {
         pw.printf("MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race %d\n", raceNumber + 1);
         pw.print("  Stat ");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" St%d   Am%d", i, i);
+            pw.printf(" St%d  Am%d", i, i);
         pw.print(" RN");
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" St%d Len%d", i, i);
@@ -212,19 +211,6 @@ public class GeneralRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*
-        try {
-            Horse h = (Horse) (Thread.currentThread());
-            pw.println("HORSE ID: " + h.getRaceIdx());
-        } catch (ClassCastException e) { }
-        try {
-            Broker h = (Broker) (Thread.currentThread());
-            pw.println("BROKER");
-        } catch (ClassCastException e) { }
-        try {
-            Spectator h = (Spectator) (Thread.currentThread());
-            pw.println("SPECTATOR ID: " + h.getID());
-        } catch (ClassCastException e) { }*/
 
         pw.printf("  %4s ", brokerState);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
@@ -232,7 +218,7 @@ public class GeneralRepository {
         pw.printf("  %1d", raceNumber + 1);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
-                    horsesAgility[i]);
+                    horsesAgility[raceNumber][i]);
         pw.println();
         pw.printf("  %1d  %2d ", raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)

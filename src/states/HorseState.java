@@ -3,9 +3,9 @@ package states;
 public enum HorseState implements State {
     AT_THE_STABLE("ATS"),
     AT_THE_PADDOCK("ATP"),
-    AT_THE_START_LINE("ATSL"),
+    AT_THE_START_LINE("ASL"),
     RUNNING("RUN"),
-    AT_THE_FINISH_LINE("ATFL");
+    AT_THE_FINISH_LINE("AFL");
 
     private final String logRepresentation;
 
