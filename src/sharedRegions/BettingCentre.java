@@ -6,6 +6,7 @@ import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
 import utils.Bet;
+import utils.BetState;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +37,8 @@ public class BettingCentre {
 
     // queue with pending bets
     // queue with accepted bets
-    private Queue<Bet> pendingBets, acceptedBets, rejectedBets;
+    private Queue<Bet> pendingBets;
+    private Queue<Bet> validatedBets;
 
     private int currentRaceID;
     private int[] winners;
@@ -45,8 +47,7 @@ public class BettingCentre {
     // queue with pending honours
     // queue with accepted honours
     private Queue<Integer> pendingHonours;
-    private HashMap<Integer, Integer> acceptedHonours;
-    private Queue<Integer> rejectedHonours;
+    private HashMap<Integer, Integer> validatedHonours;
 
     public BettingCentre(GeneralRepository generalRepository, Stable stable) {
         if (generalRepository == null)
@@ -64,11 +65,9 @@ public class BettingCentre {
         this.acceptingHonours = false;
 
         this.pendingBets = new LinkedList<>();
-        this.acceptedBets = new LinkedList<>();
-        this.rejectedBets = new LinkedList<>();
+        this.validatedBets = new LinkedList<>();
         this.pendingHonours = new LinkedList<>();
-        this.acceptedHonours = new HashMap<>();
-        this.rejectedHonours = new LinkedList<>();
+        this.validatedHonours = new HashMap<>();
 
         this.generalRepository = generalRepository;
         this.stable = stable;
@@ -95,18 +94,18 @@ public class BettingCentre {
     private void validatePendingBets() {
         // validate pending FIFO's bets
         if (pendingBets.size() > 0) {
-            Bet bet = pendingBets.peek();
-            pendingBets.remove(bet);
+            Bet bet = pendingBets.poll();
 
             // Considering the bet value is valid since spectator cannot bet
             // over a certain amount
-            if (bet.getHorseID() >= 0 &&
-                    bet.getHorseID() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-                acceptedBets.add(bet);
+            if (bet.getHorseIdx() >= 0 &&
+                    bet.getHorseIdx() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                bet.setState(BetState.ACCEPTED);
+                validatedBets.add(bet);
                 generalRepository.setSpectatorsBet(bet.getSpectatorID(),
-                        bet.getValue(), bet.getHorseID());
+                        bet.getValue(), bet.getHorseIdx());
             } else
-                rejectedBets.add(bet);
+                bet.setState(BetState.REJECTED);
         }
     }
 
@@ -188,13 +187,11 @@ public class BettingCentre {
         generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
 
         // clear accepted and rejected bets list
-        acceptedBets.clear();
-        rejectedBets.clear();
+        validatedBets.clear();
 
         // clear betting queues
         pendingHonours.clear();
-        acceptedHonours.clear();
-        rejectedHonours.clear();
+        validatedHonours.clear();
 
         // Update raceID and start accepting bets
         currentRaceID = raceID;
@@ -212,7 +209,7 @@ public class BettingCentre {
             // notify spectators
             waitingForValidation.signalAll();
 
-            if (acceptedBets.size() == EventVariables.NUMBER_OF_SPECTATORS)
+            if (validatedBets.size() == EventVariables.NUMBER_OF_SPECTATORS)
                 break;
 
             try {
@@ -252,10 +249,10 @@ public class BettingCentre {
             // notify broker
             waitingForBet.signal();
 
-            if (acceptedBets.contains(bet))
+            if (validatedBets.contains(bet))
                 break;
 
-            if (rejectedBets.contains(bet)) {
+            if (bet.getState() == BetState.REJECTED) {
                 bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
                 pendingBets.add(bet);
                 waitingForBet.signal();
@@ -270,7 +267,7 @@ public class BettingCentre {
 
         mutex.unlock();
 
-        return bet.getHorseID();
+        return bet.getHorseIdx();
     }
 
     public boolean areThereAnyWinners(int[] winners) {
@@ -282,8 +279,8 @@ public class BettingCentre {
         this.winners = winners;
 
         // create queue for the winning bets
-        winningBets = acceptedBets.stream().filter(bet ->
-                IntStream.of(winners).anyMatch(x -> x == bet.getHorseID()))
+        winningBets = validatedBets.stream().filter(bet ->
+                IntStream.of(winners).anyMatch(x -> x == bet.getHorseIdx()))
                 .collect(Collectors.toList());
 
         areThereWinners = !winningBets.isEmpty();
@@ -308,7 +305,7 @@ public class BettingCentre {
 
             waitingForCash.signalAll();
 
-            if (acceptedHonours.size() >= winningBets.size()) break;
+            if (validatedHonours.size() >= winningBets.size()) break;
 
             try {
                 waitingForHonours.await();
@@ -321,13 +318,11 @@ public class BettingCentre {
                     bet = (Bet) winningBets.stream().filter(
                             bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
-                    acceptedHonours.put(spectatorID,
-                            bet.getValue() * raceOdds[bet.getHorseID()]);
+                    validatedHonours.put(spectatorID,
+                            bet.getValue() * raceOdds[bet.getHorseIdx()]);
                     generalRepository.setSpectatorGains(spectatorID,
-                            bet.getValue() * raceOdds[bet.getHorseID()]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    rejectedHonours.add(spectatorID);
-                }
+                            bet.getValue() * raceOdds[bet.getHorseIdx()]);
+                } catch (ArrayIndexOutOfBoundsException e) { }
             }
         }
 
@@ -361,8 +356,7 @@ public class BettingCentre {
             // notify broker queue
             waitingForHonours.signalAll();
 
-            if (acceptedHonours.containsKey(spectatorID)
-                    || rejectedHonours.contains(spectatorID)) break;
+            if (!pendingHonours.contains(spectatorID)) break;
 
             try {
                 waitingForCash.await();
@@ -372,8 +366,8 @@ public class BettingCentre {
 
         // get winning value
         winningValue = 0;
-        if (acceptedHonours.containsKey(spectatorID))
-            winningValue = acceptedHonours.get(spectatorID) / winners.length;
+        if (validatedHonours.containsKey(spectatorID))
+            winningValue = validatedHonours.get(spectatorID) / winners.length;
 
         mutex.unlock();
 
