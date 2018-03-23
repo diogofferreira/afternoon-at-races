@@ -137,7 +137,7 @@ public class Paddock {
      * Method invoked by the last Horse arriving to the Racing Track.
      * It will notify all Spectators to proceed to the Betting Centre.
      */
-    public void proceedToStartLine() {
+    public void proceedToBettingCentre() {
         mutex.lock();
 
         // Restart the variables

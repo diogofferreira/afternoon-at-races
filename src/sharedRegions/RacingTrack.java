@@ -133,7 +133,7 @@ public class RacingTrack {
         // last horse notify all spectators
         if (++horsesReady == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             horsesReady = 0;
-            paddock.proceedToStartLine();
+            paddock.proceedToBettingCentre();
         }
 
         // Horse waits if race hasn't started and if it isn't its turn
