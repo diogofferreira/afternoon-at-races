@@ -11,21 +11,49 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *    General description:
- *       definition of shared region Paddock built in explicitly as a monitor using reference types from the
- *         Java concurrency library.
+ * The Paddock is a shared region where horses are appraised by the spectators
+ * before the race takes place.
  */
-
 public class Paddock {
 
-    private GeneralRepository generalRepository;
-    private ControlCentre controlCentre;
-
+    /**
+     * Instance of a monitor.
+     */
     private Lock mutex;
-    private Condition horses, spectators;
 
+    /**
+     * Condition variable where Horses will wait before proceeding to the Racing
+     * Track.
+     */
+    private Condition horses;
+
+    /**
+     * Condition variable where Spectators will wait before heading to the
+     * Betting Centre and placing their bets.
+     */
+    private Condition spectators;
+
+    /**
+     * Counter of the number of the Horses that have already arrived to the
+     * Paddock.
+     */
     private int horsesInPaddock;
+
+    /**
+     * Counter of the number of the Spectators that have already arrived to the
+     * Paddock.
+     */
     private int spectatorsInPaddock;
+
+    /**
+     * Instance of the shared region General Repository.
+     */
+    private GeneralRepository generalRepository;
+
+    /**
+     * Instance of the shared region Control Centre.
+     */
+    private ControlCentre controlCentre;
 
     public Paddock(GeneralRepository generalRepository,
                    ControlCentre controlCentre) {
@@ -41,6 +69,10 @@ public class Paddock {
         this.spectatorsInPaddock = 0;
     }
 
+    /**
+     * Method invoked by each one of the Horses. They will change their state
+     * to AT_THE_PADDOCK and wait until all Spectators arrive to the Paddock.
+     */
     public void proceedToPaddock() {
         Horse h;
         mutex.lock();
@@ -62,6 +94,10 @@ public class Paddock {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by each one of the Spectators where they will update their
+     * state to APPRAISING_THE_HORSES and will block waiting
+     */
     public void goCheckHorses() {
         Spectator s;
         mutex.lock();
@@ -85,6 +121,10 @@ public class Paddock {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the last Horse arriving to the Racing Track.
+     * It will notify all Spectators to proceed to the Betting Centre.
+     */
     public void proceedToStartLine() {
         mutex.lock();
 

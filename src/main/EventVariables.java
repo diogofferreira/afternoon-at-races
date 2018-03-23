@@ -1,11 +1,11 @@
 package main;
 
 public class EventVariables {
-    public static final int NUMBER_OF_SPECTATORS = 2;
+    public static final int NUMBER_OF_SPECTATORS = 4;
 
     public static final int NUMBER_OF_RACES = 5;
 
-    public static final int NUMBER_OF_HORSES_PER_RACE = 2;
+    public static final int NUMBER_OF_HORSES_PER_RACE = 4;
 
     public static final int NUMBER_OF_HORSES =
             NUMBER_OF_HORSES_PER_RACE * NUMBER_OF_RACES;

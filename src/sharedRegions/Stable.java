@@ -13,26 +13,63 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *    General description:
- *       definition of shared region Stable built in explicitly as a monitor using reference types from the
- *         Java concurrency library.
+ * The Stable is a shared region where horses rest before and after the races.
  */
-
 public class Stable {
 
+    /**
+     * Instance of a monitor.
+     */
     private Lock mutex;
+
+    /**
+     * Array of condition variables, which will store a condition variable to
+     * each of one the races. The horses wait in each one of these variables
+     * accordingly to the raceID they're associated to.
+     */
     private Condition[] inStable;
 
-    private int[] lineups;
-    private int[][] horsesAgility;
-    private GeneralRepository generalRepository;
-    private boolean canCelebrate;
+    /**
+     * Array of flags that signal if the horses associated to certain race (the
+     * array index) can proceed to paddock or remain blocked at the correspondent
+     * inStable condition variable.
+     */
     private boolean[] canProceed;
 
-    public Stable(GeneralRepository generalRepository, int[] horsesIdx) {
+    /**
+     * Variable that signals if all horses can unblock from inStable condition
+     * variables to end their lifecycle.
+     */
+    private boolean canCelebrate;
+
+    /**
+     * Array of Horse/Jockey pair IDs that will store the lineups for all races.
+     */
+    private int[] lineups;
+
+    /**
+     * Bidimensional array that stores the agility of each one the horses
+     * accordingly to its raceID and raceIdx. It's particularly useful to
+     * calculate race betting odds.
+     */
+    private int[][] horsesAgility;
+
+    /**
+     * Instance of the shared region General Repository.
+     */
+    private GeneralRepository generalRepository;
+
+    /**
+     * Creates a new instance of Stable.
+     * @param generalRepository Reference to an instance of the shared region
+     *                          General Repository.
+     * @param horsesIds Array of all the participant Horse/Jockey pairs ids to
+     *                  generate the lineups.
+     */
+    public Stable(GeneralRepository generalRepository, int[] horsesIds) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
-        if (horsesIdx.length != EventVariables.NUMBER_OF_HORSES)
+        if (horsesIds.length != EventVariables.NUMBER_OF_HORSES)
             throw new IllegalArgumentException("Invalid array of horses' indexes");
 
         this.generalRepository = generalRepository;
@@ -43,7 +80,7 @@ public class Stable {
 
         this.lineups = new int[EventVariables.NUMBER_OF_HORSES];
 
-        generateLineup(horsesIdx);
+        generateLineup(horsesIds);
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++)
             this.inStable[i] = this.mutex.newCondition();
@@ -52,6 +89,13 @@ public class Stable {
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
+    /**
+     * Method that generates the races lineups given an array of Horse/Jockey
+     * pairs ids. It just shuffles the given array and generates one which indexes
+     * correspond to the horses ids and the value stored in that position
+     * corresponds to the raceID * NUMBER_HORSES_PER_RACE + raceIdx of each horse.
+     * @param horses Array of Horse/Jockey pairs Ids.
+     */
     private void generateLineup(int[] horses) {
         // Shuffle array
         Random rnd = ThreadLocalRandom.current();
@@ -68,6 +112,11 @@ public class Stable {
 
     }
 
+    /**
+     * Method that returns the agility of all horses, indexed by the raceID and
+     * raceIdx of each one of them.
+     * @return Bidimensional array of horses' agilities.
+     */
     public int[][] getHorsesAgility() {
         int[][] toRtn;
 
@@ -79,6 +128,12 @@ public class Stable {
         return toRtn;
     }
 
+    /**
+     * Method invoked by the Broker to notify all horses of the current race
+     * to proceed to Paddock.
+     * @param raceID The ID of the current race; it determines which horses will
+     *               be waken up.
+     */
     public void summonHorsesToPaddock(int raceID) {
         mutex.lock();
 
@@ -89,6 +144,11 @@ public class Stable {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by an Horse, where usually it gets blocked.
+     * It sets the its state to AT_THE_STABLE.
+     * It is waken up by the Broker to proceed to Paddock or when the event ends.
+     */
     public void proceedToStable() {
         Horse h;
 
@@ -122,6 +182,11 @@ public class Stable {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the Broker to signal all horses to wake up, ending the
+     * event.
+     * Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
+     */
     public void entertainTheGuests() {
         Broker b;
 

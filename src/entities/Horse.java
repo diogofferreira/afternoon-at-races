@@ -9,7 +9,7 @@ import states.HorseState;
 import java.util.Random;
 
 /**
- * The Horse/Jockey pair is the entity that rest on the stable and is invoked
+ * The Horse/Jockey pair is the entity that rests on the stable and is invoked
  * one time max in each event to run a race.
  */
 public class Horse extends Thread {
@@ -70,7 +70,8 @@ public class Horse extends Thread {
      * @param agility Agility/max step per iteration of the horse.
      * @param stable Reference to an instance of the shared region Stable.
      * @param paddock Reference to an instance of the shared region Paddock.
-     * @param racingTrack Reference to an instance of the shared region Racing Track.
+     * @param racingTrack Reference to an instance of the shared region
+     *                   Racing Track.
      */
     public Horse(int id, int agility, Stable stable, Paddock paddock,
                  RacingTrack racingTrack) {

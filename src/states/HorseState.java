@@ -17,7 +17,7 @@ public enum HorseState {
     /**
      * Horse/Jockey pair is ready to race, at the starting line.
      */
-    AT_THE_START_LINE("ASL"),
+    AT_THE_STARTING_LINE("ASL"),
 
     /**
      * Horse/Jockey pair is running a race.

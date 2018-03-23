@@ -13,28 +13,72 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *    General description:
- *       definition of shared region RacingTrack built in explicitly as a monitor using reference types from the
- *         Java concurrency library.
+ * The Racing Track is a shared region where race effectively takes place, i.e.,
+ * where the Horses run.
  */
-
 public class RacingTrack {
 
+    /**
+     * Instance of a monitor.
+     */
     private Lock mutex;
+
+    /**
+     * Array of condition variables, which will store a condition variable to
+     * each of one the races. The horses wait in each one of these variables
+     * accordingly to their arrival order to the Racing Track.
+     */
     private Condition[] inMovement;
-    private ControlCentre controlCentre;
-    private Paddock paddock;
-    private GeneralRepository generalRepository;
 
-    // list with arrival order
-    private List<Integer> winners;
-    private int winnerStep;
-    private int horseTurn;
-    private int finishes;
-
+    /**
+     * Flag that signals if the race has already started.
+     */
     private boolean raceStarted;
 
+    /**
+     * Number that represents the Horse that will make a step in the current
+     * iteration. It can take values between 0 and NUMBER_OF_HORSES_PER_RACE - 1.
+     */
+    private int horseTurn;
 
+    /**
+     * List that saves the horseIdx of the horses that won the race.
+     */
+    private List<Integer> winners;
+
+    /**
+     * Number of steps the winners took to get the victory.
+     */
+    private int winnerStep;
+
+    /**
+     * Number of horses that have already crossed the finish line.
+     */
+    private int finishes;
+
+    /**
+     * Instance of the shared region Control Centre.
+     */
+    private ControlCentre controlCentre;
+
+    /**
+     * Instance of the shared region Paddock.
+     */
+    private Paddock paddock;
+
+    /**
+     * Instance of the shared region General Repository.
+     */
+    private GeneralRepository generalRepository;
+
+    /**
+     * Creates a new instance of Racing Track.
+     * @param generalRepository Reference to an instance of the shared region
+     *                          General Repository.
+     * @param controlCentre Reference to an instance of the shared region
+     *                          Control Centre.
+     * @param paddock Reference to an instance of the shared region Paddock.
+     */
     public RacingTrack(GeneralRepository generalRepository,
                        ControlCentre controlCentre, Paddock paddock) {
         if (generalRepository == null)
@@ -56,19 +100,22 @@ public class RacingTrack {
         this.raceStarted = false;
     }
 
-    public int[] getWinners() {
-        return winners.stream().mapToInt(i->i).toArray();
-    }
-
+    /**
+     * Method invoked by each one the Horses coming from the Paddock.
+     * They will update their state to AT_THE_STARTING_LINE and will block in the
+     * arrival order to the Racing Track in the correspondent condition variable.
+     * After being waken up by the Broker to start the race, they update their
+     * state to RUNNING.
+     */
     public void proceedToStartLine() {
         Horse h;
         int i;
         mutex.lock();
 
         h = (Horse)Thread.currentThread();
-        h.setHorseState(HorseState.AT_THE_START_LINE);
+        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
         generalRepository.setHorseState(h.getRaceIdx(),
-                HorseState.AT_THE_START_LINE);
+                HorseState.AT_THE_STARTING_LINE);
         generalRepository.setHorsePosition(h.getRaceIdx(), 0, 0);
 
         // add horse to arrival list
@@ -94,6 +141,9 @@ public class RacingTrack {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the Broker to signal the Horses to start running.
+     */
     public void startTheRace() {
         Broker b;
         mutex.lock();
@@ -109,6 +159,13 @@ public class RacingTrack {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by every Horse that hasn't still crossed the finish line.
+     * It generates a new step and updates its position.
+     * Finally, it wakes up the next horse in the arrival order to the Racing
+     * Track that hasn't finished the race.
+     * @param step The distance of the next step the Horse will take.
+     */
     public void makeAMove(int step) {
         Horse h;
         int currentTurn;
@@ -143,9 +200,20 @@ public class RacingTrack {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by each one of the participating Horses checking they have
+     * already crossed the finish line.
+     * If true, they check if they have won the race and add their ID to the
+     * corresponding list of winners.
+     * If it's the last horse crossing the finish line, it wakes up the Broker
+     * at the Control Centre and provides the list of winners.
+     * Otherwise, just wakes up the next horse that still hasn't finish the race.
+     * @return
+     */
     public boolean hasFinishLineBeenCrossed() {
         Horse h;
         int currentTurn;
+        int[] raceWinners;
         mutex.lock();
 
         currentTurn = horseTurn;
@@ -169,7 +237,7 @@ public class RacingTrack {
 
         // last horse notify broker
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            int[] raceWinners = getWinners();
+            raceWinners = winners.stream().mapToInt(i->i).toArray();
 
             // reset empty track variables
             this.inMovement =

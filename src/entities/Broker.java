@@ -40,9 +40,12 @@ public class Broker extends Thread {
     /**
      * Creates a new instance of Broker.
      * @param stable Reference to an instance of the shared region Stable.
-     * @param racingTrack Reference to an instance of the shared region Racing Track.
-     * @param controlCentre Reference to an instance of the shared region Control Centre.
-     * @param bettingCentre Reference to an instance of the shared region Betting Centre.
+     * @param racingTrack Reference to an instance of the shared region
+     *                    Racing Track.
+     * @param controlCentre Reference to an instance of the shared region
+     *                     Control Centre.
+     * @param bettingCentre Reference to an instance of the shared region
+     *                      Betting Centre.
      */
     public Broker(Stable stable, RacingTrack racingTrack,
                   ControlCentre controlCentre, BettingCentre bettingCentre) {

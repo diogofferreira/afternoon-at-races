@@ -19,36 +19,116 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * The Betting Centre is a shared region where all the bets are registered,
+ * verified and honoured.
+ */
 public class BettingCentre {
 
+    /**
+     * Instance of a monitor.
+     */
     private Lock mutex;
-    private Condition waitingForBet;
-    private Condition waitingForValidation;
-    private Condition waitingForHonours;
-    private Condition waitingForCash;
-    private Stable stable;
-    private GeneralRepository generalRepository;
 
+    /**
+     * Condition variable where the Broker will wait for the Spectators' bets.
+     */
+    private Condition waitingForBet;
+
+    /**
+     * Condition variable where the Spectators will wait for the Broker to
+     * validate their bets.
+     */
+    private Condition waitingForValidation;
+
+    /**
+     * Condition variable where the Broker will wait for the Spectators that
+     * won their bets and requested their gains.
+     */
+    private Condition waitingForHonours;
+
+    /**
+     * Condition variable where the Spectators will wait for the Broker to
+     * honour their bets.
+     */
+    private Condition waitingForCash;
+
+    /**
+     * Bidimensional array that stores the Horses agilities indexed by the raceID
+     * and the raceIdx of each one of them.
+     */
     private int[][] horsesAgility;
+
+    /**
+     * Identifier of the current race.
+     */
+    private int currentRaceID;
+
+    /**
+     * Array that stores the odds of each one of the Horses participating in the
+     * current race, indexed by their raceIdx.
+     */
     private int[] raceOdds;
 
+    /**
+     * Flag that signals if the Broker is accepting bets.
+     */
     private boolean acceptingBets;
+
+    /**
+     * Flag that signals if the Broker is honouring bets.
+     */
     private boolean acceptingHonours;
 
-    // queue with pending bets
-    // queue with accepted bets
+    /**
+     * Queue that stores pending bets.
+     */
     private Queue<Bet> pendingBets;
+
+    /**
+     * Queue that stores bets that were already validated by the Broker.
+     * It stores both accepted and rejected bets.
+     */
     private Queue<Bet> validatedBets;
 
-    private int currentRaceID;
+    /**
+     * Array that stores the horseIdx that won the race.
+     */
     private int[] winners;
+
+    /**
+     * List that stores the winning bets.
+     */
     private List<Bet> winningBets;
 
-    // queue with pending honours
-    // queue with accepted honours
+    /**
+     * Queue that stores the Spectators' Ids of the ones who are waiting for
+     * the Broker to honour their bets.
+     */
     private Queue<Integer> pendingHonours;
+
+    /**
+     * HashMap that stores the value that will be paid to the Spectators,
+     * mapped by their ID.
+     */
     private HashMap<Integer, Integer> validatedHonours;
 
+    /**
+     * Instance of the shared region Stable.
+     */
+    private Stable stable;
+
+    /**
+     * Instance of the shared region General Repository.
+     */
+    private GeneralRepository generalRepository;
+
+    /**
+     * Creates a new instance of Betting Centre.
+     * @param generalRepository Reference to an instance of the shared region
+     *                          General Repository.
+     * @param stable Reference to an instance of the shared region Stable.
+     */
     public BettingCentre(GeneralRepository generalRepository, Stable stable) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
@@ -73,6 +153,9 @@ public class BettingCentre {
         this.stable = stable;
     }
 
+    /**
+     * Method that obtains the current race odds.
+     */
     private void getRaceOdds() {
         int oddSum;
 
@@ -91,6 +174,10 @@ public class BettingCentre {
         generalRepository.setHorsesOdd(raceOdds);
     }
 
+    /**
+     * Method that validates the next pending bet (if it exists) on the
+     * pending bets queue.
+     */
     private void validatePendingBets() {
         // validate pending FIFO's bets
         if (pendingBets.size() > 0) {
@@ -109,6 +196,13 @@ public class BettingCentre {
         }
     }
 
+    /**
+     * Method that generates a new instance of Bet.
+     * @param spectatorID The ID of the Spectator performing the bet.
+     * @param strategy The betting strategy used by that Spectator.
+     * @param wallet The current amount of money in the Spectator's wallet.
+     * @return Instance of a newly generated Bet.
+     */
     private Bet getBet(int spectatorID, int strategy, int wallet) {
         int betValue = 0;
         int bettedHorse = 0;
@@ -178,6 +272,14 @@ public class BettingCentre {
         return new Bet(spectatorID, bettedHorse, betValue);
     }
 
+    /**
+     * Method invoked by the Broker.
+     * The broker changes its state to WAITING_FOR_BETS, signals the Spectators
+     * that is accepting bets.
+     * It blocks each time it validates a new bet and wakes up the Spectators
+     * that still have pending bets.
+     * @param raceID The current raceID.
+     */
     public void acceptTheBets(int raceID) {
         Broker b;
         mutex.lock();
@@ -222,6 +324,13 @@ public class BettingCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by each one of the Spectators to place their bet, effectively
+     * changing their state to PLACING_A_BET.
+     * They blocked in queue waiting for the Broker to validate their bet.
+     * If their bet is not accepted a new bet is generated.
+     * @return The Horse's index on the current race that the Spectator bet on.
+     */
     public int placeABet() {
         Spectator s;
         Bet bet;
@@ -270,6 +379,11 @@ public class BettingCentre {
         return bet.getHorseIdx();
     }
 
+    /**
+     * Method invoked by the Broker to check if there are any winning bets.
+     * @param winners An array of horseIdxs that contains the race winners.
+     * @return A boolean checking if there are any winners.
+     */
     public boolean areThereAnyWinners(int[] winners) {
         boolean areThereWinners;
 
@@ -290,6 +404,14 @@ public class BettingCentre {
         return areThereWinners;
     }
 
+    /**
+     * Method invoked by the Broker if there were any winning bets.
+     * The Broker changes its state to SETTLING_ACCOUNTS and signals the
+     * Spectators waiting for collecting their gains that it's open for settling
+     * accounts.
+     * He blocks each time he pays a winning bet and wakes up Spectators still
+     * waiting to collect their rewards.
+     */
     public void honourTheBets() {
         Broker b;
         Bet bet;
@@ -331,6 +453,13 @@ public class BettingCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by each one of the winning Spectators.
+     * They change their state to COLLECTING_THE_GAINS and block in queue waiting
+     * for their rewards.
+     * @param spectatorID The ID of the Spectator collecting his/her gains.
+     * @return The value the Spectator won.
+     */
     public double goCollectTheGains(int spectatorID) {
         Spectator s;
         double winningValue;

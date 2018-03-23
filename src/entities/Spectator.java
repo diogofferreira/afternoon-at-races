@@ -50,8 +50,10 @@ public class Spectator extends Thread {
      * @param wallet Initial amount of money in the Spectator's wallet.
      * @param strategy The betting strategy the Spectator will perform.
      * @param paddock Reference to an instance of the shared region Paddock.
-     * @param controlCentre Reference to an instance of the shared region Control Centre.
-     * @param bettingCentre Reference to an instance of the shared region Betting Centre.
+     * @param controlCentre Reference to an instance of the shared region
+     *                      Control Centre.
+     * @param bettingCentre Reference to an instance of the shared region
+     *                      Betting Centre.
      */
     public Spectator(int id, int wallet, int strategy, Paddock paddock,
                      ControlCentre controlCentre, BettingCentre bettingCentre) {
