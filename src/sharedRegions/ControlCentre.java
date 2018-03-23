@@ -114,21 +114,23 @@ public class ControlCentre {
     }
 
     /**
-     * Method invoked by 
-     * @param raceNumber
+     * Method invoked by Broker, signaling the start of the event.
+     * The Broker updates the current raceID and sets his state to
+     * ANNOUNCING_NEXT_RACE, while signalling the Horses to proceed to Paddock.
+     * @param raceID The ID of the race that will take place.
      */
-    public void summonHorsesToPaddock(int raceNumber) {
+    public void summonHorsesToPaddock(int raceID) {
         Broker b;
         mutex.lock();
 
         // Restart variables
-        generalRepository.setRaceNumber(raceNumber);
+        generalRepository.setRaceNumber(raceID);
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
-        stable.summonHorsesToPaddock(raceNumber);
+        stable.summonHorsesToPaddock(raceID);
 
         // broker wait
         while (!spectatorsInPaddock) {
@@ -142,6 +144,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * This method is invoked by every Spectator while they're waiting for
+     * a race to start.
+     * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
+     */
     public void waitForNextRace() {
         Spectator s;
 
@@ -162,6 +169,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair of the current race to arrive
+     * to the Paddock, thus waking up all the Spectators to proceed to Paddock
+     * and appraise the horses.
+     */
     public void proceedToPaddock() {
         mutex.lock();
 
@@ -172,6 +184,10 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair arriving to Paddock in order
+     * to wake up the Broker.
+     */
     public void goCheckHorses() {
         mutex.lock();
 
@@ -182,6 +198,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by each Spectator before the start of each race.
+     * They will block in WATCHING_A_RACE state until the Broker reports the
+     * results of the race.
+     */
     public void goWatchTheRace() {
         Spectator s;
         mutex.lock();
@@ -206,6 +227,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the Broker.
+     * He'll wait here until the last Horse/Jockey pair to cross the finish line
+     * wakes him up.
+     */
     public void startTheRace() {
         mutex.lock();
 
@@ -220,6 +246,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair to cross the finish line.
+     * The Broker will be notified to wake up and to report the results.
+     * @param winners An array of raceIdx of the Horses that won the race.
+     */
     public void finishTheRace(int[] winners) {
         mutex.lock();
 
@@ -237,6 +268,11 @@ public class ControlCentre {
         mutex.unlock();
     }
 
+    /**
+     * Method invoked by the Broker signalling all Spectators that the results
+     * of the race have been reported.
+     * @return An array of Horses' raceIdx that won the race.
+     */
     public int[] reportResults() {
         mutex.lock();
 
@@ -249,19 +285,28 @@ public class ControlCentre {
         return this.winners;
     }
 
-    public boolean haveIWon(int horseID) {
+    /**
+     * Method invoked by each Spectator to verify if they betted on a winning
+     * horse.
+     * @param horseIdx The raceIdx of the horse they bet on.
+     * @return A boolean indicating if the Spectator invoking the method won
+     * his/her bet.
+     */
+    public boolean haveIWon(int horseIdx) {
         boolean won;
-        //Spectator s;
         mutex.lock();
 
         // checks if winner is the one he/she bet
-        won = IntStream.of(winners).anyMatch(w -> w == horseID);
+        won = IntStream.of(winners).anyMatch(w -> w == horseIdx);
 
         mutex.unlock();
 
         return won;
     }
 
+    /**
+     * Last method invoked by the Spectators, changing their state to CELEBRATING.
+     */
     public void relaxABit() {
         Spectator s;
         mutex.lock();

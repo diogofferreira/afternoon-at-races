@@ -8,22 +8,31 @@ import sharedRegions.*;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Main class of the event.
+ * It will start all shared regions and threads (active entities).
+ */
 public class AnAfternoonAtTheRaces {
 
+    /**
+     * Main method.
+     * @param args Runtime arguments.
+     */
     public static void main (String [] args) {
         Random rnd;
-        int agility;
-        int[] horsesIdx;
-        Stable stable;
-        Paddock paddock;
-        RacingTrack racingTrack;
-        ControlCentre controlCentre;
-        BettingCentre bettingCentre;
-        GeneralRepository generalRepository;
+        int agility;                            // Agility of the horses
+        int[] horsesIdx;                        // Array of horses indexes
+        Stable stable;                          // Instance of Stable
+        Paddock paddock;                        // Instance of Paddock
+        RacingTrack racingTrack;                // Instance of Racing Track
+        ControlCentre controlCentre;            // Instance of Control Centre
+        BettingCentre bettingCentre;            // Instance of Betting Centre
+        GeneralRepository generalRepository;    // Instance of General Repository
 
         rnd = new Random();
 
-        // generate races lineup
+        // generate races lineup (just placing all ids in an array to later be
+        // shuffled at the stable)
         horsesIdx = new int[EventVariables.NUMBER_OF_HORSES];
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
             horsesIdx[i] = i;

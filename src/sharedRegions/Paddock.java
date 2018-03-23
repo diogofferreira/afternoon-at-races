@@ -46,6 +46,11 @@ public class Paddock {
     private int spectatorsInPaddock;
 
     /**
+     * Flag that signals if Spectators can proceed to the Betting Centre.
+     */
+    private boolean spectatorsCanProceed;
+
+    /**
      * Instance of the shared region General Repository.
      */
     private GeneralRepository generalRepository;
@@ -67,6 +72,7 @@ public class Paddock {
         this.spectators = this.mutex.newCondition();
         this.horsesInPaddock = 0;
         this.spectatorsInPaddock = 0;
+        this.spectatorsCanProceed = false;
     }
 
     /**
@@ -76,6 +82,9 @@ public class Paddock {
     public void proceedToPaddock() {
         Horse h;
         mutex.lock();
+
+        // Reset the variable
+        spectatorsCanProceed = false;
 
         h = (Horse)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_PADDOCK);
@@ -87,9 +96,11 @@ public class Paddock {
             controlCentre.proceedToPaddock();
 
         // horse wait in paddock
-        try {
-            horses.await();
-        } catch (InterruptedException ignored){}
+        while (spectatorsInPaddock < EventVariables.NUMBER_OF_SPECTATORS) {
+            try {
+                horses.await();
+            } catch (InterruptedException ignored) { }
+        }
 
         mutex.unlock();
     }
@@ -114,10 +125,11 @@ public class Paddock {
         }
 
         // spectator wait in paddock
-        try {
-            spectators.await();
-        } catch (InterruptedException ignored){}
-
+        while (!spectatorsCanProceed) {
+            try {
+                spectators.await();
+            } catch (InterruptedException ignored) { }
+        }
         mutex.unlock();
     }
 
@@ -133,6 +145,7 @@ public class Paddock {
         this.spectatorsInPaddock = 0;
 
         // notify all spectators
+        spectatorsCanProceed = true;
         spectators.signalAll();
 
         mutex.unlock();

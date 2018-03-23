@@ -26,7 +26,7 @@ public class RacingTrack {
     /**
      * Array of condition variables, which will store a condition variable to
      * each of one the races. The horses wait in each one of these variables
-     * accordingly to their arrival order to the Racing Track.
+     * accordingly to their raceIdx order.
      */
     private Condition[] inMovement;
 
@@ -34,6 +34,12 @@ public class RacingTrack {
      * Flag that signals if the race has already started.
      */
     private boolean raceStarted;
+
+    /**
+     * Counter that indicates how many Horses have already arrived to the
+     * Racing Track and are ready to run.
+     */
+    private int horsesReady;
 
     /**
      * Number that represents the Horse that will make a step in the current
@@ -96,20 +102,23 @@ public class RacingTrack {
         this.winners = new ArrayList<>();
         this.winnerStep = -1;
         this.finishes = 0;
+        this.horsesReady = 0;
         this.horseTurn = 0;
         this.raceStarted = false;
     }
 
     /**
      * Method invoked by each one the Horses coming from the Paddock.
-     * They will update their state to AT_THE_STARTING_LINE and will block in the
-     * arrival order to the Racing Track in the correspondent condition variable.
+     * They will update their state to AT_THE_STARTING_LINE and will block
+     * accordingly to the raceIdx of each one of them in the correspondent
+     * condition variable.
+     * The last Horse/Jockey pair to arrive also wakes up the Spectators so
+     * then can place their bets.
      * After being waken up by the Broker to start the race, they update their
      * state to RUNNING.
      */
     public void proceedToStartLine() {
         Horse h;
-        int i;
         mutex.lock();
 
         h = (Horse)Thread.currentThread();
@@ -119,19 +128,18 @@ public class RacingTrack {
         generalRepository.setHorsePosition(h.getRaceIdx(), 0, 0);
 
         // add horse to arrival list
-        i = 0;
-        while (inMovement[i] != null) i++;
-
-        inMovement[i] = mutex.newCondition();
+        inMovement[h.getRaceIdx()] = mutex.newCondition();
 
         // last horse notify all spectators
-        if (i == EventVariables.NUMBER_OF_HORSES_PER_RACE - 1)
+        if (++horsesReady == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+            horsesReady = 0;
             paddock.proceedToStartLine();
+        }
 
         // Horse waits if race hasn't started and if it isn't its turn
-        while (!(raceStarted && horseTurn == i)) {
+        while (!(raceStarted && horseTurn == h.getRaceIdx())) {
             try {
-                inMovement[i].await();
+                inMovement[h.getRaceIdx()].await();
             } catch (InterruptedException ignored) { }
         }
 
@@ -208,7 +216,8 @@ public class RacingTrack {
      * If it's the last horse crossing the finish line, it wakes up the Broker
      * at the Control Centre and provides the list of winners.
      * Otherwise, just wakes up the next horse that still hasn't finish the race.
-     * @return
+     * @return Boolean indicating whether the Horse/Jockey pair that invoked the
+     * method has already crossed the finish line or not.
      */
     public boolean hasFinishLineBeenCrossed() {
         Horse h;
