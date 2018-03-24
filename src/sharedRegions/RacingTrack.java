@@ -125,7 +125,6 @@ public class RacingTrack {
         h.setHorseState(HorseState.AT_THE_STARTING_LINE);
         generalRepository.setHorseState(h.getRaceIdx(),
                 HorseState.AT_THE_STARTING_LINE);
-        generalRepository.setHorsePosition(h.getRaceIdx(), 0, 0);
 
         // add horse to arrival list
         inMovement[h.getRaceIdx()] = mutex.newCondition();

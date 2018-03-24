@@ -103,7 +103,7 @@ public class GeneralRepository {
      */
     public GeneralRepository() {
         this.mutex = new ReentrantLock();
-        this.brokerState = BrokerState.OPENING_THE_EVENT;
+        this.brokerState = null;
         this.spectatorsState = new SpectatorState[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesState = new HorseState[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.raceNumber = 0;
@@ -116,14 +116,6 @@ public class GeneralRepository {
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-
-        // Initialize spectators state
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            spectatorsState[i] = SpectatorState.WAITING_FOR_A_RACE_TO_START;
-
-        // Initialize spectators wallet
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            spectatorsWallet[i] = EventVariables.INITIAL_WALLET;
 
         // Log file settings
         Date today = Calendar.getInstance().getTime();
@@ -182,9 +174,10 @@ public class GeneralRepository {
             e.printStackTrace();
         }
 
-        pw.printf("  %4s ", brokerState);
+        pw.printf("  %4s ", brokerState != null ? brokerState : "----");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" %3s %4d", spectatorsState[i], spectatorsWallet[i]);
+            pw.printf(" %3s %4d", spectatorsState[i] != null ?
+                    spectatorsState[i] : "---", spectatorsWallet[i]);
         pw.printf("  %1d", raceNumber + 1);
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
@@ -223,6 +216,8 @@ public class GeneralRepository {
     public void setSpectatorState(int spectatorId, SpectatorState spectatorState) {
         mutex.lock();
 
+        if (this.spectatorsState[spectatorId] == null)
+            this.spectatorsWallet[spectatorId] = EventVariables.INITIAL_WALLET;
         this.spectatorsState[spectatorId] = spectatorState;
         printState();
 
@@ -264,6 +259,11 @@ public class GeneralRepository {
         mutex.lock();
 
         this.horsesState[horseIdx] = horseState;
+        if (horseState == HorseState.AT_THE_STARTING_LINE) {
+            this.horsesPosition[horseIdx] = 0;
+            this.horsesStep[horseIdx] = 0;
+            this.horsesEnded[horseIdx] = 0;
+        }
         printState();
 
         mutex.unlock();
@@ -327,7 +327,6 @@ public class GeneralRepository {
 
         this.horsesPosition[horseIdx] = horsePosition;
         this.horsesStep[horseIdx] = horseStep;
-
         printState();
 
         mutex.unlock();
