@@ -160,7 +160,7 @@ public class Stable {
         h.setRaceIdx(lineups[h.getID()] % EventVariables.NUMBER_OF_HORSES_PER_RACE);
 
         h.setHorseState(HorseState.AT_THE_STABLE);
-        generalRepository.setHorseState(h.getRaceIdx(),
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
 
         // set horse agility in general repository
@@ -185,17 +185,11 @@ public class Stable {
     /**
      * Method invoked by the Broker to signal all horses to wake up, ending the
      * event.
-     * Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
      */
     public void entertainTheGuests() {
         Broker b;
 
         mutex.lock();
-
-        // broker just playing host, end the afternoon
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
-        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
 
         // notify all horses-jockeys to go celebrate
         canCelebrate = true;

@@ -66,10 +66,15 @@ public class ControlCentre {
     private boolean reportsPosted;
 
     /**
-     * Counter that increments each time a spectator is waken up by the announcing
-     * of the race results.
+     * Counter that increments each time a spectator is waken up by the
+     * announcing of the race results.
      */
     private int spectatorsLeavingRace;
+
+    /**
+     * Flag that signals if the event has already ended;
+     */
+    private boolean eventEnded;
 
     /**
      * Array that contains the raceIdx of the Horses winners of the race.
@@ -111,6 +116,7 @@ public class ControlCentre {
         this.raceFinished = false;
         this.reportsPosted = false;
         this.spectatorsLeavingRace = 0;
+        this.eventEnded = false;
     }
 
     /**
@@ -124,7 +130,8 @@ public class ControlCentre {
         mutex.lock();
 
         // Restart variables
-        generalRepository.setRaceNumber(raceID);
+        // Notify general repository to clear all horse related info
+        generalRepository.initRace(raceID);
 
         b = (Broker)Thread.currentThread();
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
@@ -149,8 +156,9 @@ public class ControlCentre {
      * a race to start.
      * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
      */
-    public void waitForNextRace() {
+    public boolean waitForNextRace() {
         Spectator s;
+        boolean isThereARace;
 
         mutex.lock();
 
@@ -159,14 +167,18 @@ public class ControlCentre {
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
-        while (!spectatorsCanProceed) {
+        while (!(spectatorsCanProceed || eventEnded)) {
             // spectators wait
             try {
                 waitForRace.await();
             } catch (InterruptedException ignored) {}
         }
 
+        isThereARace = !eventEnded;
+
         mutex.unlock();
+
+        return isThereARace;
     }
 
     /**
@@ -256,9 +268,6 @@ public class ControlCentre {
 
         this.winners = winners;
 
-        // Notify general repository to clear all horse related info
-        generalRepository.resetRace();
-
         this.spectatorsCanProceed = false;
 
         // notify broker
@@ -274,15 +283,17 @@ public class ControlCentre {
      * @return An array of Horses' raceIdx that won the race.
      */
     public int[] reportResults() {
+        int w[];
         mutex.lock();
 
+        w = this.winners;
         // notify all spectators
         reportsPosted = true;
         watchingRace.signalAll();
 
         mutex.unlock();
 
-        return this.winners;
+        return w;
     }
 
     /**
@@ -302,6 +313,26 @@ public class ControlCentre {
         mutex.unlock();
 
         return won;
+    }
+
+    /**
+     * Method invoked by the Broker in order to signal the spectators that the
+     * event has ended.
+     * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
+     */
+    public void celebrate() {
+        Broker b;
+        mutex.lock();
+
+        // broker just playing host, end the afternoon
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+
+        eventEnded = true;
+        waitForRace.signalAll();
+
+        mutex.unlock();
     }
 
     /**

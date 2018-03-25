@@ -1,5 +1,8 @@
 package sharedRegions;
 
+import entities.Broker;
+import entities.Horse;
+import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -46,9 +49,9 @@ public class GeneralRepository {
     private SpectatorState[] spectatorsState;
 
     /**
-     * Current Horse/Jockey pairs state.
+     * Current state of all Horse/Jockey pairs.
      */
-    private HorseState[] horsesState;
+    private HorseState[][] horsesState;
 
     /**
      * Current ID of the race taking place.
@@ -79,7 +82,7 @@ public class GeneralRepository {
     /**
      * Horse odds of winning on the current race.
      */
-    private int[] horsesOdd;
+    private double[] horsesOdd;
 
     /**
      * Current number of steps the Horse has already took in the current race.
@@ -103,19 +106,35 @@ public class GeneralRepository {
      */
     public GeneralRepository() {
         this.mutex = new ReentrantLock();
-        this.brokerState = null;
+        this.brokerState = BrokerState.OPENING_THE_EVENT;
         this.spectatorsState = new SpectatorState[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesState = new HorseState[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesState = new HorseState[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.raceNumber = 0;
         this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+        // Set up initial values for spectators info
+        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
+            this.spectatorsWallet[i] = -1;
+            this.spectatorsBettedHorse[i] = -1;
+            this.spectatorsBet[i] = -1;
+        }
+
+        // Set up initial values for horses info
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
+            this.horsesOdd[i] = -1;
+            this.horsesStep[i] = -1;
+            this.horsesPosition[i] = -1;
+            this.horsesEnded[i] = -1;
+        }
 
         // Log file settings
         Date today = Calendar.getInstance().getTime();
@@ -174,21 +193,55 @@ public class GeneralRepository {
             e.printStackTrace();
         }
 
+        /* Uncomment to check who called the current log line */
+        /*
+        try {
+            Horse h = (Horse) (Thread.currentThread());
+            pw.println("HORSE ID: " + h.getRaceID() + ", IDX = " + h.getRaceIdx());
+        } catch (ClassCastException e) { }
+        try {
+            Broker h = (Broker) (Thread.currentThread());
+            pw.println("BROKER");
+        } catch (ClassCastException e) { }
+        try {
+            Spectator h = (Spectator) (Thread.currentThread());
+            pw.println("SPECTATOR ID: " + h.getID());
+        } catch (ClassCastException e) { }
+        */
+
         pw.printf("  %4s ", brokerState != null ? brokerState : "----");
+
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf(" %3s %4d", spectatorsState[i] != null ?
-                    spectatorsState[i] : "---", spectatorsWallet[i]);
+            pw.printf(" %3s %4s",
+                    spectatorsState[i] != null ? spectatorsState[i] : "---",
+                    spectatorsWallet[i] != -1 ? spectatorsWallet[i] : "----"
+            );
+
         pw.printf("  %1d", raceNumber + 1);
+
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
-            pw.printf(" %3s  %2d ", horsesState[i] != null ? horsesState[i] : "---",
-                    horsesAgility[raceNumber][i]);
+            pw.printf(" %3s  %2s ",
+                    horsesState[raceNumber][i] != null ? horsesState[raceNumber][i] : "---",
+                    horsesState[raceNumber][i] != null ? horsesAgility[raceNumber][i] : "--"
+            );
         pw.println();
-        pw.printf("  %1d  %2d ", raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
+
+        pw.printf("  %1d  %2d ",
+                raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
+
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            pw.printf("  %1d  %4d", spectatorsBettedHorse[i], spectatorsBet[i]);
+            pw.printf("  %1s  %4s",
+                    spectatorsBettedHorse[i] != -1 ? spectatorsBettedHorse[i] : "-",
+                    spectatorsBet[i] != -1 ? spectatorsBet[i] : "----"
+            );
+
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
-            pw.printf(" %4d %2d  %2d  %1s", horsesOdd[i], horsesStep[i],
-                    horsesPosition[i], horsesEnded[i]);
+            pw.printf(" %4s %2s  %2s  %1s",
+                    horsesOdd[i] != -1 ? String.format("%4.1f",horsesOdd[i]) : "----",
+                    horsesStep[i] != -1 ? horsesStep[i] : "--",
+                    horsesPosition[i] != -1 ? horsesPosition[i] : "--",
+                    horsesEnded[i] != -1 ? horsesEnded[i] : "-"
+            );
         pw.println();
         pw.close();
 
@@ -239,32 +292,22 @@ public class GeneralRepository {
     }
 
     /**
-     * Method that sets the current race number (ID).
-     * @param raceNumber The updated race number.
-     */
-    public void setRaceNumber(int raceNumber) {
-        mutex.lock();
-
-        this.raceNumber = raceNumber;
-
-        mutex.unlock();
-    }
-
-    /**
      * Method that sets the reference Horse/Jockey pair state.
+     * @param raceID The ID of the race which the pair will run.
      * @param horseIdx The raceIdx of the Horse whose state will be updated.
      * @param horseState The next Horse state.
      */
-    public void setHorseState(int horseIdx, HorseState horseState) {
+    public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
         mutex.lock();
 
-        this.horsesState[horseIdx] = horseState;
+        this.horsesState[raceID][horseIdx] = horseState;
         if (horseState == HorseState.AT_THE_STARTING_LINE) {
             this.horsesPosition[horseIdx] = 0;
             this.horsesStep[horseIdx] = 0;
             this.horsesEnded[horseIdx] = 0;
         }
-        printState();
+        if (raceID == raceNumber)
+            printState();
 
         mutex.unlock();
     }
@@ -307,7 +350,7 @@ public class GeneralRepository {
      * Method that sets the odds of the Horses running on the current race.
      * @param horsesOdd Array of horses odds, indexed by their raceIdx.
      */
-    public void setHorsesOdd(int[] horsesOdd) {
+    public void setHorsesOdd(double[] horsesOdd) {
         mutex.lock();
 
         this.horsesOdd = horsesOdd;
@@ -346,14 +389,32 @@ public class GeneralRepository {
     }
 
     /**
-     * Method that resets the race related variables.
+     * Method that resets all the race related variables, such as the
+     * raceNumber (ID), the spectators bets, the horses odds and
+     * travelled distances.
+     * @param raceNumber The updated race number.
      */
-    public void resetRace() {
+    public void initRace(int raceNumber) {
+        this.raceNumber = raceNumber;
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesOdd = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+        // Set up initial values for spectators info
+        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
+            this.spectatorsBettedHorse[i] = -1;
+            this.spectatorsBet[i] = -1;
+        }
+
+        // Set up initial values for horses info
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
+            this.horsesOdd[i] = -1;
+            this.horsesStep[i] = -1;
+            this.horsesPosition[i] = -1;
+            this.horsesEnded[i] = -1;
+        }
     }
 }

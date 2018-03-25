@@ -85,6 +85,7 @@ public class Broker extends Thread {
                 bettingCentre.honourTheBets();
         }
 
+        controlCentre.celebrate();
         stable.entertainTheGuests();
     }
 

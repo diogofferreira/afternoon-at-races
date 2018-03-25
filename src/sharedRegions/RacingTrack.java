@@ -36,12 +36,6 @@ public class RacingTrack {
     private boolean raceStarted;
 
     /**
-     * Counter that indicates how many Horses have already arrived to the
-     * Racing Track and are ready to run.
-     */
-    private int horsesReady;
-
-    /**
      * Number that represents the Horse that will make a step in the current
      * iteration. It can take values between 0 and NUMBER_OF_HORSES_PER_RACE - 1.
      */
@@ -68,11 +62,6 @@ public class RacingTrack {
     private ControlCentre controlCentre;
 
     /**
-     * Instance of the shared region Paddock.
-     */
-    private Paddock paddock;
-
-    /**
      * Instance of the shared region General Repository.
      */
     private GeneralRepository generalRepository;
@@ -83,26 +72,25 @@ public class RacingTrack {
      *                          General Repository.
      * @param controlCentre Reference to an instance of the shared region
      *                          Control Centre.
-     * @param paddock Reference to an instance of the shared region Paddock.
      */
     public RacingTrack(GeneralRepository generalRepository,
-                       ControlCentre controlCentre, Paddock paddock) {
+                       ControlCentre controlCentre) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
-        if (paddock == null)
-            throw new IllegalArgumentException("Invalid Paddock.");
 
         this.generalRepository = generalRepository;
-        this.paddock = paddock;
         this.controlCentre = controlCentre;
         this.mutex = new ReentrantLock();
         this.inMovement = new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+        for (int i = 0; i < inMovement.length; i++)
+            this.inMovement[i] = this.mutex.newCondition();
+
         this.winners = new ArrayList<>();
         this.winnerStep = -1;
         this.finishes = 0;
-        this.horsesReady = 0;
         this.horseTurn = 0;
         this.raceStarted = false;
     }
@@ -123,17 +111,8 @@ public class RacingTrack {
 
         h = (Horse)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_STARTING_LINE);
-        generalRepository.setHorseState(h.getRaceIdx(),
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STARTING_LINE);
-
-        // add horse to arrival list
-        inMovement[h.getRaceIdx()] = mutex.newCondition();
-
-        // last horse notify all spectators
-        if (++horsesReady == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            horsesReady = 0;
-            paddock.proceedToBettingCentre();
-        }
 
         // Horse waits if race hasn't started and if it isn't its turn
         while (!(raceStarted && horseTurn == h.getRaceIdx())) {
@@ -143,7 +122,8 @@ public class RacingTrack {
         }
 
         h.setHorseState(HorseState.RUNNING);
-        generalRepository.setHorseState(h.getRaceIdx(), HorseState.RUNNING);
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+                HorseState.RUNNING);
 
         mutex.unlock();
     }
@@ -234,7 +214,7 @@ public class RacingTrack {
 
         generalRepository.setHorseEnded(h.getRaceIdx());
         h.setHorseState(HorseState.AT_THE_FINISH_LINE);
-        generalRepository.setHorseState(h.getRaceIdx(),
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_FINISH_LINE);
 
         // Add to winners
@@ -250,6 +230,10 @@ public class RacingTrack {
             // reset empty track variables
             this.inMovement =
                     new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+            for (int i = 0; i < inMovement.length; i++)
+                this.inMovement[i] = this.mutex.newCondition();
+
             this.winners.clear();
             this.finishes = 0;
             horseTurn = 0;

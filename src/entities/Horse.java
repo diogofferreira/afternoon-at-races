@@ -107,15 +107,20 @@ public class Horse extends Thread {
      * Horse/Jockey pair lifecycle.
      */
     public void run() {
+        // Start at the stable
         stable.proceedToStable();
 
+        // when called, proceed to paddock to be appraised
         paddock.proceedToPaddock();
 
+        // proceed to the starting line
         racingTrack.proceedToStartLine();
 
+        // while not crossed the finish line, keep moving
         while (!racingTrack.hasFinishLineBeenCrossed())
             racingTrack.makeAMove(makeAStep());
 
+        // wait at the stable until the broker ends the event
         stable.proceedToStable();
     }
 

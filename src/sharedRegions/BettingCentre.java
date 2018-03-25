@@ -68,7 +68,7 @@ public class BettingCentre {
      * Array that stores the odds of each one of the Horses participating in the
      * current race, indexed by their raceIdx.
      */
-    private int[] raceOdds;
+    private double[] raceOdds;
 
     /**
      * Flag that signals if the Broker is accepting bets.
@@ -157,14 +157,14 @@ public class BettingCentre {
      * Method that obtains the current race odds.
      */
     private void getRaceOdds() {
-        int oddSum;
+        double oddSum;
 
-        raceOdds = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        raceOdds = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
         if (horsesAgility == null)
             horsesAgility = stable.getHorsesAgility();
 
-        oddSum = Arrays.stream(horsesAgility[currentRaceID]).reduce(
+        oddSum = (double)Arrays.stream(horsesAgility[currentRaceID]).reduce(
                 Integer::sum).getAsInt();
 
         for (int i = 0; i < horsesAgility[currentRaceID].length; i++) {
@@ -214,10 +214,12 @@ public class BettingCentre {
             case 0:
                 // pick random horse to bet
                 try {
-                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
-                            (o1, o2) -> raceOdds[o1] < raceOdds[o2] ? o1 : o2).getAsInt();
+                    bettedHorse = IntStream.range(0, raceOdds.length)
+                            .reduce((o1, o2) -> raceOdds[o1] < raceOdds[o2] ?
+                                    o1 : o2).getAsInt();
                 } catch (NoSuchElementException e) {
-                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                    bettedHorse = rnd.nextInt(
+                            EventVariables.NUMBER_OF_HORSES_PER_RACE);
                 }
 
                 // pick a random bet value, with a max of (wallet * number_of_races)
@@ -230,15 +232,18 @@ public class BettingCentre {
             case 1:
                 // pick random horse to bet
                 try {
-                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
-                            (o1, o2) -> raceOdds[o1] < raceOdds[o2] ? o1 : o2).getAsInt();
+                    bettedHorse = IntStream.range(0, raceOdds.length)
+                            .reduce((o1, o2) -> raceOdds[o1] < raceOdds[o2] ?
+                                    o1 : o2).getAsInt();
                 } catch (NoSuchElementException e) {
-                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                    bettedHorse = rnd.nextInt(
+                            EventVariables.NUMBER_OF_HORSES_PER_RACE);
                 }
 
                 // pick a random bet value, with a max of (wallet * number_of_races)
                 // to avoid bankruptcy
-                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+                betValue = rnd.nextInt(
+                        (wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
 
                 break;
 
@@ -246,15 +251,18 @@ public class BettingCentre {
             case 2:
                 // pick random horse to bet
                 try {
-                    bettedHorse = IntStream.range(0, raceOdds.length).reduce(
-                            (o1, o2) -> raceOdds[o1] > raceOdds[o2] ? o1 : o2).getAsInt();
+                    bettedHorse = IntStream.range(0, raceOdds.length)
+                            .reduce((o1, o2) -> raceOdds[o1] > raceOdds[o2] ?
+                                    o1 : o2).getAsInt();
                 } catch (NoSuchElementException e) {
-                    bettedHorse = rnd.nextInt(EventVariables.NUMBER_OF_HORSES_PER_RACE);
+                    bettedHorse = rnd.nextInt(
+                            EventVariables.NUMBER_OF_HORSES_PER_RACE);
                 }
 
                 // pick a random bet value, with a max of (wallet * number_of_races)
                 // to avoid bankruptcy
-                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+                betValue = rnd.nextInt(
+                        (wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
 
                 break;
 
@@ -264,7 +272,8 @@ public class BettingCentre {
 
                 // pick a random bet value, with a max of (wallet * number_of_races)
                 // to avoid bankruptcy
-                betValue = rnd.nextInt((wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
+                betValue = rnd.nextInt(
+                        (wallet / EventVariables.NUMBER_OF_RACES - 1)) + 1;
 
                 break;
         }
@@ -441,9 +450,9 @@ public class BettingCentre {
                             bt -> bt.getSpectatorID() == spectatorID).toArray()[0];
 
                     validatedHonours.put(spectatorID,
-                            bet.getValue() * raceOdds[bet.getHorseIdx()]);
+                            (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
                     generalRepository.setSpectatorGains(spectatorID,
-                            bet.getValue() * raceOdds[bet.getHorseIdx()]);
+                            (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
                 } catch (ArrayIndexOutOfBoundsException e) { }
             }
         }

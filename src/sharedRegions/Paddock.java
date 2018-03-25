@@ -76,6 +76,20 @@ public class Paddock {
     }
 
     /**
+     * Method invoked by the last Horse leaving to the Racing Track.
+     * It will notify all Spectators to proceed to the Betting Centre.
+     */
+    private void proceedToBettingCentre() {
+        // Restart the variables
+        this.horsesInPaddock = 0;
+        this.spectatorsInPaddock = 0;
+
+        // notify all spectators
+        spectatorsCanProceed = true;
+        spectators.signalAll();
+    }
+
+    /**
      * Method invoked by each one of the Horses. They will change their state
      * to AT_THE_PADDOCK and wait until all Spectators arrive to the Paddock.
      */
@@ -88,7 +102,7 @@ public class Paddock {
 
         h = (Horse)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_PADDOCK);
-        generalRepository.setHorseState(h.getRaceIdx(),
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_PADDOCK);
 
         // last horse notify spectators
@@ -101,6 +115,10 @@ public class Paddock {
                 horses.await();
             } catch (InterruptedException ignored) { }
         }
+
+        // last horse notify all spectators
+        if (--horsesInPaddock == 0)
+            proceedToBettingCentre();
 
         mutex.unlock();
     }
@@ -130,24 +148,6 @@ public class Paddock {
                 spectators.await();
             } catch (InterruptedException ignored) { }
         }
-        mutex.unlock();
-    }
-
-    /**
-     * Method invoked by the last Horse arriving to the Racing Track.
-     * It will notify all Spectators to proceed to the Betting Centre.
-     */
-    public void proceedToBettingCentre() {
-        mutex.lock();
-
-        // Restart the variables
-        this.horsesInPaddock = 0;
-        this.spectatorsInPaddock = 0;
-
-        // notify all spectators
-        spectatorsCanProceed = true;
-        spectators.signalAll();
-
         mutex.unlock();
     }
 }

@@ -79,17 +79,17 @@ public class Spectator extends Thread {
     public void run() {
         int bettedHorse;
 
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
-            controlCentre.waitForNextRace();
-
+        while(controlCentre.waitForNextRace()) {
             // goCheckHorses
             paddock.goCheckHorses();
 
+            // Place a bet and return the horse the spectator chose
             bettedHorse = bettingCentre.placeABet();
 
             // update wallet
             controlCentre.goWatchTheRace();
 
+            // Check if won the bet and collect the gains if so
             if (controlCentre.haveIWon(bettedHorse))
                 wallet += bettingCentre.goCollectTheGains(this.id);
         }

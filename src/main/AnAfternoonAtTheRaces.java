@@ -42,7 +42,7 @@ public class AnAfternoonAtTheRaces {
         stable = new Stable(generalRepository, horsesIdx);
         controlCentre = new ControlCentre(generalRepository, stable);
         paddock = new Paddock(generalRepository, controlCentre);
-        racingTrack = new RacingTrack(generalRepository, controlCentre, paddock);
+        racingTrack = new RacingTrack(generalRepository, controlCentre);
         bettingCentre = new BettingCentre(generalRepository, stable);
 
         // entities initialization
