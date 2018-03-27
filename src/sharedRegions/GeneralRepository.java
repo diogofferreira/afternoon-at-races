@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Stream;
 
 /**
  * The General Repository is a shared region where all the information about the
@@ -80,9 +81,9 @@ public class GeneralRepository {
     private int[][] horsesAgility;
 
     /**
-     * Horse odds of winning on the current race.
+     * Horse odds of winning.
      */
-    private double[] horsesOdd;
+    private double[][] horsesOdd;
 
     /**
      * Current number of steps the Horse has already took in the current race.
@@ -116,7 +117,8 @@ public class GeneralRepository {
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesOdd = new double[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -130,7 +132,7 @@ public class GeneralRepository {
 
         // Set up initial values for horses info
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
-            this.horsesOdd[i] = -1;
+            //this.horsesOdd[i] = -1;
             this.horsesStep[i] = -1;
             this.horsesPosition[i] = -1;
             this.horsesEnded[i] = -1;
@@ -157,8 +159,10 @@ public class GeneralRepository {
             e.printStackTrace();
         }
 
-        pw.println("AFTERNOON AT THE RACE TRACK - Description of the internal state of the problem\n");
-        pw.printf("MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race %d\n", raceNumber + 1);
+        pw.println("AFTERNOON AT THE RACE TRACK - Description of the " +
+                "internal state of the problem\n");
+        pw.printf("MAN/BRK SPECTATOR/BETTER HORSE/JOCKEY PAIR at Race %d\n",
+                raceNumber + 1);
         pw.print("  Stat ");
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" St%d  Am%d", i, i);
@@ -186,6 +190,13 @@ public class GeneralRepository {
      */
     private void printState() {
         mutex.lock();
+
+        if (brokerState == BrokerState.OPENING_THE_EVENT
+                && Stream.of(spectatorsState).anyMatch(
+                        s -> s != SpectatorState.WAITING_FOR_A_RACE_TO_START)) {
+            mutex.unlock();
+            return;
+        }
 
         try {
             pw = new PrintWriter(new FileWriter(filename, true));
@@ -221,8 +232,12 @@ public class GeneralRepository {
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2s ",
-                    horsesState[raceNumber][i] != null ? horsesState[raceNumber][i] : "---",
-                    horsesState[raceNumber][i] != null ? horsesAgility[raceNumber][i] : "--"
+                    brokerState != BrokerState.OPENING_THE_EVENT &&
+                            horsesState[raceNumber][i] != null ?
+                            horsesState[raceNumber][i] : "---",
+                    brokerState != BrokerState.OPENING_THE_EVENT &&
+                            horsesState[raceNumber][i] != null ?
+                            horsesAgility[raceNumber][i] : "--"
             );
         pw.println();
 
@@ -237,7 +252,9 @@ public class GeneralRepository {
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %4s %2s  %2s  %1s",
-                    horsesOdd[i] != -1 ? String.format("%4.1f",horsesOdd[i]) : "----",
+                    brokerState != BrokerState.OPENING_THE_EVENT &&
+                            horsesOdd[raceNumber][i] != 0.0 ?
+                            String.format("%4.1f", horsesOdd[raceNumber][i]) : "----",
                     horsesStep[i] != -1 ? horsesStep[i] : "--",
                     horsesPosition[i] != -1 ? horsesPosition[i] : "--",
                     horsesEnded[i] != -1 ? horsesEnded[i] : "-"
@@ -350,10 +367,10 @@ public class GeneralRepository {
      * Method that sets the odds of the Horses running on the current race.
      * @param horsesOdd Array of horses odds, indexed by their raceIdx.
      */
-    public void setHorsesOdd(double[] horsesOdd) {
+    public void setHorsesOdd(int raceID, double[] horsesOdd) {
         mutex.lock();
 
-        this.horsesOdd = horsesOdd;
+        this.horsesOdd[raceID] = horsesOdd;
 
         mutex.unlock();
     }
@@ -398,7 +415,7 @@ public class GeneralRepository {
         this.raceNumber = raceNumber;
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        //this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -411,7 +428,7 @@ public class GeneralRepository {
 
         // Set up initial values for horses info
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
-            this.horsesOdd[i] = -1;
+            //this.horsesOdd[i] = -1;
             this.horsesStep[i] = -1;
             this.horsesPosition[i] = -1;
             this.horsesEnded[i] = -1;

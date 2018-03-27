@@ -55,6 +55,12 @@ public class Stable {
     private int[][] horsesAgility;
 
     /**
+     * Array that stores the odds of each one of the Horses participating in the
+     * current race, indexed by their raceIdx.
+     */
+    private double[][] raceOdds;
+
+    /**
      * Instance of the shared region General Repository.
      */
     private GeneralRepository generalRepository;
@@ -87,6 +93,9 @@ public class Stable {
 
         this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+        this.raceOdds = new double[EventVariables.NUMBER_OF_RACES]
+                [EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
     /**
@@ -113,6 +122,24 @@ public class Stable {
     }
 
     /**
+     * Method that computes the current race odds.
+     */
+    public void computeRaceOdds(int raceID) {
+        double oddSum;
+
+        //raceOdds = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+        oddSum = (double)Arrays.stream(horsesAgility[raceID]).reduce(
+                Integer::sum).getAsInt();
+
+        for (int i = 0; i < horsesAgility[raceID].length; i++) {
+            raceOdds[raceID][i] = oddSum / horsesAgility[raceID][i];
+        }
+
+        generalRepository.setHorsesOdd(raceID, raceOdds[raceID]);
+    }
+
+    /**
      * Method that returns the agility of all horses, indexed by the raceID and
      * raceIdx of each one of them.
      * @return Bidimensional array of horses' agilities.
@@ -125,6 +152,18 @@ public class Stable {
         toRtn = this.horsesAgility;
 
         mutex.unlock();
+        return toRtn;
+    }
+
+    public double[] getRaceOdds(int raceID) {
+        double[] toRtn;
+
+        mutex.lock();
+
+        toRtn = this.raceOdds[raceID];
+
+        mutex.unlock();
+
         return toRtn;
     }
 
@@ -159,16 +198,23 @@ public class Stable {
         h.setRaceID(lineups[h.getID()] / EventVariables.NUMBER_OF_HORSES_PER_RACE);
         h.setRaceIdx(lineups[h.getID()] % EventVariables.NUMBER_OF_HORSES_PER_RACE);
 
-        h.setHorseState(HorseState.AT_THE_STABLE);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
-                HorseState.AT_THE_STABLE);
-
         // set horse agility in general repository
         if (horsesAgility[h.getRaceID()][h.getRaceIdx()] == 0) {
             horsesAgility[h.getRaceID()][h.getRaceIdx()] = h.getAgility();
             generalRepository.setHorseAgility(
                     h.getRaceID(), h.getRaceIdx(), h.getAgility());
         }
+
+        for (int i = 0; i < horsesAgility[h.getRaceID()].length; i++) {
+            if (horsesAgility[h.getRaceID()][i] == 0)
+                break;
+            if (i == horsesAgility[h.getRaceID()].length - 1)
+                computeRaceOdds(h.getRaceID());
+        }
+
+        h.setHorseState(HorseState.AT_THE_STABLE);
+        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+                HorseState.AT_THE_STABLE);
 
         // only waits if it's not time to celebrate or if broker has not notified
         // that it can proceed to paddock

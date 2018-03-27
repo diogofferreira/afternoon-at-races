@@ -5,7 +5,6 @@ import entities.Horse;
 import entities.Spectator;
 import sharedRegions.*;
 
-import java.util.Arrays;
 import java.util.Random;
 
 /**

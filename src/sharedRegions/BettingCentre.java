@@ -54,12 +54,6 @@ public class BettingCentre {
     private Condition waitingForCash;
 
     /**
-     * Bidimensional array that stores the Horses agilities indexed by the raceID
-     * and the raceIdx of each one of them.
-     */
-    private int[][] horsesAgility;
-
-    /**
      * Identifier of the current race.
      */
     private int currentRaceID;
@@ -151,27 +145,6 @@ public class BettingCentre {
 
         this.generalRepository = generalRepository;
         this.stable = stable;
-    }
-
-    /**
-     * Method that obtains the current race odds.
-     */
-    private void getRaceOdds() {
-        double oddSum;
-
-        raceOdds = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-
-        if (horsesAgility == null)
-            horsesAgility = stable.getHorsesAgility();
-
-        oddSum = (double)Arrays.stream(horsesAgility[currentRaceID]).reduce(
-                Integer::sum).getAsInt();
-
-        for (int i = 0; i < horsesAgility[currentRaceID].length; i++) {
-            raceOdds[i] = oddSum / horsesAgility[currentRaceID][i];
-        }
-
-        generalRepository.setHorsesOdd(raceOdds);
     }
 
     /**
@@ -306,7 +279,7 @@ public class BettingCentre {
 
         // Update raceID and start accepting bets
         currentRaceID = raceID;
-        getRaceOdds();
+        raceOdds = stable.getRaceOdds(currentRaceID);
 
         // Signals spectators that now broker is accepting bets
         acceptingBets = true;
@@ -391,7 +364,7 @@ public class BettingCentre {
     /**
      * Method invoked by the Broker to check if there are any winning bets.
      * @param winners An array of horseIdxs that contains the race winners.
-     * @return A boolean checking if there are any winners.
+     * @return True if there are any winners, false otherwise.
      */
     public boolean areThereAnyWinners(int[] winners) {
         boolean areThereWinners;
