@@ -1,8 +1,5 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
-import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -99,7 +96,7 @@ public class GeneralRepository {
      * Array that indicates if the Horse/Jockey pair has already crossed the
      * finish line (0 - false / 1 - true).
      */
-    private int[] horsesEnded;
+    private int[] horsesStanding;
 
     /**
      * Creates a new instance of General Repository.
@@ -111,7 +108,7 @@ public class GeneralRepository {
         this.spectatorsState = new SpectatorState[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesState = new HorseState[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.raceNumber = 0;
+        this.raceNumber = -1;
         this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
@@ -121,7 +118,7 @@ public class GeneralRepository {
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
         // Set up initial values for spectators info
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
@@ -132,10 +129,9 @@ public class GeneralRepository {
 
         // Set up initial values for horses info
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
-            //this.horsesOdd[i] = -1;
             this.horsesStep[i] = -1;
             this.horsesPosition[i] = -1;
-            this.horsesEnded[i] = -1;
+            this.horsesStanding[i] = -1;
         }
 
         // Log file settings
@@ -176,7 +172,7 @@ public class GeneralRepository {
             pw.printf(" BS%d  BA%d", i, i);
         pw.printf(" ");
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
-            pw.printf(" Od%d N%d Ps%d SD%s", i, i, i, i);
+            pw.printf(" Od%d N%d Ps%d Sd%s", i, i, i, i);
         pw.println();
         pw.close();
         printState();
@@ -242,7 +238,8 @@ public class GeneralRepository {
         pw.println();
 
         pw.printf("  %1d  %2d ",
-                raceNumber + 1, EventVariables.RACING_TRACK_LENGTH);
+                raceNumber + 1, raceNumber < 0 ?
+                        0 : EventVariables.RACING_TRACK_LENGTH);
 
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf("  %1s  %4s",
@@ -257,7 +254,7 @@ public class GeneralRepository {
                             String.format("%4.1f", horsesOdd[raceNumber][i]) : "----",
                     horsesStep[i] != -1 ? horsesStep[i] : "--",
                     horsesPosition[i] != -1 ? horsesPosition[i] : "--",
-                    horsesEnded[i] != -1 ? horsesEnded[i] : "-"
+                    horsesStanding[i] != -1 ? horsesStanding[i] : "-"
             );
         pw.println();
         pw.close();
@@ -321,7 +318,6 @@ public class GeneralRepository {
         if (horseState == HorseState.AT_THE_STARTING_LINE) {
             this.horsesPosition[horseIdx] = 0;
             this.horsesStep[horseIdx] = 0;
-            this.horsesEnded[horseIdx] = 0;
         }
         if (raceID == raceNumber)
             printState();
@@ -393,13 +389,13 @@ public class GeneralRepository {
     }
 
     /**
-     * Method that signals that the referenced Horse has crossed the finish line.
-     * @param horseIdx raceIdx of the Horse that crossed the finish line.
+     * Method that signals the horses' position in the race.
+     * @param standings horses' position in the race.
      */
-    public void setHorseEnded(int horseIdx) {
+    public void setHorsesStanding(int[] standings) {
         mutex.lock();
 
-        this.horsesEnded[horseIdx] = 1;
+        this.horsesStanding = standings;
         printState();
 
         mutex.unlock();
@@ -415,10 +411,9 @@ public class GeneralRepository {
         this.raceNumber = raceNumber;
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        //this.horsesOdd = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesEnded = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
         // Set up initial values for spectators info
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
@@ -428,10 +423,9 @@ public class GeneralRepository {
 
         // Set up initial values for horses info
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
-            //this.horsesOdd[i] = -1;
             this.horsesStep[i] = -1;
             this.horsesPosition[i] = -1;
-            this.horsesEnded[i] = -1;
+            this.horsesStanding[i] = -1;
         }
     }
 }

@@ -6,8 +6,6 @@ import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,14 +40,19 @@ public class RacingTrack {
     private int horseTurn;
 
     /**
-     * List that saves the horseIdx of the horses that won the race.
+     * List that saves the standing of the horses in the race.
      */
-    private List<Integer> winners;
+    private int[] raceStandings;
 
     /**
-     * Number of steps the winners took to get the victory.
+     * Number of steps the current horse took to get the finish line.
      */
-    private int winnerStep;
+    private int currentStep;
+
+    /**
+     * Position of the current horse when he get the finish line.
+     */
+    private int currentPosition;
 
     /**
      * Number of horses that have already crossed the finish line.
@@ -88,8 +91,7 @@ public class RacingTrack {
         for (int i = 0; i < inMovement.length; i++)
             this.inMovement[i] = this.mutex.newCondition();
 
-        this.winners = new ArrayList<>();
-        this.winnerStep = -1;
+        this.currentStep = 0;
         this.finishes = 0;
         this.horseTurn = 0;
         this.raceStarted = false;
@@ -114,7 +116,7 @@ public class RacingTrack {
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STARTING_LINE);
 
-        // Horse waits if race hasn't started and if it isn't its turn
+        // horse waits if race hasn't started and if it isn't its turn
         while (!(raceStarted && horseTurn == h.getRaceIdx())) {
             try {
                 inMovement[h.getRaceIdx()].await();
@@ -168,7 +170,7 @@ public class RacingTrack {
                 h.getCurrentPosition(),
                 h.getCurrentStep());
 
-        // Signal next horse
+        // signal next horse
         do {
             horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
         } while (inMovement[horseTurn] == null);
@@ -201,7 +203,6 @@ public class RacingTrack {
     public boolean hasFinishLineBeenCrossed() {
         Horse h;
         int currentTurn;
-        int[] raceWinners;
         mutex.lock();
 
         currentTurn = horseTurn;
@@ -212,21 +213,25 @@ public class RacingTrack {
             return false;
         }
 
-        generalRepository.setHorseEnded(h.getRaceIdx());
         h.setHorseState(HorseState.AT_THE_FINISH_LINE);
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_FINISH_LINE);
 
-        // Add to winners
-        if (winners.isEmpty() || winnerStep == h.getCurrentStep()) {
-            winners.add(h.getRaceIdx());
-            winnerStep = h.getCurrentStep();
+        // add horse to arrival list
+        if (raceStandings == null) {
+            raceStandings = new int [EventVariables.NUMBER_OF_HORSES_PER_RACE];
+            currentPosition = 1;
+        } else {
+            currentPosition = currentStep != h.getCurrentStep() ?
+                    currentPosition + 1 : currentPosition;
         }
+
+        currentStep = h.getCurrentStep();
+
+        raceStandings[h.getRaceIdx()] = currentPosition;
 
         // last horse notify broker
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-            raceWinners = winners.stream().mapToInt(i->i).toArray();
-
             // reset empty track variables
             this.inMovement =
                     new Condition[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -234,24 +239,24 @@ public class RacingTrack {
             for (int i = 0; i < inMovement.length; i++)
                 this.inMovement[i] = this.mutex.newCondition();
 
-            this.winners.clear();
             this.finishes = 0;
             horseTurn = 0;
             raceStarted = false;
 
-            controlCentre.finishTheRace(raceWinners);
+            controlCentre.finishTheRace(raceStandings);
 
+            raceStandings = null;
 
         } else {
-            // Signal next horse
+            // signal next horse
             do {
                 horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
             } while (inMovement[horseTurn] == null);
 
-            // Remove current racer from the race
+            // remove current racer from the race
             inMovement[currentTurn] = null;
 
-            // Signal next horse
+            // signal next horse
             if (horseTurn != currentTurn)
                 inMovement[horseTurn].signal();
         }

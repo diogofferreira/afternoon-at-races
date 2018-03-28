@@ -1,6 +1,5 @@
 package entities;
 
-import main.EventVariables;
 import sharedRegions.*;
 import states.SpectatorState;
 

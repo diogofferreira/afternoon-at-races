@@ -77,9 +77,9 @@ public class ControlCentre {
     private boolean eventEnded;
 
     /**
-     * Array that contains the raceIdx of the Horses winners of the race.
+     * Array that contains the standings of the Horses in the race.
      */
-    private int[] winners;
+    private int[] standings;
 
     /**
      * Instance of the shared region General Repository.
@@ -261,12 +261,12 @@ public class ControlCentre {
     /**
      * Method invoked by the last Horse/Jockey pair to cross the finish line.
      * The Broker will be notified to wake up and to report the results.
-     * @param winners An array of raceIdx of the Horses that won the race.
+     * @param standings An array of standings of the Horses that in the race.
      */
-    public void finishTheRace(int[] winners) {
+    public void finishTheRace(int[] standings) {
         mutex.lock();
 
-        this.winners = winners;
+        this.standings = standings;
 
         this.spectatorsCanProceed = false;
 
@@ -286,7 +286,12 @@ public class ControlCentre {
         int w[];
         mutex.lock();
 
-        w = this.winners;
+        generalRepository.setHorsesStanding(standings);
+
+        // set winners list
+        w = IntStream.range(0, standings.length).
+                filter(i -> standings[i] == 1).toArray();
+
         // notify all spectators
         reportsPosted = true;
         watchingRace.signalAll();
@@ -308,7 +313,8 @@ public class ControlCentre {
         mutex.lock();
 
         // checks if winner is the one he/she bet
-        won = IntStream.of(winners).anyMatch(w -> w == horseIdx);
+        won = IntStream.range(0, standings.length).
+                filter(i -> standings[i] == 1).anyMatch(w -> w == horseIdx);
 
         mutex.unlock();
 

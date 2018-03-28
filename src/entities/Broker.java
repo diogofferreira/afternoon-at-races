@@ -80,7 +80,7 @@ public class Broker extends Thread {
             // reportResults
             winners = controlCentre.reportResults();
 
-            // If there are any winners, honour those bets
+            // if there are any winners, honour those bets
             if (bettingCentre.areThereAnyWinners(winners))
                 bettingCentre.honourTheBets();
         }

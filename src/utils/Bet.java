@@ -1,6 +1,5 @@
 package utils;
 
-
 import main.EventVariables;
 
 public class Bet {
