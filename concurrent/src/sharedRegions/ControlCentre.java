@@ -155,6 +155,7 @@ public class ControlCentre {
      * This method is invoked by every Spectator while they're waiting for
      * a race to start.
      * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
+     * @return True if there's still a race next.
      */
     public boolean waitForNextRace() {
         Spectator s;

@@ -122,8 +122,9 @@ public class Stable {
 
     /**
      * Method that computes the current race odds.
+     * @param raceID The ID of the race which odds will be computed.
      */
-    public void computeRaceOdds(int raceID) {
+    private void computeRaceOdds(int raceID) {
         double oddSum;
 
         //raceOdds = new double[EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -154,6 +155,12 @@ public class Stable {
         return toRtn;
     }
 
+    /**
+     * Method that returns the odd of all horses running on the race with ID
+     * passed as argument..
+     * @param raceID The ID of the race of the odds.
+     * @return Array with horses' odds.
+     */
     public double[] getRaceOdds(int raceID) {
         double[] toRtn;
 

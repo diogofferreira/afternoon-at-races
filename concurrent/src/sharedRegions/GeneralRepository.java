@@ -361,6 +361,7 @@ public class GeneralRepository {
 
     /**
      * Method that sets the odds of the Horses running on the current race.
+     * @param raceID The ID of the race where these odds are applied.
      * @param horsesOdd Array of horses odds, indexed by their raceIdx.
      */
     public void setHorsesOdd(int raceID, double[] horsesOdd) {
