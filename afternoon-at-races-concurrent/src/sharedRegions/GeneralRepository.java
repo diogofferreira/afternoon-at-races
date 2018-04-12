@@ -99,6 +99,11 @@ public class GeneralRepository {
     private int[] horsesStanding;
 
     /**
+     * Number of spectators celebrating
+     */
+    private int celebrating;
+
+    /**
      * Creates a new instance of General Repository.
      * It also creates a new file (log) and prints the its header.
      */
@@ -119,6 +124,7 @@ public class GeneralRepository {
         this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        this.celebrating = 0;
 
         // Set up initial values for spectators info
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
@@ -218,6 +224,7 @@ public class GeneralRepository {
 
         pw.printf("  %4s ", brokerState != null ? brokerState : "----");
 
+
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf(" %3s %4s",
                     spectatorsState[i] != null ? spectatorsState[i] : "---",
@@ -250,11 +257,18 @@ public class GeneralRepository {
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %4s %2s  %2s  %1s",
                     brokerState != BrokerState.OPENING_THE_EVENT &&
-                            horsesOdd[raceNumber][i] != 0.0 ?
+                            horsesOdd[raceNumber][i] != 0.0 &&
+                            celebrating != EventVariables.NUMBER_OF_SPECTATORS?
                             String.format("%4.1f", horsesOdd[raceNumber][i]) : "----",
-                    horsesStep[i] != -1 ? horsesStep[i] : "--",
-                    horsesPosition[i] != -1 ? horsesPosition[i] : "--",
-                    horsesStanding[i] != -1 ? horsesStanding[i] : "-"
+                    horsesStep[i] != -1 &&
+                            celebrating != EventVariables.NUMBER_OF_SPECTATORS
+                            ? horsesStep[i] : "--",
+                    horsesPosition[i] != -1 &&
+                            celebrating != EventVariables.NUMBER_OF_SPECTATORS
+                            ? horsesPosition[i] : "--",
+                    horsesStanding[i] != -1 &&
+                            celebrating != EventVariables.NUMBER_OF_SPECTATORS
+                            ? horsesStanding[i] : "-"
             );
         pw.println();
         pw.close();
@@ -286,6 +300,13 @@ public class GeneralRepository {
         if (this.spectatorsState[spectatorId] == null)
             this.spectatorsWallet[spectatorId] = EventVariables.INITIAL_WALLET;
         this.spectatorsState[spectatorId] = spectatorState;
+
+        if (spectatorState == SpectatorState.CELEBRATING) {
+            celebrating++;
+            spectatorsBet[spectatorId] = -1;
+            spectatorsBettedHorse[spectatorId] = -1;
+        }
+
         printState();
 
         mutex.unlock();
