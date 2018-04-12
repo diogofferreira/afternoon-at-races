@@ -7,27 +7,27 @@ public enum HorseState {
     /**
      * Horse/Jockey pair is at the stable.
      */
-    AT_THE_STABLE("ATS"),
+    AT_THE_STABLE("ATS", 0),
 
     /**
      * Horse/Jockey pair is at the paddock, being appraised by the spectators.
      */
-    AT_THE_PADDOCK("ATP"),
+    AT_THE_PADDOCK("ATP", 1),
 
     /**
      * Horse/Jockey pair is ready to race, at the starting line.
      */
-    AT_THE_STARTING_LINE("ASL"),
+    AT_THE_STARTING_LINE("ASL", 2),
 
     /**
      * Horse/Jockey pair is running a race.
      */
-    RUNNING("RUN"),
+    RUNNING("RUN", 3),
 
     /**
      * Horse/Jockey pair crossed the finish line.
      */
-    AT_THE_FINISH_LINE("AFL");
+    AT_THE_FINISH_LINE("AFL", 4);
 
     /**
      * Textual representation of the states.
@@ -35,11 +35,25 @@ public enum HorseState {
     private final String logRepresentation;
 
     /**
+     * ID of the state;
+     */
+    private final int id;
+
+    /**
      * Constructor to add a new state.
      * @param logRepresentation Textual representation of the state.
      */
-    private HorseState(String logRepresentation) {
+    private HorseState(String logRepresentation, int id) {
         this.logRepresentation = logRepresentation;
+        this.id = id;
+    }
+
+    /**
+     * Method that returns an integer id of the state.
+     * @return Integer representation of the id;
+     */
+    public int getId() {
+        return this.id;
     }
 
     /**
