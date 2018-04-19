@@ -21,6 +21,10 @@ public class BettingCentreMessage implements Serializable {
     // entity id
     private int entityId;
 
+    public BettingCentreMessage(BettingCentreMessageTypes error) {
+        this.method = error.getId();
+    }
+
     public BettingCentreMessage(BettingCentreMessageTypes method,
                                 int entityId) {
         this.method = method.getId();

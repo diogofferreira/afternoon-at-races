@@ -8,7 +8,9 @@ public enum StableMessageTypes {
 
     PROCEED_TO_STABLE(2),
 
-    ENTERTAIN_THE_GUESTS(3);
+    ENTERTAIN_THE_GUESTS(3),
+
+    ERROR(4);
 
     /**
      * ID of the message type;

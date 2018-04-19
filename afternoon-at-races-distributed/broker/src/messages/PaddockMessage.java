@@ -11,6 +11,10 @@ public class PaddockMessage implements Serializable {
     // entity id
     private int entityId;
 
+    public PaddockMessage(PaddockMessageTypes error) {
+        this.method = error.getId();
+    }
+
     public PaddockMessage(PaddockMessageTypes method,
                           int entityId) {
         this.method = method.getId();

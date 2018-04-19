@@ -17,6 +17,10 @@ public class RacingTrackMessage implements Serializable {
     // entity id
     private int entityId;
 
+    public RacingTrackMessage(RacingTrackMessageTypes error) {
+        this.method = error.getId();
+    }
+
     public RacingTrackMessage(RacingTrackMessageTypes method,
                               int entityId) {
         this.method = method.getId();

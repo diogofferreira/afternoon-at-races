@@ -10,7 +10,9 @@ public enum BettingCentreMessageTypes {
 
     HONOUR_THE_BETS(3),
 
-    GO_COLLECT_THE_GAINS(4);
+    GO_COLLECT_THE_GAINS(4),
+
+    ERROR(5);
 
     /**
      * ID of the message type;

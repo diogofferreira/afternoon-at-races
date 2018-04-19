@@ -19,6 +19,10 @@ public class StableMessage implements Serializable {
     // entity id
     private int entityId;
 
+    public StableMessage(StableMessageTypes error) {
+        this.method = error.getId();
+    }
+
     public StableMessage(StableMessageTypes method,
                          int entityId) {
         this.method = method.getId();

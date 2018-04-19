@@ -26,6 +26,11 @@ public class GeneralRepositoryMessage implements Serializable {
     // entity id
     private int entityId;
 
+
+    public GeneralRepositoryMessage(GeneralRepositoryMessageTypes error) {
+        this.method = error.getId();
+    }
+
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
                                     int entityId) {
         this.method = method.getId();

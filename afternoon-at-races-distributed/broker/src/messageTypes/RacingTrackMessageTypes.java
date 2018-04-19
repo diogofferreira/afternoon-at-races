@@ -8,7 +8,9 @@ public enum RacingTrackMessageTypes {
 
     MAKE_A_MOVE(2),
 
-    HAS_FINISH_LINE_BEEN_CROSSED(3);
+    HAS_FINISH_LINE_BEEN_CROSSED(3),
+
+    ERROR(4);
 
     /**
      * ID of the message type;

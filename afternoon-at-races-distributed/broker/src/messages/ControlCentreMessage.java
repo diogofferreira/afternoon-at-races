@@ -21,6 +21,16 @@ public class ControlCentreMessage implements Serializable {
     // entity id
     private int entityId;
 
+    public ControlCentreMessage(ControlCentreMessageTypes error) {
+        this.method = error.getId();
+    }
+
+    public ControlCentreMessage(ControlCentreMessageTypes method,
+                                int entityId) {
+        this.method = method.getId();
+        this.entityId = entityId;
+    }
+
     public ControlCentreMessage(ControlCentreMessageTypes method,
                                 int raceIdOrHorseIdx, int entityId) {
         this.method = method.getId();
@@ -28,12 +38,6 @@ public class ControlCentreMessage implements Serializable {
             this.raceId = raceIdOrHorseIdx;
         else
             this.horseIdx = raceIdOrHorseIdx;
-        this.entityId = entityId;
-    }
-
-    public ControlCentreMessage(ControlCentreMessageTypes method,
-                                int entityId) {
-        this.method = method.getId();
         this.entityId = entityId;
     }
 

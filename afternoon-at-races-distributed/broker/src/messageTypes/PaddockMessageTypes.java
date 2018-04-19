@@ -4,7 +4,9 @@ public enum PaddockMessageTypes {
 
     PROCEED_TO_PADDOCK(0),
 
-    GO_CHECK_HORSES(1);
+    GO_CHECK_HORSES(1),
+
+    ERROR(2);
 
     /**
      * ID of the message type;

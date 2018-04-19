@@ -20,7 +20,9 @@ public enum GeneralRepositoryMessageTypes {
 
     SET_HORSES_STANDING(8),
 
-    INIT_RACE(9);
+    INIT_RACE(9),
+
+    ERROR(10);
 
     /**
      * ID of the message type;

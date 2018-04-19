@@ -22,7 +22,9 @@ public enum ControlCentreMessageTypes {
 
     CELEBRATE(9),
 
-    RELAX_A_BIT(10);
+    RELAX_A_BIT(10),
+
+    ERROR(11);
 
     /**
      * ID of the message type;
