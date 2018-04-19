@@ -46,4 +46,21 @@ public enum ControlCentreMessageTypes {
     public int getId() {
         return this.id;
     }
+
+    public static ControlCentreMessageTypes getType(int id) {
+        switch (id) {
+            case 0: return SUMMON_HORSES_TO_PADDOCK;
+            case 1: return WAIT_FOR_NEXT_RACE;
+            case 2: return PROCEED_TO_PADDOCK;
+            case 3: return GO_CHECK_HORSES;
+            case 4: return GO_WATCH_THE_RACE;
+            case 5: return START_THE_RACE;
+            case 6: return FINISH_THE_RACE;
+            case 7: return REPORT_RESULTS;
+            case 8: return HAVE_I_WON;
+            case 9: return CELEBRATE;
+            case 10: return RELAX_A_BIT;
+            default: return null;
+        }
+    }
 }

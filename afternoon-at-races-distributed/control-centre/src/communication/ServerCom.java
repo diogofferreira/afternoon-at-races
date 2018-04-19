@@ -85,6 +85,15 @@ public class ServerCom {
             e.printStackTrace();
             System.exit(1);
         }
+
+        try {
+            listeningSocket.setSoTimeout(1000);
+        } catch (SocketException e) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - cannot set socket timeout: " + serverPortNumb + "!");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -117,6 +126,8 @@ public class ServerCom {
         scon = new ServerCom(serverPortNumb, listeningSocket);
         try {
             scon.commSocket = listeningSocket.accept();
+        } catch (SocketTimeoutException e) {
+            // do nothing
         } catch (SocketException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - the socket was closed while listening!");

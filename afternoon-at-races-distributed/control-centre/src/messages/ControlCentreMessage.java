@@ -15,24 +15,51 @@ public class ControlCentreMessage implements Serializable {
 
     // replies
     private boolean isThereARace;
-    private boolean haceIWon;
+    private boolean haveIWon;
     private int[] winners;
 
     // entity id
     private int entityId;
 
-    // entity state
-    private int entityState;
-
-    public ControlCentreMessage(ControlCentreMessageTypes method, int raceId) {
-        this.method = method.getId();
-        this.raceId = raceId;
-        this.entityId = 0; // broker only
+    public ControlCentreMessage(ControlCentreMessageTypes error) {
+        this.method = error.getId();
     }
 
-    public ControlCentreMessage(ControlCentreMessageTypes method) {
+    public ControlCentreMessage(ControlCentreMessageTypes method,
+                                int entityId) {
         this.method = method.getId();
-        this.entityId = 0; // broker only
+        this.entityId = entityId;
+    }
+
+    public ControlCentreMessage(ControlCentreMessageTypes method,
+                                int raceIdOrHorseIdx, int entityId) {
+        this.method = method.getId();
+        if (this.method == 0)
+            this.raceId = raceIdOrHorseIdx;
+        else
+            this.horseIdx = raceIdOrHorseIdx;
+        this.entityId = entityId;
+    }
+
+    public ControlCentreMessage(ControlCentreMessageTypes method,
+                                boolean isThereARaceOrHaveIWon, int entityId) {
+        this.method = method.getId();
+        if (this.method == 1)
+            this.isThereARace = isThereARaceOrHaveIWon;
+        else
+            this.haveIWon = isThereARaceOrHaveIWon;
+        this.entityId = entityId;
+    }
+
+
+    public ControlCentreMessage(ControlCentreMessageTypes method,
+                                int[] standingsOrWinners, int entityId) {
+        this.method = method.getId();
+        if (this.method == 6)
+            this.standings = standingsOrWinners;
+        else
+            this.winners = standingsOrWinners;
+        this.entityId = entityId;
     }
 
     public int getMethod() {
@@ -75,12 +102,12 @@ public class ControlCentreMessage implements Serializable {
         isThereARace = thereARace;
     }
 
-    public boolean isHaceIWon() {
-        return haceIWon;
+    public boolean isHaveIWon() {
+        return haveIWon;
     }
 
-    public void setHaceIWon(boolean haceIWon) {
-        this.haceIWon = haceIWon;
+    public void setHaveIWon(boolean haceIWon) {
+        this.haveIWon = haceIWon;
     }
 
     public int[] getWinners() {
@@ -97,13 +124,5 @@ public class ControlCentreMessage implements Serializable {
 
     public void setEntityId(int entityId) {
         this.entityId = entityId;
-    }
-
-    public int getEntityState() {
-        return entityState;
-    }
-
-    public void setEntityState(int entityState) {
-        this.entityState = entityState;
     }
 }

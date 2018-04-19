@@ -3,6 +3,7 @@ package communication;
 import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
 import sharedRegions.ControlCentre;
+import sharedRegionsInterfaces.ControlCentreInterface;
 
 /**
  * This data type defines the server side thread that effectively provides the
@@ -12,7 +13,7 @@ import sharedRegions.ControlCentre;
 public class ControlCentreAPS extends Thread {
 
     private ServerCom com;                  // socket de comunicação com o cliente
-    private ControlCentre controlCentre;    // serviço a ser fornecido
+    private ControlCentreInterface ccInt;    // serviço a ser fornecido
 
     /**
      *  Constructor to initiate variables.
@@ -20,28 +21,26 @@ public class ControlCentreAPS extends Thread {
      *     @param com Communication channel.
      *     @param controlCentre Instance of ControlCentre to provide the service.
      */
-    public ControlCentreAPS (ServerCom com, ControlCentre controlCentre) {
+    public ControlCentreAPS (ServerCom com, ControlCentreInterface ccInt) {
+        if (com == null)
+            throw new IllegalArgumentException("Invalid communication socket.");
+        if (ccInt == null)
+            throw new IllegalArgumentException("Invalid Control Centre interface.");
+
         this.com = com;
-        this.controlCentre = controlCentre;
+        this.ccInt = ccInt;
     }
 
     /**
      *  Provide the service.
      */
     @Override
-    public void run () {
+    public void run() {
         ControlCentreMessage inMessage = (ControlCentreMessage)com.readObject();
+
         ControlCentreMessage outMessage = null;
 
-        switch (ControlCentreMessageTypes.getType(inMessage.getMethod())) {
-            case SUMMON_HORSES_TO_PADDOCK:
-                controlCentre.summonHorsesToPaddock(inMessage.getRaceId());
-                outMessage = new ControlCentreMessage(
-                        ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK);
-                break;
-            default:
-                System.out.println("Error"); break;
-        }
+
 
         com.writeObject(outMessage);
     }
