@@ -1,5 +1,7 @@
 package messages;
 
+import messageTypes.BettingCentreMessageTypes;
+
 import java.io.Serializable;
 
 public class BettingCentreMessage implements Serializable {
@@ -9,7 +11,7 @@ public class BettingCentreMessage implements Serializable {
     // arguments
     private int raceId;
     private int spectatorId;
-    private int[] winner;
+    private int[] winners;
 
     // replies
     private boolean areThereAnyWinners;
@@ -19,14 +21,41 @@ public class BettingCentreMessage implements Serializable {
     // entity id
     private int entityId;
 
-    // acceptTheBets method
-    public BettingCentreMessage(int raceId) {
-        this.raceId = raceId;
-        this.method = 1;
+    public BettingCentreMessage(BettingCentreMessageTypes method,
+                                int entityId) {
+        this.method = method.getId();
+        this.entityId = entityId;
     }
 
-    // placeABet method
-    public BettingCentreMessage() {
+    public BettingCentreMessage(BettingCentreMessageTypes method,
+                                int raceIdOrBettedHorse, int entityId) {
+        this.method = method.getId();
+        if (this.method == 0)
+            this.raceId = raceIdOrBettedHorse;
+        else
+            this.bettedHorse = raceIdOrBettedHorse;
+        this.entityId = entityId;
+    }
+
+    public BettingCentreMessage(BettingCentreMessageTypes method,
+                                int[] winners, int entityId) {
+        this.method = method.getId();
+        this.winners = winners;
+        this.entityId = entityId;
+    }
+
+    public BettingCentreMessage(BettingCentreMessageTypes method,
+                                boolean areThereAnyWinners, int entityId) {
+        this.method = method.getId();
+        this.areThereAnyWinners = areThereAnyWinners;
+        this.entityId = entityId;
+    }
+
+    public BettingCentreMessage(BettingCentreMessageTypes method,
+                                double winningValue, int entityId) {
+        this.method = method.getId();
+        this.winningValue = winningValue;
+        this.entityId = entityId;
     }
 
     public int getMethod() {
@@ -41,8 +70,8 @@ public class BettingCentreMessage implements Serializable {
         return spectatorId;
     }
 
-    public int[] getWinner() {
-        return winner;
+    public int[] getWinners() {
+        return winners;
     }
 
     public boolean isAreThereAnyWinners() {

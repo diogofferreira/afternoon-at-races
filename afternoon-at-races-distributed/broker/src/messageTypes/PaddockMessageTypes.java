@@ -1,28 +1,10 @@
 package messageTypes;
 
-public enum ControlCentreMessageTypes {
+public enum PaddockMessageTypes {
 
-    SUMMON_HORSES_TO_PADDOCK(0),
+    PROCEED_TO_PADDOCK(0),
 
-    WAIT_FOR_NEXT_RACE(1),
-
-    PROCEED_TO_PADDOCK(2),
-
-    GO_CHECK_HORSES(3),
-
-    GO_WATCH_THE_RACE(4),
-
-    START_THE_RACE(5),
-
-    FINISH_THE_RACE(6),
-
-    REPORT_RESULTS(7),
-
-    HAVE_I_WON(8),
-
-    CELEBRATE(9),
-
-    RELAX_A_BIT(10);
+    GO_CHECK_HORSES(1);
 
     /**
      * ID of the message type;
@@ -33,7 +15,7 @@ public enum ControlCentreMessageTypes {
      * Constructor to add a new message type.
      * @param id ID of the message type.
      */
-    private ControlCentreMessageTypes(int id) {
+    private PaddockMessageTypes(int id) {
         this.id = id;
     }
 

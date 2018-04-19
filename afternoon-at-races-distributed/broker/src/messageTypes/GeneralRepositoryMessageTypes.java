@@ -1,28 +1,26 @@
 package messageTypes;
 
-public enum ControlCentreMessageTypes {
+public enum GeneralRepositoryMessageTypes {
 
-    SUMMON_HORSES_TO_PADDOCK(0),
+    SET_BROKER_STATE(0),
 
-    WAIT_FOR_NEXT_RACE(1),
+    SET_SPECTATOR_STATE(1),
 
-    PROCEED_TO_PADDOCK(2),
+    SET_HORSE_STATE(2),
 
-    GO_CHECK_HORSES(3),
+    SET_SPECTATOR_GAINS(3),
 
-    GO_WATCH_THE_RACE(4),
+    SET_SPECTATORS_BET(4),
 
-    START_THE_RACE(5),
+    SET_HORSE_AGILITY(5),
 
-    FINISH_THE_RACE(6),
+    SET_HORSES_ODD(6),
 
-    REPORT_RESULTS(7),
+    SET_HORSE_POSITION(7),
 
-    HAVE_I_WON(8),
+    SET_HORSES_STANDING(8),
 
-    CELEBRATE(9),
-
-    RELAX_A_BIT(10);
+    INIT_RACE(9);
 
     /**
      * ID of the message type;
@@ -33,7 +31,7 @@ public enum ControlCentreMessageTypes {
      * Constructor to add a new message type.
      * @param id ID of the message type.
      */
-    private ControlCentreMessageTypes(int id) {
+    private GeneralRepositoryMessageTypes(int id) {
         this.id = id;
     }
 
