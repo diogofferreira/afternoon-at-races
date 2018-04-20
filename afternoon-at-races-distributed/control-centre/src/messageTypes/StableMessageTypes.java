@@ -32,4 +32,20 @@ public enum StableMessageTypes {
     public int getId() {
         return this.id;
     }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static StableMessageTypes getType(int id) {
+        switch (id) {
+            case 0: return GET_RACE_ODDS;
+            case 1: return SUMMON_HORSES_TO_PADDOCK;
+            case 2: return PROCEED_TO_STABLE;
+            case 3: return ENTERTAIN_THE_GUESTS;
+            case 4: return ERROR;
+            default: return null;
+        }
+    }
 }

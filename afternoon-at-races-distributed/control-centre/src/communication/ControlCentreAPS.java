@@ -19,7 +19,7 @@ public class ControlCentreAPS extends Thread {
      *  Constructor to initiate variables.
      *
      *     @param com Communication channel.
-     *     @param controlCentre Instance of ControlCentre to provide the service.
+     *     @param ccInt Instance of ControlCentreInterface to provide the service.
      */
     public ControlCentreAPS (ServerCom com, ControlCentreInterface ccInt) {
         if (com == null)
@@ -37,9 +37,7 @@ public class ControlCentreAPS extends Thread {
     @Override
     public void run() {
         ControlCentreMessage inMessage = (ControlCentreMessage)com.readObject();
-
-        ControlCentreMessage outMessage = null;
-
+        ControlCentreMessage outMessage = ccInt.processAndReply(inMessage);
         com.writeObject(outMessage);
     }
 }

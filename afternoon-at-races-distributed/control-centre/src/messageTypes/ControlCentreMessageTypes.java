@@ -47,6 +47,11 @@ public enum ControlCentreMessageTypes {
         return this.id;
     }
 
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
     public static ControlCentreMessageTypes getType(int id) {
         switch (id) {
             case 0: return SUMMON_HORSES_TO_PADDOCK;

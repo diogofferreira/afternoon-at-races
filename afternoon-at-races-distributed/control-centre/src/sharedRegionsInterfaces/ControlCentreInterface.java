@@ -24,6 +24,11 @@ public class ControlCentreInterface {
 
         switch (mType) {
             case SUMMON_HORSES_TO_PADDOCK:
+                int raceID = inMessage.getRaceId();
+
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
+                    return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+
                 controlCentre.summonHorsesToPaddock(inMessage.getRaceId());
                 return new ControlCentreMessage(
                         ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, 0);
