@@ -3,6 +3,7 @@ package stubs;
 
 import communication.ClientCom;
 import entities.Broker;
+import main.EventVariables;
 import messageTypes.ControlCentreMessageTypes;
 import messageTypes.GeneralRepositoryMessageTypes;
 import messages.ControlCentreMessage;
@@ -59,46 +60,110 @@ public class GeneralRepositoryStub {
     }
 
     public void initRace(int raceNumber) {
-        exchange(new GeneralRepositoryMessage(GeneralRepositoryMessageTypes.INIT_RACE));
+        GeneralRepositoryMessage inMessage;
+
+        if (raceNumber < 0 || raceNumber > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
+                GeneralRepositoryMessageTypes.INIT_RACE));
+
+        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    GeneralRepositoryMessageTypes.INIT_RACE);
+            System.exit(1);
+        }
     }
 
     public void setBrokerState(BrokerState brokerState) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (brokerState == null)
+            throw new IllegalArgumentException("Invalid broker state");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_BROKER_STATE,
                 brokerState.getId(), 0));
     }
 
     public void setHorseAgility(int raceID, int horseIdx, int horseAgility) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+        if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse idx");
+        if (horseAgility < 1 || horseAgility > EventVariables.HORSE_MAX_STEP)
+            throw new IllegalArgumentException("Invalid horse agility");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_AGILITY, raceID,
                 horseIdx, horseAgility, horseIdx));
     }
 
     public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse idx");
+        if (horsePosition < 0)
+            throw new IllegalArgumentException("Invalid horse position");
+        if (horseStep < 0)
+            throw new IllegalArgumentException("Invalid horse step");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_POSITION, horseIdx,
                 horsePosition, horseStep, horseIdx));
     }
 
     public void setHorseOdd(int raceID, double[] horsesOdd) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+        if (horsesOdd == null ||
+                horsesOdd.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse odds");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSES_ODD, raceID,
                 horsesOdd, 0));
     }
 
     public void setHorsesStanding(int[] standings) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (standings == null ||
+                standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse standings");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSES_STANDING, standings, 0));
     }
 
     public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+        if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse idx");
+        if (horseState == null)
+            throw new IllegalArgumentException("Invalid horse state");
+
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_STATE, raceID,
                 horseIdx, horseState.getId(), horseIdx));
     }
 
     public void setSpectatorsGains(int spectatorID, int amount) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
+            throw new IllegalArgumentException("Invalid spectator ID");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, spectatorID,
                 amount, 0));
         // REVER CONSTRUTOR
@@ -106,13 +171,30 @@ public class GeneralRepositoryStub {
 
     public void setSpectatorsBet(int spectatorID, int spectatorBet,
                                 int spectatorBettedHorse) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
+            throw new IllegalArgumentException("Invalid spectator ID");
+        if (spectatorBet < 0)
+            throw new IllegalArgumentException("Invalid spectator bet amount");
+        if (spectatorBettedHorse < 0 ||
+                spectatorBettedHorse > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid horse idx");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATORS_BET, spectatorID,
                 spectatorBet, spectatorBettedHorse, 0));
     }
 
     public void setSpectatorState(int spectatorID, SpectatorState spectatorState) {
-        exchange(new GeneralRepositoryMessage(
+        GeneralRepositoryMessage inMessage;
+
+        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+            throw new IllegalArgumentException("Invalid spectator ID");
+        if (spectatorState == null)
+            throw new IllegalArgumentException("Invalid spectator state");
+        
+        inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE, spectatorID,
                 spectatorState.getId(), spectatorID));
     }

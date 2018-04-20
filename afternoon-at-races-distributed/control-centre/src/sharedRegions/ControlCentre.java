@@ -6,6 +6,7 @@ import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
 import stubs.GeneralRepositoryStub;
+import stubs.StableStub;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -88,21 +89,22 @@ public class ControlCentre {
     private GeneralRepositoryStub generalRepository;
 
     /**
-     * Instance of the shared region Stable.
+     * Instance of the communication stub for the shared region Stable.
      */
-    private Stable stable;
+    private StableStub stable;
 
     /**
      * Creates a new instance of Control Centre.
      * @param generalRepository Reference to an instance of a communication stub
      *                         for the shared region General Repository.
-     * @param stable Reference to an instance of the shared region Stable.
+     * @param stable Reference to an instance of the communication stub
+     *               for the shared region Stable.
      */
-    public ControlCentre(GeneralRepositoryStub generalRepository, Stable stable) {
+    public ControlCentre(GeneralRepositoryStub generalRepository, StableStub stable) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository Stub.");
         if (stable == null)
-            throw new IllegalArgumentException("Invalid Stable.");
+            throw new IllegalArgumentException("Invalid Stable Stub.");
 
         this.generalRepository = generalRepository;
         this.stable = stable;

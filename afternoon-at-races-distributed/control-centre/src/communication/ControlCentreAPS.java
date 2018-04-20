@@ -40,8 +40,6 @@ public class ControlCentreAPS extends Thread {
 
         ControlCentreMessage outMessage = null;
 
-
-
         com.writeObject(outMessage);
     }
 }
