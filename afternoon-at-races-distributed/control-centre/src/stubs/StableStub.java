@@ -70,9 +70,6 @@ public class StableStub {
         double[] raceOdds;
         StableMessage inMessage;
 
-        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
-            throw new IllegalArgumentException("Invalid race ID");
-
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.GET_RACE_ODDS, raceID, 0));
 
@@ -87,7 +84,7 @@ public class StableStub {
         if (raceOdds == null ||
                 raceOdds.length != EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
+                    " - Invalid race odds array - " +
                     StableMessageTypes.GET_RACE_ODDS);
             System.exit(1);
         }
