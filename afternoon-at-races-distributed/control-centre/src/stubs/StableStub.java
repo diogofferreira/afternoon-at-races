@@ -1,10 +1,11 @@
 package stubs;
 
-
 import communication.ClientCom;
+import entities.Horse;
 import main.EventVariables;
 import messageTypes.StableMessageTypes;
 import messages.StableMessage;
+import states.HorseState;
 
 
 /**
@@ -70,6 +71,9 @@ public class StableStub {
         double[] raceOdds;
         StableMessage inMessage;
 
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.GET_RACE_ODDS, raceID, 0));
 
@@ -93,7 +97,11 @@ public class StableStub {
     }
 
     public void proceedToStable() {
-        StableMessage inMessage = exchange(new StableMessage(
+        Horse h;
+        StableMessage inMessage;
+
+        h = (Horse) Thread.currentThread();
+        inMessage = exchange(new StableMessage(
                 StableMessageTypes.PROCEED_TO_STABLE, 0));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
@@ -102,6 +110,8 @@ public class StableStub {
                     StableMessageTypes.PROCEED_TO_STABLE);
             System.exit(1);
         }
+
+        h.setHorseState(HorseState.AT_THE_STABLE);
     }
 
     public void summonHorsesToPaddock(int raceID) {
