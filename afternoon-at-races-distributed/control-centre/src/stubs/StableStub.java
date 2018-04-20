@@ -34,7 +34,7 @@ public class StableStub {
     }
 
     /**
-     * Message exchanged with Control Centre server.
+     * Message exchanged with Stable server.
      */
     private StableMessage exchange(StableMessage outMessage) {
         ClientCom com = new ClientCom(serverHostName, serverPortNumb);

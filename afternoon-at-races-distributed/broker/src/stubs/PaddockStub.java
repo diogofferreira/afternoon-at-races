@@ -1,16 +1,10 @@
 package stubs;
 
-
 import communication.ClientCom;
 import entities.Horse;
 import entities.Spectator;
-import main.EventVariables;
-import messageTypes.ControlCentreMessageTypes;
-import entities.Broker;
 import messageTypes.PaddockMessageTypes;
-import messages.ControlCentreMessage;
 import messages.PaddockMessage;
-import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
 
@@ -41,7 +35,7 @@ public class PaddockStub {
     }
 
     /**
-     * Message exchanged with Control Centre server.
+     * Message exchanged with Paddock server.
      */
     private PaddockMessage exchange(PaddockMessage outMessage) {
         ClientCom com = new ClientCom(serverHostName, serverPortNumb);
@@ -85,7 +79,7 @@ public class PaddockStub {
 
         h = (Horse) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
-                PaddockMessageTypes.PROCEED_TO_PADDOCK, s.getID()));
+                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
