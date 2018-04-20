@@ -19,11 +19,8 @@ public class ControlCentreInterface {
     public ControlCentreMessage processAndReply(ControlCentreMessage inMessage) {
         ControlCentreMessageTypes mType;
 
-        try {
-            mType = ControlCentreMessageTypes.getType(inMessage.getMethod());
-        } catch (NullPointerException e) {
+        if ((mType = ControlCentreMessageTypes.getType(inMessage.getMethod())) == null)
             return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
-        }
 
         switch (mType) {
             case SUMMON_HORSES_TO_PADDOCK:

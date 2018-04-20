@@ -1,6 +1,7 @@
-package communication;
+package stubs;
 
 
+import communication.ClientCom;
 import messageTypes.ControlCentreMessageTypes;
 import entities.Broker;
 import messages.ControlCentreMessage;

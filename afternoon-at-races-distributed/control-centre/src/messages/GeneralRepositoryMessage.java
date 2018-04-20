@@ -80,7 +80,7 @@ public class GeneralRepositoryMessage implements Serializable {
     }
 
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
-                                    int bettedHorse, int spectatorBet, int entityId) {
+                                    int spectatorBet, int bettedHorse, int entityId) {
         this.method = method.getId();
         this.spectatorBettedHorse = bettedHorse;
         this.spectatorBet = spectatorBet;
