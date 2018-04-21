@@ -69,4 +69,21 @@ public enum SpectatorState {
     public String toString() {
         return logRepresentation;
     }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static SpectatorState getType(int id) {
+        switch (id) {
+            case 0: return WAITING_FOR_A_RACE_TO_START;
+            case 1: return APPRAISING_THE_HORSES;
+            case 2: return PLACING_A_BET;
+            case 3: return WATCHING_A_RACE;
+            case 4: return COLLECTING_THE_GAINS;
+            case 5: return CELEBRATING;
+            default: return null;
+        }
+    }
 }

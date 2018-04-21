@@ -69,4 +69,21 @@ public enum BrokerState {
     public String toString() {
         return logRepresentation;
     }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static BrokerState getType(int id) {
+        switch (id) {
+            case 0: return OPENING_THE_EVENT;
+            case 1: return ANNOUNCING_NEXT_RACE;
+            case 2: return WAITING_FOR_BETS;
+            case 3: return SUPERVISING_THE_RACE;
+            case 4: return SETTLING_ACCOUNTS;
+            case 5: return PLAYING_HOST_AT_THE_BAR;
+            default: return null;
+        }
+    }
 }

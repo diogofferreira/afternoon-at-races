@@ -64,4 +64,20 @@ public enum HorseState {
     public String toString() {
         return logRepresentation;
     }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static HorseState getType(int id) {
+        switch (id) {
+            case 0: return AT_THE_STABLE;
+            case 1: return AT_THE_PADDOCK;
+            case 2: return AT_THE_STARTING_LINE;
+            case 3: return RUNNING;
+            case 4: return AT_THE_FINISH_LINE;
+            default: return null;
+        }
+    }
 }
