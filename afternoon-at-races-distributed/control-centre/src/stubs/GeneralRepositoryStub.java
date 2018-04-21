@@ -204,11 +204,10 @@ public class GeneralRepositoryStub {
 
         if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
             throw new IllegalArgumentException("Invalid spectator ID");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, spectatorID,
-                amount, 0));
-        // REVER CONSTRUTOR
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, amount,
+                spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

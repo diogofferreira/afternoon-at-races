@@ -49,7 +49,7 @@ public class RacingTrackMessage implements Serializable {
         return step;
     }
 
-    public boolean isHasFinishLineBeenCrossed() {
+    public boolean hasFinishLineBeenCrossed() {
         return hasFinishLineBeenCrossed;
     }
 
