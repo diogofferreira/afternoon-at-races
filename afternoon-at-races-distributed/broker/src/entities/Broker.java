@@ -1,11 +1,12 @@
 package entities;
 
 import main.EventVariables;
-import sharedRegions.BettingCentre;
-import sharedRegions.ControlCentre;
-import sharedRegions.RacingTrack;
-import sharedRegions.Stable;
+
 import states.BrokerState;
+import stubs.BettingCentreStub;
+import stubs.ControlCentreStub;
+import stubs.RacingTrackStub;
+import stubs.StableStub;
 
 /**
  * The Broker is the entity that controls the event, regulates the bets
@@ -20,22 +21,22 @@ public class Broker extends Thread {
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableStub stable;
 
     /**
      * Instance of the shared region Racing Track.
      */
-    private RacingTrack racingTrack;
+    private RacingTrackStub racingTrack;
 
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreStub controlCentre;
 
     /**
      * Instance of the shared region Betting Centre.
      */
-    private BettingCentre bettingCentre;
+    private BettingCentreStub bettingCentre;
 
     /**
      * Creates a new instance of Broker.
@@ -47,8 +48,8 @@ public class Broker extends Thread {
      * @param bettingCentre Reference to an instance of the shared region
      *                      Betting Centre.
      */
-    public Broker(Stable stable, RacingTrack racingTrack,
-                  ControlCentre controlCentre, BettingCentre bettingCentre) {
+    public Broker(StableStub stable, RacingTrackStub racingTrack,
+                  ControlCentreStub controlCentre, BettingCentreStub bettingCentre) {
         if (stable == null || racingTrack == null ||
                 controlCentre == null || bettingCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");

@@ -1,11 +1,7 @@
 package main;
 
 import entities.Broker;
-import entities.Horse;
-import entities.Spectator;
-import sharedRegions.*;
-
-import java.util.Random;
+import stubs.*;
 
 /**
  * Main class of the event.
@@ -18,74 +14,41 @@ public class AnAfternoonAtTheRaces {
      * @param args Runtime arguments.
      */
     public static void main (String [] args) {
-        Random rnd;
-        int agility;                            // Agility of the horses
-        int[] horsesIdx;                        // Array of horses indexes
-        Stable stable;                          // Instance of Stable
-        Paddock paddock;                        // Instance of Paddock
-        RacingTrack racingTrack;                // Instance of Racing Track
-        ControlCentre controlCentre;            // Instance of Control Centre
-        BettingCentre bettingCentre;            // Instance of Betting Centre
-        GeneralRepository generalRepository;    // Instance of General Repository
+        StableStub stable;                          // instance of Stable
+        RacingTrackStub racingTrack;                // instance of Racing Track
+        ControlCentreStub controlCentre;            // instance of Control Centre
+        BettingCentreStub bettingCentre;            // instance of Betting Centre
 
-        rnd = new Random();
-
-        // generate races lineup (just placing all ids in an array to later be
-        // shuffled at the stable)
-        horsesIdx = new int[EventVariables.NUMBER_OF_HORSES];
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
-            horsesIdx[i] = i;
+        /**
+         * LOCATIONS
+         * CC - ws01
+         * GR - ws02
+         * ST - ws03
+         * PA - ws04
+         * RT - ws05
+         * BC - ws06
+         * B  - ws07
+         * H  - ws08
+         * S  - ws09
+         */
 
         // shared regions initialization
-        generalRepository = new GeneralRepository();
-        stable = new Stable(generalRepository, horsesIdx);
-        controlCentre = new ControlCentre(generalRepository, stable);
-        paddock = new Paddock(generalRepository, controlCentre);
-        racingTrack = new RacingTrack(generalRepository, controlCentre);
-        bettingCentre = new BettingCentre(generalRepository, stable);
+        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
+                22401);
+        stable = new StableStub("l040101-ws03.ua.pt",
+                22403);
+        racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
+                22405);
+        bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
+                22406);
 
         // entities initialization
         Broker broker = new Broker(stable, racingTrack, controlCentre, bettingCentre);
-        Horse [] horses = new Horse[EventVariables.NUMBER_OF_HORSES];
-        Spectator[] spectators = new Spectator[EventVariables.NUMBER_OF_SPECTATORS];
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++) {
-            agility = rnd.nextInt(EventVariables.HORSE_MAX_STEP) + 1;
-            horses[i] = new Horse(i, agility, stable, paddock, racingTrack);
-        }
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
-            spectators[i] = new Spectator(i, EventVariables.INITIAL_WALLET, i,
-                    paddock, controlCentre, bettingCentre);
-        }
 
         // start of the simulation
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
-            horses[i].start();
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
-            spectators[i].start();
-
         broker.start();
 
         // end of the simulation
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++) {
-            try {
-                horses[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
-            try {
-                spectators[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
             broker.join();
         } catch (InterruptedException e) {

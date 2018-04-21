@@ -7,12 +7,14 @@ import sharedRegions.ControlCentre;
 
 public class ControlCentreInterface {
 
+    private int requests;
     private ControlCentre controlCentre;
 
     public ControlCentreInterface(ControlCentre controlCentre) {
         if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
 
+        this.requests = 0;
         this.controlCentre = controlCentre;
     }
 
@@ -94,11 +96,16 @@ public class ControlCentreInterface {
 
             case RELAX_A_BIT:
                 controlCentre.relaxABit();
+                requests++;
                 return new ControlCentreMessage(
                         ControlCentreMessageTypes.RELAX_A_BIT, 0);
 
             default:
                 return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
         }
+    }
+
+    public int getRequests() {
+        return requests;
     }
 }

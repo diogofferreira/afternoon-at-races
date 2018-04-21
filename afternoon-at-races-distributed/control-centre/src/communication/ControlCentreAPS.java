@@ -21,7 +21,7 @@ public class ControlCentreAPS extends Thread {
      *     @param com Communication channel.
      *     @param ccInt Instance of ControlCentreInterface to provide the service.
      */
-    public ControlCentreAPS (ServerCom com, ControlCentreInterface ccInt) {
+    public ControlCentreAPS(ServerCom com, ControlCentreInterface ccInt) {
         if (com == null)
             throw new IllegalArgumentException("Invalid communication socket.");
         if (ccInt == null)

@@ -140,7 +140,7 @@ public class BettingCentreStub {
         b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
     }
 
-    public double placeABet() {
+    public int placeABet() {
         Spectator s;
         BettingCentreMessage inMessage;
 

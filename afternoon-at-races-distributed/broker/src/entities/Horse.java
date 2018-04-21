@@ -1,10 +1,11 @@
 package entities;
 
 import main.EventVariables;
-import sharedRegions.Paddock;
-import sharedRegions.RacingTrack;
-import sharedRegions.Stable;
+
 import states.HorseState;
+import stubs.PaddockStub;
+import stubs.RacingTrackStub;
+import stubs.StableStub;
 
 import java.util.Random;
 
@@ -52,17 +53,17 @@ public class Horse extends Thread {
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableStub stable;
 
     /**
      * Instance of the shared region Paddock.
      */
-    private Paddock paddock;
+    private PaddockStub paddock;
 
     /**
      * Instance of the shared region Racing Track.
      */
-    private RacingTrack racingTrack;
+    private RacingTrackStub racingTrack;
 
     /**
      * Creates a new instance of Horse/Jockey pair.
@@ -73,8 +74,8 @@ public class Horse extends Thread {
      * @param racingTrack Reference to an instance of the shared region
      *                   Racing Track.
      */
-    public Horse(int id, int agility, Stable stable, Paddock paddock,
-                 RacingTrack racingTrack) {
+    public Horse(int id, int agility, StableStub stable, PaddockStub paddock,
+                 RacingTrackStub racingTrack) {
         if (id < 0)
             throw new IllegalArgumentException("Invalid Horse ID.");
         if (agility < 0 || agility > EventVariables.HORSE_MAX_STEP)

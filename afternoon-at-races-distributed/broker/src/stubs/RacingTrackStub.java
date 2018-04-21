@@ -74,10 +74,10 @@ public class RacingTrackStub {
             System.exit(1);
         }
 
-        if (inMessage.isHasFinishLineBeenCrossed())
+        if (inMessage.hasFinishLineBeenCrossed())
             h.setHorseState(HorseState.AT_THE_FINISH_LINE);
 
-        return inMessage.isHasFinishLineBeenCrossed();
+        return inMessage.hasFinishLineBeenCrossed();
     }
 
     public void makeAMove(int step) {

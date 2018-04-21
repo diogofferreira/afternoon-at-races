@@ -1,7 +1,9 @@
 package entities;
 
-import sharedRegions.*;
 import states.SpectatorState;
+import stubs.BettingCentreStub;
+import stubs.ControlCentreStub;
+import stubs.PaddockStub;
 
 /**
  * The Spectator is the entity which attends the event and bets on horses to win
@@ -31,17 +33,17 @@ public class Spectator extends Thread {
     /**
      * Instance of the shared region Paddock.
      */
-    private Paddock paddock;
+    private PaddockStub paddock;
 
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreStub controlCentre;
 
     /**
      * Instance of the shared region Betting Centre.
      */
-    private BettingCentre bettingCentre;
+    private BettingCentreStub bettingCentre;
 
     /**
      * Creates a new instance of Spectator.
@@ -54,8 +56,8 @@ public class Spectator extends Thread {
      * @param bettingCentre Reference to an instance of the shared region
      *                      Betting Centre.
      */
-    public Spectator(int id, int wallet, int strategy, Paddock paddock,
-                     ControlCentre controlCentre, BettingCentre bettingCentre) {
+    public Spectator(int id, int wallet, int strategy, PaddockStub paddock,
+                     ControlCentreStub controlCentre, BettingCentreStub bettingCentre) {
         if (paddock == null)
             throw new IllegalArgumentException("Invalid Paddock.");
         if (controlCentre == null)
