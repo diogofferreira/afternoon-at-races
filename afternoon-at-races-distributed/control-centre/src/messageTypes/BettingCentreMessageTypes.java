@@ -34,4 +34,21 @@ public enum BettingCentreMessageTypes {
     public int getId() {
         return this.id;
     }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static BettingCentreMessageTypes getType(int id) {
+        switch (id) {
+            case 0: return ACCEPT_THE_BETS;
+            case 1: return PLACE_A_BET;
+            case 2: return ARE_THERE_ANY_WINNERS;
+            case 3: return HONOUR_THE_BETS;
+            case 4: return GO_COLLECT_THE_GAINS;
+            case 5: return ERROR;
+            default: return null;
+        }
+    }
 }
