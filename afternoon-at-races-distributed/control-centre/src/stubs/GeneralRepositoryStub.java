@@ -2,11 +2,8 @@ package stubs;
 
 
 import communication.ClientCom;
-import entities.Broker;
 import main.EventVariables;
-import messageTypes.ControlCentreMessageTypes;
 import messageTypes.GeneralRepositoryMessageTypes;
-import messages.ControlCentreMessage;
 import messages.GeneralRepositoryMessage;
 import states.BrokerState;
 import states.HorseState;
@@ -138,7 +135,7 @@ public class GeneralRepositoryStub {
         }
     }
 
-    public void setHorseOdd(int raceID, double[] horsesOdd) {
+    public void setHorsesOdd(int raceID, double[] horsesOdd) {
         GeneralRepositoryMessage inMessage;
 
         if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
@@ -204,7 +201,7 @@ public class GeneralRepositoryStub {
 
         if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
             throw new IllegalArgumentException("Invalid spectator ID");
-
+        
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, amount,
                 spectatorID));

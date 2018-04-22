@@ -1,13 +1,16 @@
 package main;
 
 import entities.Broker;
-import stubs.*;
+import stubs.BettingCentreStub;
+import stubs.ControlCentreStub;
+import stubs.RacingTrackStub;
+import stubs.StableStub;
 
 /**
  * Main class of the event.
- * It will start all shared regions and threads (active entities).
+ * It will start the broker entity.
  */
-public class AnAfternoonAtTheRaces {
+public class BrokerMain {
 
     /**
      * Main method.

@@ -1,26 +1,26 @@
 package main;
 
-import communication.ControlCentreAPS;
+import communication.BettingCentreAPS;
 import communication.ServerCom;
 import sharedRegions.*;
-import sharedRegionsInterfaces.ControlCentreInterface;
+import sharedRegionsInterfaces.BettingCentreInterface;
 import stubs.GeneralRepositoryStub;
 import stubs.StableStub;
 
 /**
  * Main class of the event.
- * It will start all shared regions and threads (active entities).
+ * It will start the control centre region.
  */
-public class AnAfternoonAtTheRaces {
+public class BettingCentreMain {
 
     /**
      * Main method.
      * @param args Runtime arguments.
      */
     public static void main (String [] args) {
-        ControlCentre controlCentre;
-        ControlCentreInterface controlCentreInterface;
-        ControlCentreAPS controlCentreAPS;
+        BettingCentre bettingCentre;
+        BettingCentreInterface bettingCentreInterface;
+        BettingCentreAPS bettingCentreAPS;
 
         GeneralRepositoryStub generalRepository;
         StableStub stable;
@@ -33,18 +33,18 @@ public class AnAfternoonAtTheRaces {
                 22403);
 
         // service establishment
-        scom = new ServerCom(22401);
+        scom = new ServerCom(22406);
         scom.start();
 
         // shared region initialization
-        controlCentre = new ControlCentre(generalRepository, stable);
-        controlCentreInterface = new ControlCentreInterface(controlCentre);
+        bettingCentre = new BettingCentre(generalRepository, stable);
+        bettingCentreInterface = new BettingCentreInterface(bettingCentre);
 
         // request processing
-        while(controlCentreInterface.getRequests() != EventVariables.NUMBER_OF_SPECTATORS) {
+        while(bettingCentreInterface.getRequests() != ... ) {
             scomi = scom.accept();
-            controlCentreAPS = new ControlCentreAPS(scomi, controlCentreInterface);
-            controlCentreAPS.start();
+            bettingCentreAPS = new BettingCentreAPS(scomi, bettingCentreInterface);
+            bettingCentreAPS.start();
         }
     }
 }

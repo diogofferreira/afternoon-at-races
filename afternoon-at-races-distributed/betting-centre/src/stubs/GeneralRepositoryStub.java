@@ -196,7 +196,7 @@ public class GeneralRepositoryStub {
         }
     }
 
-    public void setSpectatorsGains(int spectatorID, int amount) {
+    public void setSpectatorGains(int spectatorID, int amount) {
         GeneralRepositoryMessage inMessage;
 
         if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
