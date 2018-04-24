@@ -9,6 +9,9 @@ import sharedRegions.BettingCentre;
 public class BettingCentreInterface {
 
     private int requests;
+
+    private int raceNumber;
+
     private BettingCentre bettingCentre;
 
     public BettingCentreInterface(BettingCentre bettingCentre) {
@@ -16,6 +19,8 @@ public class BettingCentreInterface {
             throw new IllegalArgumentException("Invalid Betting Centre.");
 
         this.bettingCentre = bettingCentre;
+        this.requests = 0;
+        this.raceNumber = -1;
     }
 
     public BettingCentreMessage processAndReply(BettingCentreMessage inMessage) {
@@ -31,6 +36,7 @@ public class BettingCentreInterface {
         switch (mType) {
             case ACCEPT_THE_BETS:
                 raceID = inMessage.getRaceId();
+                raceNumber = raceID;
 
                 if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
                     return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
@@ -58,6 +64,10 @@ public class BettingCentreInterface {
                     return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 
                 amount = bettingCentre.goCollectTheGains(spectatorID);
+
+                if (raceNumber == EventVariables.NUMBER_OF_RACES -1)
+                    requests++;
+
                 return new BettingCentreMessage(
                         BettingCentreMessageTypes.GO_COLLECT_THE_GAINS,
                         amount, inMessage.getEntityId());

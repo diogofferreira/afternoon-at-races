@@ -31,7 +31,9 @@ public class GeneralRepositoryMain {
         generalRepositoryInterface = new GeneralRepositoryInterface(generalRepository);
 
         // request processing
-        while(generalRepositoryInterface.getRequests() != ...) {
+        while(generalRepositoryInterface.getRequests()
+                != EventVariables.NUMBER_OF_HORSES_PER_RACE
+                + EventVariables.NUMBER_OF_SPECTATORS) {
             scomi = scom.accept();
             generalRepositoryAPS = new GeneralRepositoryAPS(scomi, generalRepositoryInterface);
             generalRepositoryAPS.start();

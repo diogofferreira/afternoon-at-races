@@ -33,7 +33,8 @@ public class ControlCentreInterface {
 
                 controlCentre.summonHorsesToPaddock(inMessage.getRaceId());
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, 0);
+                        ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK,
+                        inMessage.getEntityId());
 
             case WAIT_FOR_NEXT_RACE:
                 boolean isThereARace = controlCentre.waitForNextRace();
@@ -44,22 +45,26 @@ public class ControlCentreInterface {
             case PROCEED_TO_PADDOCK:
                 controlCentre.proceedToPaddock();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.PROCEED_TO_PADDOCK, 0);
+                        ControlCentreMessageTypes.PROCEED_TO_PADDOCK,
+                        inMessage.getEntityId());
 
             case GO_CHECK_HORSES:
                 controlCentre.goCheckHorses();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.GO_CHECK_HORSES, 0);
+                        ControlCentreMessageTypes.GO_CHECK_HORSES,
+                        inMessage.getEntityId());
 
             case GO_WATCH_THE_RACE:
                 controlCentre.goWatchTheRace();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.GO_WATCH_THE_RACE, 0);
+                        ControlCentreMessageTypes.GO_WATCH_THE_RACE,
+                        inMessage.getEntityId());
 
             case START_THE_RACE:
                 controlCentre.startTheRace();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.START_THE_RACE, 0);
+                        ControlCentreMessageTypes.START_THE_RACE,
+                        inMessage.getEntityId());
 
             case FINISH_THE_RACE:
                 int[] standings = inMessage.getStandings();
@@ -70,12 +75,14 @@ public class ControlCentreInterface {
 
                 controlCentre.finishTheRace(standings);
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.FINISH_THE_RACE, 0);
+                        ControlCentreMessageTypes.FINISH_THE_RACE,
+                        inMessage.getEntityId());
 
             case REPORT_RESULTS:
                 int[] winners = controlCentre.reportResults();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.REPORT_RESULTS, winners, 0);
+                        ControlCentreMessageTypes.REPORT_RESULTS, winners,
+                        inMessage.getEntityId());
 
             case HAVE_I_WON:
                 boolean haveIWon;
@@ -87,18 +94,21 @@ public class ControlCentreInterface {
 
                 haveIWon = controlCentre.haveIWon(horseIdx);
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.HAVE_I_WON, haveIWon, 0);
+                        ControlCentreMessageTypes.HAVE_I_WON, haveIWon,
+                        inMessage.getEntityId());
 
             case CELEBRATE:
                 controlCentre.celebrate();
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.CELEBRATE, 0);
+                        ControlCentreMessageTypes.CELEBRATE,
+                        inMessage.getEntityId());
 
             case RELAX_A_BIT:
                 controlCentre.relaxABit();
                 requests++;
                 return new ControlCentreMessage(
-                        ControlCentreMessageTypes.RELAX_A_BIT, 0);
+                        ControlCentreMessageTypes.RELAX_A_BIT,
+                        inMessage.getEntityId());
 
             default:
                 return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);

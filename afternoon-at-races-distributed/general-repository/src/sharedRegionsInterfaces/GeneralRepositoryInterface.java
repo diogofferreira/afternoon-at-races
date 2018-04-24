@@ -13,11 +13,14 @@ public class GeneralRepositoryInterface {
 
     private GeneralRepository generalRepository;
 
+    private int requests;
+
     public GeneralRepositoryInterface(GeneralRepository generalRepository) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
 
         this.generalRepository = generalRepository;
+        this.requests = 0;
     }
 
     public GeneralRepositoryMessage processAndReply(GeneralRepositoryMessage inMessage) {
@@ -145,6 +148,12 @@ public class GeneralRepositoryInterface {
                             GeneralRepositoryMessageTypes.ERROR);
 
                 generalRepository.setHorseState(raceID, horseIdx, horseState);
+
+                // Update internal counters
+                if (raceID == EventVariables.NUMBER_OF_RACES - 1
+                        && horseState == HorseState.AT_THE_STABLE)
+                    requests++;
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSE_STATE,
                         inMessage.getEntityId());
@@ -201,6 +210,11 @@ public class GeneralRepositoryInterface {
                             GeneralRepositoryMessageTypes.ERROR);
 
                 generalRepository.setSpectatorState(spectatorID, spectatorState);
+
+                // Update counter
+                if (spectatorState == SpectatorState.CELEBRATING)
+                    requests++;
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,
                         inMessage.getEntityId());
@@ -210,4 +224,9 @@ public class GeneralRepositoryInterface {
                         GeneralRepositoryMessageTypes.ERROR);
         }
     }
+
+    public int getRequests() {
+        return requests;
+    }
+
 }
