@@ -114,4 +114,22 @@ public class RacingTrackStub {
 
         h.setHorseState(HorseState.RUNNING);
     }
+
+    public void startTheRace() {
+        Broker b;
+        RacingTrackMessage inMessage;
+
+        b = (Broker) Thread.currentThread();
+        inMessage = exchange(new RacingTrackMessage(
+                RacingTrackMessageTypes.START_THE_RACE, 0));
+
+        if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    RacingTrackMessageTypes.START_THE_RACE);
+            System.exit(1);
+        }
+
+        b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+    }
 }

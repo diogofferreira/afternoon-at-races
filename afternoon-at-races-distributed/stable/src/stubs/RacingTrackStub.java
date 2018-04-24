@@ -94,6 +94,8 @@ public class RacingTrackStub {
                     RacingTrackMessageTypes.MAKE_A_MOVE);
             System.exit(1);
         }
+
+        h.setHorseState(HorseState.RUNNING);
     }
 
     public void proceedToStartLine() {
@@ -102,8 +104,6 @@ public class RacingTrackStub {
         RacingTrackMessage inMessage;
 
         h = (Horse) Thread.currentThread();
-        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
-
         inMessage = exchange(new RacingTrackMessage(
                 RacingTrackMessageTypes.PROCEED_TO_START_LINE, h.getID()));
 
@@ -114,7 +114,7 @@ public class RacingTrackStub {
             System.exit(1);
         }
 
-        h.setHorseState(HorseState.RUNNING);
+        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
     }
 
     public void startTheRace() {

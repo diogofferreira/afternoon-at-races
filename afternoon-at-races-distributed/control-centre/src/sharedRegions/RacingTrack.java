@@ -123,10 +123,6 @@ public class RacingTrack {
             } catch (InterruptedException ignored) { }
         }
 
-        h.setHorseState(HorseState.RUNNING);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
-                HorseState.RUNNING);
-
         mutex.unlock();
     }
 
@@ -162,6 +158,12 @@ public class RacingTrack {
 
         currentTurn = horseTurn;
         h = (Horse)Thread.currentThread();
+
+        if (h.getCurrentStep() == 0) {
+            h.setHorseState(HorseState.RUNNING);
+            generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+                    HorseState.RUNNING);
+        }
 
         // notify next horse in FIFO
         // update current position

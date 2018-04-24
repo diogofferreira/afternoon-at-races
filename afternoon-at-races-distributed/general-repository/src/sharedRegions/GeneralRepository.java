@@ -340,7 +340,7 @@ public class GeneralRepository {
             this.horsesPosition[horseIdx] = 0;
             this.horsesStep[horseIdx] = 0;
         }
-        if (raceID == raceNumber)
+        if (raceID == raceNumber && horseState != HorseState.RUNNING)
             printState();
 
         mutex.unlock();
