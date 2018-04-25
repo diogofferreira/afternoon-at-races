@@ -5,6 +5,9 @@ import messageTypes.PaddockMessageTypes;
 import java.io.Serializable;
 
 public class PaddockMessage implements Serializable {
+
+    private static final long serialVersionUID = 1004L;
+
     // method type
     private int method;
 
@@ -47,5 +50,15 @@ public class PaddockMessage implements Serializable {
 
     public int getRaceIdx() {
         return raceIdx;
+    }
+
+    @Override
+    public String toString() {
+        return "PaddockMessage{" +
+                "method=" + method +
+                ", raceID=" + raceID +
+                ", raceIdx=" + raceIdx +
+                ", entityId=" + entityId +
+                '}';
     }
 }

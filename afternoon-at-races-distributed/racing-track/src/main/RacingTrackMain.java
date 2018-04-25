@@ -27,9 +27,14 @@ public class RacingTrackMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
+        /*controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
                 22401);
         generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
+                22402);*/
+
+        controlCentre = new ControlCentreStub("127.0.0.1",
+                22401);
+        generalRepository = new GeneralRepositoryStub("127.0.0.1",
                 22402);
 
         // service establishment
@@ -43,8 +48,10 @@ public class RacingTrackMain {
         // request processing
         while(racingTrackInterface.getRequests() != EventVariables.NUMBER_OF_HORSES) {
             scomi = scom.accept();
-            racingTrackAPS = new RacingTrackAPS(scomi, racingTrackInterface);
-            racingTrackAPS.start();
+            if (scomi != null) {
+                racingTrackAPS = new RacingTrackAPS(scomi, racingTrackInterface);
+                racingTrackAPS.start();
+            }
         }
     }
 }

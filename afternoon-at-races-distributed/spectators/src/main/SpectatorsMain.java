@@ -19,11 +19,17 @@ public class SpectatorsMain {
         BettingCentreStub bettingCentre;            // instance of Betting Centre
 
         // shared regions initialization
-        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
+        /*controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
                 22401);
         paddock = new PaddockStub("l040101-ws04.ua.pt",
                 22404);
         bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
+                22406);*/
+        controlCentre = new ControlCentreStub("127.0.0.1",
+                22401);
+        paddock = new PaddockStub("127.0.0.1",
+                22404);
+        bettingCentre = new BettingCentreStub("127.0.0.1",
                 22406);
 
         // entities initialization

@@ -23,6 +23,8 @@ public class PaddockInterface {
     public PaddockMessage processAndReply(PaddockMessage inMessage) {
         PaddockMessageTypes mType;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = PaddockMessageTypes.getType(inMessage.getMethod())) == null)
             return new PaddockMessage(PaddockMessageTypes.ERROR);
 

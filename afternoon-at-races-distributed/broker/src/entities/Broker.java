@@ -68,10 +68,12 @@ public class Broker extends Thread implements BrokerInt {
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock
+            System.out.println("SUMMON HORSES");
             controlCentre.summonHorsesToPaddock(i);
-
+            System.out.println("ACCEPT THE BETS");
             // acceptsBets
             bettingCentre.acceptTheBets(i);
+            System.out.println("START THE RACE");
 
             // startTheRace
             racingTrack.startTheRace();

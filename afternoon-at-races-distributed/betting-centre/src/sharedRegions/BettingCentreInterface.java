@@ -31,6 +31,8 @@ public class BettingCentreInterface {
         boolean areThereAnyWinners;
         double amount;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = BettingCentreMessageTypes.getType(inMessage.getMethod())) == null)
             return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 

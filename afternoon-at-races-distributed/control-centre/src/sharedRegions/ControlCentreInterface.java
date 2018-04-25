@@ -23,6 +23,8 @@ public class ControlCentreInterface {
     public ControlCentreMessage processAndReply(ControlCentreMessage inMessage) {
         ControlCentreMessageTypes mType;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = ControlCentreMessageTypes.getType(inMessage.getMethod())) == null)
             return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
 

@@ -35,8 +35,10 @@ public class GeneralRepositoryMain {
                 != EventVariables.NUMBER_OF_HORSES_PER_RACE
                 + EventVariables.NUMBER_OF_SPECTATORS) {
             scomi = scom.accept();
-            generalRepositoryAPS = new GeneralRepositoryAPS(scomi, generalRepositoryInterface);
-            generalRepositoryAPS.start();
+            if (scomi != null) {
+                generalRepositoryAPS = new GeneralRepositoryAPS(scomi, generalRepositoryInterface);
+                generalRepositoryAPS.start();
+            }
         }
     }
 }

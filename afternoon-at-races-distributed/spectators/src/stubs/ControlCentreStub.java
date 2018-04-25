@@ -248,7 +248,7 @@ public class ControlCentreStub {
 
         s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.START_THE_RACE));
+                ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

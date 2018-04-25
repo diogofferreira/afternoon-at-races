@@ -32,20 +32,4 @@ public enum RacingTrackMessageTypes {
     public int getId() {
         return this.id;
     }
-
-    /**
-     * Method that returns an enum given its id.
-     * @param id The id correspondent to the enum type.
-     * @return The correspondent enum.
-     */
-    public static RacingTrackMessageTypes getType(int id) {
-        switch (id) {
-            case 0: return PROCEED_TO_START_LINE;
-            case 1: return START_THE_RACE;
-            case 2: return MAKE_A_MOVE;
-            case 3: return HAS_FINISH_LINE_BEEN_CROSSED;
-            case 4: return ERROR;
-            default: return null;
-        }
-    }
 }

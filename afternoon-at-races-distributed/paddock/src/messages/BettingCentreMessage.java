@@ -3,8 +3,12 @@ package messages;
 import messageTypes.BettingCentreMessageTypes;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class BettingCentreMessage implements Serializable {
+
+    private static final long serialVersionUID = 1002L;
+
     // method type
     private int method;
 
@@ -112,5 +116,21 @@ public class BettingCentreMessage implements Serializable {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "BettingCentreMessage{" +
+                "method=" + method +
+                ", wallet=" + wallet +
+                ", strategy=" + strategy +
+                ", raceId=" + raceId +
+                ", spectatorId=" + spectatorId +
+                ", winners=" + Arrays.toString(winners) +
+                ", areThereAnyWinners=" + areThereAnyWinners +
+                ", winningValue=" + winningValue +
+                ", bettedHorse=" + bettedHorse +
+                ", entityId=" + entityId +
+                '}';
     }
 }

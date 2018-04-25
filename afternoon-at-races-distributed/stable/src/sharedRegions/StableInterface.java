@@ -24,6 +24,8 @@ public class StableInterface {
         double[] odds;
         HorseInt h;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = StableMessageTypes.getType(inMessage.getMethod())) == null)
             return new StableMessage(StableMessageTypes.ERROR);
 

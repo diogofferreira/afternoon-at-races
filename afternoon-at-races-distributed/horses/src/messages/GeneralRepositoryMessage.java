@@ -3,8 +3,12 @@ package messages;
 import messageTypes.GeneralRepositoryMessageTypes;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class GeneralRepositoryMessage implements Serializable {
+
+    private static final long serialVersionUID = 1003L;
+
     // method type
     private int method;
 
@@ -160,5 +164,26 @@ public class GeneralRepositoryMessage implements Serializable {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "GeneralRepositoryMessage{" +
+                "method=" + method +
+                ", brokerState=" + brokerState +
+                ", spectatorState=" + spectatorState +
+                ", horseState=" + horseState +
+                ", raceId=" + raceId +
+                ", raceNumber=" + raceNumber +
+                ", horseIdx=" + horseIdx +
+                ", horseAgility=" + horseAgility +
+                ", horsePosition=" + horsePosition +
+                ", horseStep=" + horseStep +
+                ", spectatorBet=" + spectatorBet +
+                ", spectatorBettedHorse=" + spectatorBettedHorse +
+                ", standings=" + Arrays.toString(standings) +
+                ", horsesOdd=" + Arrays.toString(horsesOdd) +
+                ", entityId=" + entityId +
+                '}';
     }
 }

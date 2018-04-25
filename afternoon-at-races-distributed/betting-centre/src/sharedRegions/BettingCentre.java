@@ -424,7 +424,7 @@ public class BettingCentre {
 
                     validatedHonours.put(spectatorID,
                             (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
-                    generalRepository.setSpectatorGains(spectatorID,
+                    generalRepository.setSpectatorsGains(spectatorID,
                             (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
                 } catch (ArrayIndexOutOfBoundsException e) { }
             }

@@ -48,8 +48,10 @@ public class BettingCentreMain {
         while(bettingCentreInterface.getRequests()
                 != EventVariables.NUMBER_OF_SPECTATORS) {
             scomi = scom.accept();
-            bettingCentreAPS = new BettingCentreAPS(scomi, bettingCentreInterface);
-            bettingCentreAPS.start();
+            if (scomi != null) {
+                bettingCentreAPS = new BettingCentreAPS(scomi, bettingCentreInterface);
+                bettingCentreAPS.start();
+            }
         }
     }
 }

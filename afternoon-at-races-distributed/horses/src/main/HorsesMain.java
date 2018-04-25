@@ -25,11 +25,18 @@ public class HorsesMain {
         RacingTrackStub racingTrack;            // instance of Racing Track
 
         // shared regions initialization
-        stable = new StableStub("l040101-ws03.ua.pt",
+        /*stable = new StableStub("l040101-ws03.ua.pt",
                 22403);
         paddock = new PaddockStub("l040101-ws04.ua.pt",
                 22404);
         racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
+                22405);*/
+
+        stable = new StableStub("127.0.0.1",
+                22403);
+        paddock = new PaddockStub("127.0.0.1",
+                22404);
+        racingTrack = new RacingTrackStub("127.0.0.1",
                 22405);
 
         // entities initialization

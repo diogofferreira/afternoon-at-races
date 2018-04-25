@@ -33,6 +33,8 @@ public class GeneralRepositoryInterface {
         HorseState horseState;
         SpectatorState spectatorState;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = GeneralRepositoryMessageTypes.getType(inMessage.getMethod())) == null)
             return new GeneralRepositoryMessage(GeneralRepositoryMessageTypes.ERROR);
 

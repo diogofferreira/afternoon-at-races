@@ -26,7 +26,9 @@ public class StableMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
+        /*generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
+                22402);*/
+        generalRepository = new GeneralRepositoryStub("127.0.0.1",
                 22402);
 
         // service establishment
@@ -48,8 +50,10 @@ public class StableMain {
         while(stableInterface.getRequests() !=
                 (EventVariables.NUMBER_OF_HORSES * 2 + 1)) {
             scomi = scom.accept();
-            stableAPS = new StableAPS(scomi, stableInterface);
-            stableAPS.start();
+            if (scomi != null) {
+                stableAPS = new StableAPS(scomi, stableInterface);
+                stableAPS.start();
+            }
         }
     }
 }

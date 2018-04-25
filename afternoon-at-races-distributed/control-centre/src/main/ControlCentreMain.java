@@ -27,9 +27,13 @@ public class ControlCentreMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
+        /*generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
                 22402);
         stable = new StableStub("l040101-ws03.ua.pt",
+                22403);*/
+        generalRepository = new GeneralRepositoryStub("127.0.0.1",
+                22402);
+        stable = new StableStub("127.0.0.1",
                 22403);
 
         // service establishment
@@ -43,8 +47,10 @@ public class ControlCentreMain {
         // request processing
         while(controlCentreInterface.getRequests() != EventVariables.NUMBER_OF_SPECTATORS) {
             scomi = scom.accept();
-            controlCentreAPS = new ControlCentreAPS(scomi, controlCentreInterface);
-            controlCentreAPS.start();
+            if (scomi != null) {
+                controlCentreAPS = new ControlCentreAPS(scomi, controlCentreInterface);
+                controlCentreAPS.start();
+            }
         }
     }
 }

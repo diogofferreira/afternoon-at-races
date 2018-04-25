@@ -5,6 +5,9 @@ import messageTypes.RacingTrackMessageTypes;
 import java.io.Serializable;
 
 public class RacingTrackMessage implements Serializable {
+
+    private static final long serialVersionUID = 1005L;
+
     // method type
     private int method;
 
@@ -107,5 +110,20 @@ public class RacingTrackMessage implements Serializable {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "RacingTrackMessage{" +
+                "method=" + method +
+                ", raceID=" + raceID +
+                ", raceIdx=" + raceIdx +
+                ", agility=" + agility +
+                ", currentPosition=" + currentPosition +
+                ", currentStep=" + currentStep +
+                ", step=" + step +
+                ", hasFinishLineBeenCrossed=" + hasFinishLineBeenCrossed +
+                ", entityId=" + entityId +
+                '}';
     }
 }

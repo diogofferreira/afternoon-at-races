@@ -3,8 +3,12 @@ package messages;
 import messageTypes.StableMessageTypes;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class StableMessage implements Serializable {
+
+    private static final long serialVersionUID = 1006L;
+
     // method type
     private int method;
 
@@ -100,5 +104,20 @@ public class StableMessage implements Serializable {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "StableMessage{" +
+                "method=" + method +
+                ", raceID=" + raceID +
+                ", raceIdx=" + raceIdx +
+                ", agility=" + agility +
+                ", raceId=" + raceId +
+                ", horsesId=" + Arrays.toString(horsesId) +
+                ", horsesAgility=" + Arrays.toString(horsesAgility) +
+                ", raceOdds=" + Arrays.toString(raceOdds) +
+                ", entityId=" + entityId +
+                '}';
     }
 }

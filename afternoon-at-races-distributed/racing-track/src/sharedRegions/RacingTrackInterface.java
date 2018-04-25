@@ -23,6 +23,8 @@ public class RacingTrackInterface {
         int step;
         boolean hasFinishLineBeenCrossed;
 
+        System.out.println(inMessage.toString());
+
         if ((mType = RacingTrackMessageTypes.getType(inMessage.getMethod())) == null)
             return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
 

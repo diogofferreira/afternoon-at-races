@@ -3,8 +3,12 @@ package messages;
 import messageTypes.ControlCentreMessageTypes;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class ControlCentreMessage implements Serializable {
+
+    private static final long serialVersionUID = 1001L;
+
     // method type
     private int method;
 
@@ -124,5 +128,19 @@ public class ControlCentreMessage implements Serializable {
 
     public void setEntityId(int entityId) {
         this.entityId = entityId;
+    }
+
+    @Override
+    public String toString() {
+        return "ControlCentreMessage{" +
+                "method=" + method +
+                ", raceId=" + raceId +
+                ", standings=" + Arrays.toString(standings) +
+                ", horseIdx=" + horseIdx +
+                ", isThereARace=" + isThereARace +
+                ", haveIWon=" + haveIWon +
+                ", winners=" + Arrays.toString(winners) +
+                ", entityId=" + entityId +
+                '}';
     }
 }

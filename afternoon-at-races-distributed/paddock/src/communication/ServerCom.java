@@ -122,12 +122,13 @@ public class ServerCom {
      */
     public ServerCom accept() {
         ServerCom scon;                                      // canal de comunicação
+        boolean timeout = false;
 
         scon = new ServerCom(serverPortNumb, listeningSocket);
         try {
             scon.commSocket = listeningSocket.accept();
         } catch (SocketTimeoutException e) {
-            // do nothing
+            timeout = true;
         } catch (SocketException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - the socket was closed while listening!");
@@ -139,6 +140,9 @@ public class ServerCom {
             e.printStackTrace();
             System.exit(1);
         }
+
+        if (timeout)
+            return null;
 
         try {
             scon.in = new ObjectInputStream(scon.commSocket.getInputStream());

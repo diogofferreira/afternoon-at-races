@@ -1,16 +1,18 @@
 package messageTypes;
 
-public enum StableMessageTypes {
+public enum BettingCentreMessageTypes {
 
-    GET_RACE_ODDS(0),
+    ACCEPT_THE_BETS(0),
 
-    SUMMON_HORSES_TO_PADDOCK(1),
+    PLACE_A_BET(1),
 
-    PROCEED_TO_STABLE(2),
+    ARE_THERE_ANY_WINNERS(2),
 
-    ENTERTAIN_THE_GUESTS(3),
+    HONOUR_THE_BETS(3),
 
-    ERROR(4);
+    GO_COLLECT_THE_GAINS(4),
+
+    ERROR(5);
 
     /**
      * ID of the message type;
@@ -21,7 +23,7 @@ public enum StableMessageTypes {
      * Constructor to add a new message type.
      * @param id ID of the message type.
      */
-    private StableMessageTypes(int id) {
+    private BettingCentreMessageTypes(int id) {
         this.id = id;
     }
 
@@ -38,13 +40,14 @@ public enum StableMessageTypes {
      * @param id The id correspondent to the enum type.
      * @return The correspondent enum.
      */
-    public static StableMessageTypes getType(int id) {
+    public static BettingCentreMessageTypes getType(int id) {
         switch (id) {
-            case 0: return GET_RACE_ODDS;
-            case 1: return SUMMON_HORSES_TO_PADDOCK;
-            case 2: return PROCEED_TO_STABLE;
-            case 3: return ENTERTAIN_THE_GUESTS;
-            case 4: return ERROR;
+            case 0: return ACCEPT_THE_BETS;
+            case 1: return PLACE_A_BET;
+            case 2: return ARE_THERE_ANY_WINNERS;
+            case 3: return HONOUR_THE_BETS;
+            case 4: return GO_COLLECT_THE_GAINS;
+            case 5: return ERROR;
             default: return null;
         }
     }
