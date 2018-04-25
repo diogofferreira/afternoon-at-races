@@ -59,6 +59,11 @@ public class GeneralRepositoryInterface {
                             GeneralRepositoryMessageTypes.ERROR);
 
                 generalRepository.setBrokerState(brokerState);
+
+                // Update counter
+                if (brokerState == BrokerState.PLAYING_HOST_AT_THE_BAR)
+                    requests++;
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_BROKER_STATE,
                         inMessage.getEntityId());
@@ -203,6 +208,10 @@ public class GeneralRepositoryInterface {
                 spectatorState = SpectatorState.getType(
                         inMessage.getSpectatorState());
 
+                // Update counter
+                if (spectatorState == SpectatorState.CELEBRATING)
+                    requests++;
+
                 if (spectatorID < 0 ||
                         spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
                     return new GeneralRepositoryMessage(
@@ -213,9 +222,6 @@ public class GeneralRepositoryInterface {
 
                 generalRepository.setSpectatorState(spectatorID, spectatorState);
 
-                // Update counter
-                if (spectatorState == SpectatorState.CELEBRATING)
-                    requests++;
 
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,

@@ -111,8 +111,8 @@ public class StableStub {
             System.exit(1);
         }
 
-        if (inMessage.getRaceID() < 0 ||
-                inMessage.getRaceID() > EventVariables.NUMBER_OF_RACES) {
+        if (inMessage.getRaceId() < 0 ||
+                inMessage.getRaceId() > EventVariables.NUMBER_OF_RACES) {
             System.out.println(Thread.currentThread().getName() +
                     " - Invalid race id in " +
                     StableMessageTypes.PROCEED_TO_STABLE);
@@ -128,7 +128,7 @@ public class StableStub {
         }
 
         h.setHorseState(HorseState.AT_THE_STABLE);
-        h.setRaceID(inMessage.getRaceID());
+        h.setRaceID(inMessage.getRaceId());
         h.setRaceIdx(inMessage.getRaceIdx());
     }
 

@@ -246,9 +246,9 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid spectator ID");
         if (spectatorState == null)
             throw new IllegalArgumentException("Invalid spectator state");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE, spectatorID,
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,
                 spectatorState.getId(), spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {

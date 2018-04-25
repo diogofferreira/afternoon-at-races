@@ -13,12 +13,11 @@ public class StableMessage implements Serializable {
     private int method;
 
     // implicit info
-    private int raceID;
+    private int raceId;
     private int raceIdx;
     private int agility;
 
-    // arguments (raceID)
-    private int raceId;
+    // arguments
     private int[] horsesId;
 
     // replies
@@ -65,17 +64,13 @@ public class StableMessage implements Serializable {
     public StableMessage(StableMessageTypes method, int raceID, int raceIdx,
                          int entityId) {
         this.method = method.getId();
-        this.raceID = raceID;
+        this.raceId = raceID;
         this.raceIdx = raceIdx;
         this.entityId = entityId;
     }
 
     public int getMethod() {
         return method;
-    }
-
-    public int getRaceId() {
-        return raceId;
     }
 
     public int[] getHorsesId() {
@@ -90,8 +85,8 @@ public class StableMessage implements Serializable {
         return raceOdds;
     }
 
-    public int getRaceID() {
-        return raceID;
+    public int getRaceId() {
+        return raceId;
     }
 
     public int getRaceIdx() {
@@ -110,7 +105,6 @@ public class StableMessage implements Serializable {
     public String toString() {
         return "StableMessage{" +
                 "method=" + method +
-                ", raceID=" + raceID +
                 ", raceIdx=" + raceIdx +
                 ", agility=" + agility +
                 ", raceId=" + raceId +
