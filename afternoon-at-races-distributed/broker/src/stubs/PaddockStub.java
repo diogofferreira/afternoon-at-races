@@ -1,8 +1,8 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Horse;
-import entities.Spectator;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import messageTypes.PaddockMessageTypes;
 import messages.PaddockMessage;
 import states.HorseState;
@@ -56,10 +56,10 @@ public class PaddockStub {
     }
 
     public void goCheckHorses() {
-        Spectator s;
+        SpectatorInt s;
         PaddockMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
                 PaddockMessageTypes.GO_CHECK_HORSES, s.getID()));
 
@@ -74,12 +74,13 @@ public class PaddockStub {
     }
 
     public void proceedToPaddock() {
-        Horse h;
+        HorseInt h;
         PaddockMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
-                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getID()));
+                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getRaceID(),
+                h.getRaceIdx(), h.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

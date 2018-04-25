@@ -25,7 +25,8 @@ public class PaddockMessage implements Serializable {
         this.entityId = entityId;
     }
 
-    public PaddockMessage(PaddockMessageTypes method, int raceID, int raceIdx, int entityId) {
+    public PaddockMessage(PaddockMessageTypes method, int raceID,
+                          int raceIdx, int entityId) {
         this.method = method.getId();
         this.raceID = raceID;
         this.raceIdx = raceIdx;

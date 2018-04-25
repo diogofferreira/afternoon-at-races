@@ -2,9 +2,9 @@ package stubs;
 
 
 import communication.ClientCom;
-import entities.Broker;
-import entities.Horse;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
@@ -59,10 +59,10 @@ public class ControlCentreStub {
     }
 
     public void celebrate() {
-        Broker b;
+        BrokerInt b;
         ControlCentreMessage inMessage;
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.CELEBRATE, 0));
 
@@ -109,10 +109,10 @@ public class ControlCentreStub {
     }
 
     public void goWatchTheRace() {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.GO_WATCH_THE_RACE, s.getID()));
 
@@ -127,13 +127,13 @@ public class ControlCentreStub {
     }
 
     public boolean haveIWon(int horseIdx) {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
         if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid horse idx");
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.HAVE_I_WON, horseIdx, s.getID()));
 
@@ -148,10 +148,10 @@ public class ControlCentreStub {
     }
 
     public void proceedToPaddock() {
-        Horse h;
+        HorseInt h;
         ControlCentreMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
 
@@ -164,10 +164,10 @@ public class ControlCentreStub {
     }
 
     public void relaxABit() {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.RELAX_A_BIT, s.getID()));
 
@@ -222,13 +222,13 @@ public class ControlCentreStub {
     }
 
     public void summonHorsesToPaddock(int raceID) {
-        Broker b;
+        BrokerInt b;
         ControlCentreMessage inMessage;
 
         if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Invalid race ID");
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID));
 
@@ -243,10 +243,10 @@ public class ControlCentreStub {
     }
 
     public boolean waitForNextRace() {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.START_THE_RACE));
 

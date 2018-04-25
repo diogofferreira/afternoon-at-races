@@ -1,4 +1,4 @@
-package sharedRegionsInterfaces;
+package sharedRegions;
 
 import entities.BrokerInt;
 import entities.SpectatorInt;

@@ -34,6 +34,12 @@ public class RacingTrackMessage implements Serializable {
         this.entityId = entityId;
     }
 
+    public RacingTrackMessage(RacingTrackMessageTypes method,
+                              int step, int entityId) {
+        this.method = method.getId();
+        this.step = step;
+        this.entityId = entityId;
+    }
 
     public RacingTrackMessage(RacingTrackMessageTypes method,
                               boolean hasFinishLineBeenCrossed, int entityId) {

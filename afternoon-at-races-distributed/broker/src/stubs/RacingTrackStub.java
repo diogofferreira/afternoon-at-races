@@ -1,16 +1,12 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Broker;
-import entities.Horse;
-import entities.Spectator;
-import messageTypes.PaddockMessageTypes;
+import entities.BrokerInt;
+import entities.HorseInt;
 import messageTypes.RacingTrackMessageTypes;
-import messages.PaddockMessage;
 import messages.RacingTrackMessage;
 import states.BrokerState;
 import states.HorseState;
-import states.SpectatorState;
 
 /**
  * This data type defines the communication stub of Racing Track.
@@ -60,12 +56,14 @@ public class RacingTrackStub {
     }
 
     public boolean hasFinishLineBeenCrossed() {
-        Horse h;
+        HorseInt h;
         RacingTrackMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED, h.getRaceIdx()));
+                RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED,
+                h.getRaceID(), h.getRaceIdx(), h.getAgility(),
+                h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -81,16 +79,18 @@ public class RacingTrackStub {
     }
 
     public void makeAMove(int step) {
-        Horse h;
+        HorseInt h;
         RacingTrackMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
 
         if (step < 1 || step > h.getAgility())
             throw new IllegalArgumentException("Invalid horse step");
 
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.MAKE_A_MOVE, step, h.getID()));
+                RacingTrackMessageTypes.MAKE_A_MOVE, step, h.getRaceID(),
+                h.getRaceIdx(), h.getAgility(), h.getCurrentPosition(),
+                h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -98,18 +98,20 @@ public class RacingTrackStub {
                     RacingTrackMessageTypes.MAKE_A_MOVE);
             System.exit(1);
         }
+
+        h.setHorseState(HorseState.RUNNING);
+        h.updateCurrentPosition(step);
     }
 
     public void proceedToStartLine() {
-        // Rever este método devido às atualizações de estado
-        Horse h;
+        HorseInt h;
         RacingTrackMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
-        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
-
+        h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.PROCEED_TO_START_LINE, h.getID()));
+                RacingTrackMessageTypes.PROCEED_TO_START_LINE,
+                h.getRaceID(), h.getRaceIdx(), h.getAgility(),
+                h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -118,14 +120,14 @@ public class RacingTrackStub {
             System.exit(1);
         }
 
-        h.setHorseState(HorseState.RUNNING);
+        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
     }
 
     public void startTheRace() {
-        Broker b;
+        BrokerInt b;
         RacingTrackMessage inMessage;
 
-        b = (Broker) Thread.currentThread();
+        b = (BrokerInt) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
                 RacingTrackMessageTypes.START_THE_RACE, 0));
 

@@ -1,7 +1,7 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Horse;
+import entities.HorseInt;
 import main.EventVariables;
 import messageTypes.StableMessageTypes;
 import messages.StableMessage;
@@ -97,10 +97,10 @@ public class StableStub {
     }
 
     public void proceedToStable() {
-        Horse h;
+        HorseInt h;
         StableMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.PROCEED_TO_STABLE, h.getAgility(), h.getID()));
 

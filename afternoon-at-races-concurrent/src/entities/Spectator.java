@@ -90,7 +90,7 @@ public class Spectator extends Thread {
 
             // Check if won the bet and collect the gains if so
             if (controlCentre.haveIWon(bettedHorse))
-                wallet += bettingCentre.goCollectTheGains(this.id);
+                wallet += bettingCentre.goCollectTheGains();
         }
 
         controlCentre.relaxABit();

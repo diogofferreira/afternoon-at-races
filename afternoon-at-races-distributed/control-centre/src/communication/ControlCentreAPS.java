@@ -5,7 +5,7 @@ import entities.HorseInt;
 import entities.SpectatorInt;
 import main.EventVariables;
 import messages.ControlCentreMessage;
-import sharedRegionsInterfaces.ControlCentreInterface;
+import sharedRegions.ControlCentreInterface;
 import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;

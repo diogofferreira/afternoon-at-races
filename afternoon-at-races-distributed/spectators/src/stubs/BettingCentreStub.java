@@ -1,10 +1,12 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.BettingCentreMessageTypes;
 import messages.BettingCentreMessage;
+import states.BrokerState;
 import states.SpectatorState;
 
 /**
@@ -54,6 +56,27 @@ public class BettingCentreStub {
         return inMessage;
     }
 
+    public void acceptTheBets(int raceID) {
+        BrokerInt b;
+        BettingCentreMessage inMessage;
+
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+
+        b = (BrokerInt)Thread.currentThread();
+        inMessage = exchange(new BettingCentreMessage(
+                BettingCentreMessageTypes.ACCEPT_THE_BETS, raceID, 0));
+
+        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    BettingCentreMessageTypes.ACCEPT_THE_BETS);
+            System.exit(1);
+        }
+
+        b.setBrokerState(BrokerState.WAITING_FOR_BETS);
+    }
+
     public boolean areThereAnyWinners(int[] standings) {
         BettingCentreMessage inMessage;
 
@@ -74,16 +97,13 @@ public class BettingCentreStub {
         return inMessage.isAreThereAnyWinners();
     }
 
-    public double goCollectTheGains(int spectatorID) {
-        Spectator s;
+    public double goCollectTheGains() {
+        SpectatorInt s;
         BettingCentreMessage inMessage;
 
-        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-            throw new IllegalArgumentException("Invalid spectator ID");
-
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, spectatorID));
+                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -96,11 +116,29 @@ public class BettingCentreStub {
         return inMessage.getWinningValue();
     }
 
-    public int placeABet() {
-        Spectator s;
+    public void honourTheBets() {
+        BrokerInt b;
         BettingCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
+        inMessage = exchange(new BettingCentreMessage(
+                BettingCentreMessageTypes.HONOUR_THE_BETS, 0));
+
+        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    BettingCentreMessageTypes.HONOUR_THE_BETS);
+            System.exit(1);
+        }
+
+        b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
+    }
+
+    public int placeABet() {
+        SpectatorInt s;
+        BettingCentreMessage inMessage;
+
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.PLACE_A_BET, s.getID()));
 

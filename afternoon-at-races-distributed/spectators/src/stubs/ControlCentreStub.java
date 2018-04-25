@@ -2,10 +2,13 @@ package stubs;
 
 
 import communication.ClientCom;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
+import states.BrokerState;
 import states.SpectatorState;
 
 /**
@@ -55,6 +58,24 @@ public class ControlCentreStub {
         return inMessage;
     }
 
+    public void celebrate() {
+        BrokerInt b;
+        ControlCentreMessage inMessage;
+
+        b = (BrokerInt)Thread.currentThread();
+        inMessage = exchange(new ControlCentreMessage(
+                ControlCentreMessageTypes.CELEBRATE, 0));
+
+        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    ControlCentreMessageTypes.CELEBRATE);
+            System.exit(1);
+        }
+
+        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+    }
+
     public void finishTheRace(int[] standings) {
         ControlCentreMessage inMessage;
 
@@ -88,10 +109,10 @@ public class ControlCentreStub {
     }
 
     public void goWatchTheRace() {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.GO_WATCH_THE_RACE, s.getID()));
 
@@ -106,13 +127,13 @@ public class ControlCentreStub {
     }
 
     public boolean haveIWon(int horseIdx) {
-        Spectator s;
+        SpectatorInt s;
         ControlCentreMessage inMessage;
 
         if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid horse idx");
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.HAVE_I_WON, horseIdx, s.getID()));
 
@@ -126,11 +147,27 @@ public class ControlCentreStub {
         return inMessage.isHaveIWon();
     }
 
-    public void relaxABit() {
-        Spectator s;
+    public void proceedToPaddock() {
+        HorseInt h;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        h = (HorseInt) Thread.currentThread();
+        inMessage = exchange(new ControlCentreMessage(
+                ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
+
+        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    ControlCentreMessageTypes.PROCEED_TO_PADDOCK);
+            System.exit(1);
+        }
+    }
+
+    public void relaxABit() {
+        SpectatorInt s;
+        ControlCentreMessage inMessage;
+
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.RELAX_A_BIT, s.getID()));
 
@@ -184,11 +221,32 @@ public class ControlCentreStub {
         }
     }
 
-    public boolean waitForNextRace() {
-        Spectator s;
+    public void summonHorsesToPaddock(int raceID) {
+        BrokerInt b;
         ControlCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+            throw new IllegalArgumentException("Invalid race ID");
+
+        b = (BrokerInt)Thread.currentThread();
+        inMessage = exchange(new ControlCentreMessage(
+                ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID));
+
+        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK);
+            System.exit(1);
+        }
+
+        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+    }
+
+    public boolean waitForNextRace() {
+        SpectatorInt s;
+        ControlCentreMessage inMessage;
+
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.START_THE_RACE));
 

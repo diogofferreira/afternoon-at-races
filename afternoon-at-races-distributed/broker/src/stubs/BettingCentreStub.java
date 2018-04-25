@@ -1,14 +1,11 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Horse;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.BettingCentreMessageTypes;
-import messageTypes.ControlCentreMessageTypes;
-import entities.Broker;
 import messages.BettingCentreMessage;
-import messages.ControlCentreMessage;
 import states.BrokerState;
 import states.SpectatorState;
 
@@ -60,13 +57,13 @@ public class BettingCentreStub {
     }
 
     public void acceptTheBets(int raceID) {
-        Broker b;
+        BrokerInt b;
         BettingCentreMessage inMessage;
 
         if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Invalid race ID");
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.ACCEPT_THE_BETS, raceID, 0));
 
@@ -100,16 +97,13 @@ public class BettingCentreStub {
         return inMessage.isAreThereAnyWinners();
     }
 
-    public double goCollectTheGains(int spectatorID) {
-        Spectator s;
+    public double goCollectTheGains() {
+        SpectatorInt s;
         BettingCentreMessage inMessage;
 
-        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-            throw new IllegalArgumentException("Invalid spectator ID");
-
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, spectatorID));
+                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -123,10 +117,10 @@ public class BettingCentreStub {
     }
 
     public void honourTheBets() {
-        Broker b;
+        BrokerInt b;
         BettingCentreMessage inMessage;
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.HONOUR_THE_BETS, 0));
 
@@ -141,13 +135,12 @@ public class BettingCentreStub {
     }
 
     public int placeABet() {
-        Spectator s;
+        SpectatorInt s;
         BettingCentreMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.PLACE_A_BET, s.getWallet(),
-                s.getStrategy(), s.getID()));
+                BettingCentreMessageTypes.PLACE_A_BET, s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

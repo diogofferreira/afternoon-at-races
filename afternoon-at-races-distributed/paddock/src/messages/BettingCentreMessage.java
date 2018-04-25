@@ -8,6 +8,10 @@ public class BettingCentreMessage implements Serializable {
     // method type
     private int method;
 
+    // implicit info
+    private int wallet;
+    private int strategy;
+
     // arguments
     private int raceId;
     private int spectatorId;
@@ -62,12 +66,28 @@ public class BettingCentreMessage implements Serializable {
         this.entityId = entityId;
     }
 
+    public BettingCentreMessage(BettingCentreMessageTypes method, int wallet,
+                                int strategy, int entityId) {
+        this.method = method.getId();
+        this.wallet = wallet;
+        this.strategy = strategy;
+        this.entityId = entityId;
+    }
+
     public int getMethod() {
         return method;
     }
 
     public int getRaceId() {
         return raceId;
+    }
+
+    public int getWallet() {
+        return wallet;
+    }
+
+    public int getStrategy() {
+        return strategy;
     }
 
     public int getSpectatorId() {

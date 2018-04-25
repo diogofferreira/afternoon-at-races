@@ -8,6 +8,11 @@ public class StableMessage implements Serializable {
     // method type
     private int method;
 
+    // implicit info
+    private int raceID;
+    private int raceIdx;
+    private int agility;
+
     // arguments (raceID)
     private int raceId;
     private int[] horsesId;
@@ -37,9 +42,12 @@ public class StableMessage implements Serializable {
     }
 
     public StableMessage(StableMessageTypes method,
-                         int raceId, int entityId) {
+                         int raceIdOrAgility, int entityId) {
         this.method = method.getId();
-        this.raceId = raceId;
+        if (method == StableMessageTypes.PROCEED_TO_STABLE)
+            this.agility = raceIdOrAgility;
+        else
+            this.raceId = raceIdOrAgility;
         this.entityId = entityId;
     }
 
@@ -47,6 +55,14 @@ public class StableMessage implements Serializable {
                          double[] raceOdds, int entityId) {
         this.method = method.getId();
         this.raceOdds = raceOdds;
+        this.entityId = entityId;
+    }
+
+    public StableMessage(StableMessageTypes method, int raceID, int raceIdx,
+                         int entityId) {
+        this.method = method.getId();
+        this.raceID = raceID;
+        this.raceIdx = raceIdx;
         this.entityId = entityId;
     }
 
@@ -68,6 +84,18 @@ public class StableMessage implements Serializable {
 
     public double[] getRaceOdds() {
         return raceOdds;
+    }
+
+    public int getRaceID() {
+        return raceID;
+    }
+
+    public int getRaceIdx() {
+        return raceIdx;
+    }
+
+    public int getAgility() {
+        return agility;
     }
 
     public int getEntityId() {

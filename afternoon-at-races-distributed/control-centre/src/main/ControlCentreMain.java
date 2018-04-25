@@ -3,7 +3,7 @@ package main;
 import communication.ControlCentreAPS;
 import communication.ServerCom;
 import sharedRegions.*;
-import sharedRegionsInterfaces.ControlCentreInterface;
+import sharedRegions.ControlCentreInterface;
 import stubs.GeneralRepositoryStub;
 import stubs.StableStub;
 

@@ -1,9 +1,11 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Spectator;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import messageTypes.PaddockMessageTypes;
 import messages.PaddockMessage;
+import states.HorseState;
 import states.SpectatorState;
 
 /**
@@ -54,10 +56,10 @@ public class PaddockStub {
     }
 
     public void goCheckHorses() {
-        Spectator s;
+        SpectatorInt s;
         PaddockMessage inMessage;
 
-        s = (Spectator) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
                 PaddockMessageTypes.GO_CHECK_HORSES, s.getID()));
 
@@ -70,4 +72,25 @@ public class PaddockStub {
 
         s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
     }
+
+    public void proceedToPaddock() {
+        HorseInt h;
+        PaddockMessage inMessage;
+
+        h = (HorseInt) Thread.currentThread();
+        inMessage = exchange(new PaddockMessage(
+                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getRaceID(),
+                h.getRaceIdx(), h.getID()));
+
+        if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    PaddockMessageTypes.PROCEED_TO_PADDOCK);
+            System.exit(1);
+        }
+
+        h.setHorseState(HorseState.AT_THE_PADDOCK);
+    }
+
+
 }

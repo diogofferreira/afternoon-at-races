@@ -1,10 +1,12 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Horse;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import messageTypes.PaddockMessageTypes;
 import messages.PaddockMessage;
 import states.HorseState;
+import states.SpectatorState;
 
 /**
  * This data type defines the communication stub of Paddock.
@@ -53,13 +55,32 @@ public class PaddockStub {
         return inMessage;
     }
 
-    public void proceedToPaddock() {
-        Horse h;
+    public void goCheckHorses() {
+        SpectatorInt s;
         PaddockMessage inMessage;
 
-        h = (Horse) Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
-                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getID()));
+                PaddockMessageTypes.GO_CHECK_HORSES, s.getID()));
+
+        if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    PaddockMessageTypes.GO_CHECK_HORSES);
+            System.exit(1);
+        }
+
+        s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
+    }
+
+    public void proceedToPaddock() {
+        HorseInt h;
+        PaddockMessage inMessage;
+
+        h = (HorseInt) Thread.currentThread();
+        inMessage = exchange(new PaddockMessage(
+                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getRaceID(),
+                h.getRaceIdx(), h.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

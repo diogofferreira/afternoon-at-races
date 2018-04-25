@@ -9,15 +9,12 @@ import utils.Bet;
 import utils.BetState;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * The Betting Centre is a shared region where all the bets are registered,
@@ -439,10 +436,9 @@ public class BettingCentre {
      * Method invoked by each one of the winning Spectators.
      * They change their state to COLLECTING_THE_GAINS and block in queue waiting
      * for their rewards.
-     * @param spectatorID The ID of the Spectator collecting his/her gains.
      * @return The value the Spectator won.
      */
-    public double goCollectTheGains(int spectatorID) {
+    public double goCollectTheGains() {
         Spectator s;
         double winningValue;
 
@@ -460,14 +456,14 @@ public class BettingCentre {
         }
 
         // add to pending collections queue
-        pendingHonours.add(spectatorID);
+        pendingHonours.add(s.getID());
 
         // spectator waits queue
         while (true) {
             // notify broker queue
             waitingForHonours.signalAll();
 
-            if (!pendingHonours.contains(spectatorID)) break;
+            if (!pendingHonours.contains(s.getID())) break;
 
             try {
                 waitingForCash.await();
@@ -477,8 +473,8 @@ public class BettingCentre {
 
         // get winning value
         winningValue = 0;
-        if (validatedHonours.containsKey(spectatorID))
-            winningValue = validatedHonours.get(spectatorID) / winners.length;
+        if (validatedHonours.containsKey(s.getID()))
+            winningValue = validatedHonours.get(s.getID()) / winners.length;
 
         mutex.unlock();
 
