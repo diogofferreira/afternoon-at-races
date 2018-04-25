@@ -46,7 +46,7 @@ public class BettingCentreMain {
 
         // request processing
         while(bettingCentreInterface.getRequests()
-                != EventVariables.NUMBER_OF_SPECTATORS) {
+                != bettingCentreInterface.getNumberOfWinners()) {
             scomi = scom.accept();
             if (scomi != null) {
                 bettingCentreAPS = new BettingCentreAPS(scomi, bettingCentreInterface);

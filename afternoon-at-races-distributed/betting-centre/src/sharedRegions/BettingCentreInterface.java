@@ -13,6 +13,8 @@ public class BettingCentreInterface {
 
     private int raceNumber;
 
+    private int numberOfWinners;
+
     private BettingCentre bettingCentre;
 
     public BettingCentreInterface(BettingCentre bettingCentre) {
@@ -22,6 +24,7 @@ public class BettingCentreInterface {
         this.bettingCentre = bettingCentre;
         this.requests = 0;
         this.raceNumber = -1;
+        this.numberOfWinners = -1;
     }
 
     public BettingCentreMessage processAndReply(BettingCentreMessage inMessage) {
@@ -55,6 +58,8 @@ public class BettingCentreInterface {
                         winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 
+                numberOfWinners = winners.length;
+
                 areThereAnyWinners = bettingCentre.areThereAnyWinners(winners);
                 return new BettingCentreMessage(
                         BettingCentreMessageTypes.ACCEPT_THE_BETS,
@@ -71,7 +76,7 @@ public class BettingCentreInterface {
 
                 amount = bettingCentre.goCollectTheGains();
 
-                if (raceNumber == EventVariables.NUMBER_OF_RACES -1)
+                if (raceNumber == EventVariables.NUMBER_OF_RACES - 1)
                     requests++;
 
                 return new BettingCentreMessage(
@@ -108,4 +113,6 @@ public class BettingCentreInterface {
     public int getRequests() {
         return requests;
     }
+
+    public int getNumberOfWinners() { return numberOfWinners; }
 }

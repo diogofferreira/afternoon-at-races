@@ -113,7 +113,7 @@ public class GeneralRepositoryInterface {
                 raceID = inMessage.getRaceId();
                 horsesOdd = inMessage.getHorsesOdd();
 
-                if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
                     return new GeneralRepositoryMessage(
                             GeneralRepositoryMessageTypes.ERROR);
                 if (horsesOdd == null ||
@@ -170,7 +170,7 @@ public class GeneralRepositoryInterface {
                 amount = inMessage.getSpectatorBet();
 
                 if (spectatorID < 0 ||
-                        spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
                     return new GeneralRepositoryMessage(
                             GeneralRepositoryMessageTypes.ERROR);
 

@@ -64,7 +64,7 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid race ID");
         
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.INIT_RACE));
+                GeneralRepositoryMessageTypes.INIT_RACE, raceNumber, 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -165,7 +165,8 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid horse standings");
         
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.SET_HORSES_STANDING, standings, 0));
+                GeneralRepositoryMessageTypes.SET_HORSES_STANDING,
+                standings, 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -187,7 +188,8 @@ public class GeneralRepositoryStub {
 
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_STATE, raceID,
-                horseIdx, horseState.getId(), horseIdx));
+                horseIdx, horseState.getId(),
+                ((HorseInt)Thread.currentThread()).getID()));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -228,8 +230,8 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid horse idx");
         
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.SET_SPECTATORS_BET, spectatorID,
-                spectatorBet, spectatorBettedHorse, 0));
+                GeneralRepositoryMessageTypes.SET_SPECTATORS_BET,
+                spectatorBet, spectatorBettedHorse, spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
