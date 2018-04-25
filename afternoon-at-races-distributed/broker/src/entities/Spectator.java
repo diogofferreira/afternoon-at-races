@@ -9,7 +9,7 @@ import stubs.PaddockStub;
  * The Spectator is the entity which attends the event and bets on horses to win
  * the races.
  */
-public class Spectator extends Thread {
+public class Spectator extends Thread implements SpectatorInt {
     /**
      * Current state of the Spectator lifecycle.
      */
@@ -102,6 +102,7 @@ public class Spectator extends Thread {
      * Method that returns the current Spectator state.
      * @return Current Spectator state.
      */
+    @Override
     public SpectatorState getSpectatorState() {
         return state;
     }
@@ -110,6 +111,7 @@ public class Spectator extends Thread {
      * Updates the current Spectator state.
      * @param state The new Spectator state.
      */
+    @Override
     public void setSpectatorState(SpectatorState state) {
         this.state = state;
     }
@@ -118,16 +120,36 @@ public class Spectator extends Thread {
      * Method that returns the ID of the Spectator.
      * @return The ID of the Spectator.
      */
+    @Override
     public int getID() {
         return id;
+    }
+
+    /**
+     * Method that sets the ID of the Spectator.
+     * @param id The new ID of the Spectator.
+     */
+    @Override
+    public void setID(int id) {
+        this.id = id;
     }
 
     /**
      * Method that returns the current amount of money in the Spectator's wallet.
      * @return The current amount of money in the Spectator's wallet.
      */
+    @Override
     public int getWallet() {
         return wallet;
+    }
+
+    /**
+     * Method that sets the value at the wallet of the Spectator.
+     * @param wallet The new value at the wallet of the Spectator.
+     */
+    @Override
+    public void setWallet(int wallet) {
+        this.wallet = wallet;
     }
 
     /**
@@ -136,6 +158,7 @@ public class Spectator extends Thread {
      * @param value The value that will be summed to the wallet (it may add or
      *              subtract depending on its signal)
      */
+    @Override
     public void updateWallet(int value) {
         this.wallet += value;
     }
@@ -144,7 +167,17 @@ public class Spectator extends Thread {
      * Method that returns the Spectator's betting strategy.
      * @return The Spectator's betting strategy.
      */
+    @Override
     public int getStrategy() {
         return strategy;
+    }
+
+    /**
+     * Method that sets the betting strategy of the Spectator.
+     * @param strategy The strategy used by the Spectator.
+     */
+    @Override
+    public void setStrategy(int strategy) {
+        this.strategy = strategy;
     }
 }

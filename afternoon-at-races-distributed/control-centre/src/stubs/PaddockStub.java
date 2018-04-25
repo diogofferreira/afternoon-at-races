@@ -79,7 +79,8 @@ public class PaddockStub {
 
         h = (Horse) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
-                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getID()));
+                PaddockMessageTypes.PROCEED_TO_PADDOCK, h.getRaceID(),
+                h.getRaceIdx(), h.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

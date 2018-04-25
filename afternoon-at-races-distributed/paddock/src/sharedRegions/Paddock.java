@@ -1,7 +1,7 @@
 package sharedRegions;
 
-import entities.Horse;
-import entities.Spectator;
+import entities.HorseInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import states.HorseState;
 import states.SpectatorState;
@@ -96,13 +96,13 @@ public class Paddock {
      * to AT_THE_PADDOCK and wait until all Spectators arrive to the Paddock.
      */
     public void proceedToPaddock() {
-        Horse h;
+        HorseInt h;
         mutex.lock();
 
         // Reset the variable
         spectatorsCanProceed = false;
 
-        h = (Horse)Thread.currentThread();
+        h = (HorseInt)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_PADDOCK);
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_PADDOCK);
@@ -130,10 +130,10 @@ public class Paddock {
      * state to APPRAISING_THE_HORSES and will block waiting
      */
     public void goCheckHorses() {
-        Spectator s;
+        SpectatorInt s;
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.APPRAISING_THE_HORSES);

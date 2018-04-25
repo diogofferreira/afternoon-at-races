@@ -1,7 +1,7 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -129,14 +129,14 @@ public class ControlCentre {
      * @param raceID The ID of the race that will take place.
      */
     public void summonHorsesToPaddock(int raceID) {
-        Broker b;
+        BrokerInt b;
         mutex.lock();
 
         // Restart variables
         // Notify general repository to clear all horse related info
         generalRepository.initRace(raceID);
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
@@ -161,12 +161,12 @@ public class ControlCentre {
      * @return True if there's still a race next.
      */
     public boolean waitForNextRace() {
-        Spectator s;
+        SpectatorInt s;
         boolean isThereARace;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt) Thread.currentThread();
         s.setSpectatorState(SpectatorState.WAITING_FOR_A_RACE_TO_START);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.WAITING_FOR_A_RACE_TO_START);
@@ -220,10 +220,10 @@ public class ControlCentre {
      * results of the race.
      */
     public void goWatchTheRace() {
-        Spectator s;
+        SpectatorInt s;
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt)Thread.currentThread();
         s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.WATCHING_A_RACE);
@@ -331,11 +331,11 @@ public class ControlCentre {
      * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
      */
     public void celebrate() {
-        Broker b;
+        BrokerInt b;
         mutex.lock();
 
         // broker just playing host, end the afternoon
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
         generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
 
@@ -349,11 +349,11 @@ public class ControlCentre {
      * Last method invoked by the Spectators, changing their state to CELEBRATING.
      */
     public void relaxABit() {
-        Spectator s;
+        SpectatorInt s;
         mutex.lock();
 
         /// just relax, end the afternoon
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt)Thread.currentThread();
         s.setSpectatorState(SpectatorState.CELEBRATING);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.CELEBRATING);

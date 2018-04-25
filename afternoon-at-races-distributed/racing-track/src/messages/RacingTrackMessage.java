@@ -8,6 +8,13 @@ public class RacingTrackMessage implements Serializable {
     // method type
     private int method;
 
+    // implicit info
+    private int raceID;
+    private int raceIdx;
+    private int agility;
+    private int currentPosition;
+    private int currentStep;
+
     // arguments
     private int step;
 
@@ -27,17 +34,36 @@ public class RacingTrackMessage implements Serializable {
         this.entityId = entityId;
     }
 
-    public RacingTrackMessage(RacingTrackMessageTypes method,
-                              int step, int entityId) {
-        this.method = method.getId();
-        this.step = step;
-        this.entityId = entityId;
-    }
 
     public RacingTrackMessage(RacingTrackMessageTypes method,
                               boolean hasFinishLineBeenCrossed, int entityId) {
         this.method = method.getId();
         this.hasFinishLineBeenCrossed = hasFinishLineBeenCrossed;
+        this.entityId = entityId;
+    }
+
+    public RacingTrackMessage(RacingTrackMessageTypes method, int step, int raceID,
+                              int raceIdx, int agility, int currentPosition,
+                              int currentStep, int entityId) {
+        this.method = method.getId();
+        this.step = step;
+        this.raceID = raceID;
+        this.raceIdx = raceIdx;
+        this.agility = agility;
+        this.currentPosition = currentPosition;
+        this.currentStep = currentStep;
+        this.entityId = entityId;
+    }
+
+    public RacingTrackMessage(RacingTrackMessageTypes method, int raceID,
+                              int raceIdx, int agility, int currentPosition,
+                              int currentStep, int entityId) {
+        this.method = method.getId();
+        this.raceID = raceID;
+        this.raceIdx = raceIdx;
+        this.agility = agility;
+        this.currentPosition = currentPosition;
+        this.currentStep = currentStep;
         this.entityId = entityId;
     }
 
@@ -51,6 +77,26 @@ public class RacingTrackMessage implements Serializable {
 
     public boolean hasFinishLineBeenCrossed() {
         return hasFinishLineBeenCrossed;
+    }
+
+    public int getRaceID() {
+        return raceID;
+    }
+
+    public int getRaceIdx() {
+        return raceIdx;
+    }
+
+    public int getAgility() {
+        return agility;
+    }
+
+    public int getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public int getCurrentStep() {
+        return currentStep;
     }
 
     public int getEntityId() {

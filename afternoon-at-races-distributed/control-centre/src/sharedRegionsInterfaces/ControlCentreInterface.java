@@ -1,5 +1,7 @@
 package sharedRegionsInterfaces;
 
+import entities.BrokerInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
@@ -24,6 +26,9 @@ public class ControlCentreInterface {
         if ((mType = ControlCentreMessageTypes.getType(inMessage.getMethod())) == null)
             return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
 
+        if (inMessage.getEntityId() < 0)
+            return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+
         switch (mType) {
             case SUMMON_HORSES_TO_PADDOCK:
                 int raceID = inMessage.getRaceId();
@@ -37,6 +42,13 @@ public class ControlCentreInterface {
                         inMessage.getEntityId());
 
             case WAIT_FOR_NEXT_RACE:
+                if (inMessage.getEntityId() < 0 ||
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+
+                ((SpectatorInt) Thread.currentThread()).setID(
+                        inMessage.getEntityId());
+
                 boolean isThereARace = controlCentre.waitForNextRace();
                 return new ControlCentreMessage(
                         ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE,
@@ -55,6 +67,8 @@ public class ControlCentreInterface {
                         inMessage.getEntityId());
 
             case GO_WATCH_THE_RACE:
+                ((SpectatorInt) Thread.currentThread()).setID(
+                        inMessage.getEntityId());
                 controlCentre.goWatchTheRace();
                 return new ControlCentreMessage(
                         ControlCentreMessageTypes.GO_WATCH_THE_RACE,
@@ -89,7 +103,7 @@ public class ControlCentreInterface {
                 int horseIdx = inMessage.getHorseIdx();
 
                 if (horseIdx < 0 ||
-                        horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                        horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
 
                 haveIWon = controlCentre.haveIWon(horseIdx);
@@ -104,6 +118,9 @@ public class ControlCentreInterface {
                         inMessage.getEntityId());
 
             case RELAX_A_BIT:
+                ((SpectatorInt) Thread.currentThread()).setID(
+                        inMessage.getEntityId());
+
                 controlCentre.relaxABit();
                 requests++;
                 return new ControlCentreMessage(

@@ -1,7 +1,7 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
+import entities.BrokerInt;
+import entities.HorseInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -110,10 +110,10 @@ public class RacingTrack {
      * state to RUNNING.
      */
     public void proceedToStartLine() {
-        Horse h;
+        HorseInt h;
         mutex.lock();
 
-        h = (Horse)Thread.currentThread();
+        h = (HorseInt)Thread.currentThread();
         h.setHorseState(HorseState.AT_THE_STARTING_LINE);
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STARTING_LINE);
@@ -125,10 +125,6 @@ public class RacingTrack {
             } catch (InterruptedException ignored) { }
         }
 
-        h.setHorseState(HorseState.RUNNING);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
-                HorseState.RUNNING);
-
         mutex.unlock();
     }
 
@@ -136,10 +132,10 @@ public class RacingTrack {
      * Method invoked by the Broker to signal the Horses to start running.
      */
     public void startTheRace() {
-        Broker b;
+        BrokerInt b;
         mutex.lock();
 
-        b = (Broker) Thread.currentThread();
+        b = (BrokerInt) Thread.currentThread();
         b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
@@ -158,16 +154,22 @@ public class RacingTrack {
      * @param step The distance of the next step the Horse will take.
      */
     public void makeAMove(int step) {
-        Horse h;
+        HorseInt h;
         int currentTurn;
         mutex.lock();
 
         currentTurn = horseTurn;
-        h = (Horse)Thread.currentThread();
+        h = (HorseInt)Thread.currentThread();
+
+        if (h.getCurrentStep() == 0) {
+            h.setHorseState(HorseState.RUNNING);
+            generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+                    HorseState.RUNNING);
+        }
 
         // notify next horse in FIFO
         // update current position
-        h.setCurrentPosition(step);
+        h.updateCurrentPosition(step);
         generalRepository.setHorsePosition(h.getRaceIdx(),
                 h.getCurrentPosition(),
                 h.getCurrentStep());
@@ -203,12 +205,12 @@ public class RacingTrack {
      * method has already crossed the finish line or not.
      */
     public boolean hasFinishLineBeenCrossed() {
-        Horse h;
+        HorseInt h;
         int currentTurn;
         mutex.lock();
 
         currentTurn = horseTurn;
-        h = (Horse)Thread.currentThread();
+        h = (HorseInt)Thread.currentThread();
 
         if (h.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH) {
             mutex.unlock();

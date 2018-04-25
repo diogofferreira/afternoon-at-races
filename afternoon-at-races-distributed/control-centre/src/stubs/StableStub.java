@@ -102,7 +102,7 @@ public class StableStub {
 
         h = (Horse) Thread.currentThread();
         inMessage = exchange(new StableMessage(
-                StableMessageTypes.PROCEED_TO_STABLE, 0));
+                StableMessageTypes.PROCEED_TO_STABLE, h.getAgility(), h.getID()));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -111,7 +111,25 @@ public class StableStub {
             System.exit(1);
         }
 
+        if (inMessage.getRaceID() < 0 ||
+                inMessage.getRaceID() > EventVariables.NUMBER_OF_RACES) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - Invalid race id in " +
+                    StableMessageTypes.PROCEED_TO_STABLE);
+            System.exit(1);
+        }
+
+        if (inMessage.getRaceIdx() < 0 ||
+                inMessage.getRaceIdx() > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - Invalid race idx in " +
+                    StableMessageTypes.PROCEED_TO_STABLE);
+            System.exit(1);
+        }
+
         h.setHorseState(HorseState.AT_THE_STABLE);
+        h.setRaceID(inMessage.getRaceID());
+        h.setRaceIdx(inMessage.getRaceIdx());
     }
 
     public void summonHorsesToPaddock(int raceID) {

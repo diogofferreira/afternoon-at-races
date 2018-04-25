@@ -3,7 +3,7 @@ package main;
 import communication.GeneralRepositoryAPS;
 import communication.ServerCom;
 import sharedRegions.GeneralRepository;
-import sharedRegionsInterfaces.GeneralRepositoryInterface;
+import sharedRegions.GeneralRepositoryInterface;
 
 /**
  * Main class of the event.

@@ -3,7 +3,7 @@ package main;
 import communication.PaddockAPS;
 import communication.ServerCom;
 import sharedRegions.*;
-import sharedRegionsInterfaces.PaddockInterface;
+import sharedRegions.PaddockInterface;
 import stubs.ControlCentreStub;
 import stubs.GeneralRepositoryStub;
 

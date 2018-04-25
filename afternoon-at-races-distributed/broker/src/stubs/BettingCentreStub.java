@@ -146,7 +146,8 @@ public class BettingCentreStub {
 
         s = (Spectator) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.PLACE_A_BET, s.getID()));
+                BettingCentreMessageTypes.PLACE_A_BET, s.getWallet(),
+                s.getStrategy(), s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

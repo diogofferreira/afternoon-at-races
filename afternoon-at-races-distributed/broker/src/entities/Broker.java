@@ -1,7 +1,6 @@
 package entities;
 
 import main.EventVariables;
-
 import states.BrokerState;
 import stubs.BettingCentreStub;
 import stubs.ControlCentreStub;
@@ -12,7 +11,7 @@ import stubs.StableStub;
  * The Broker is the entity that controls the event, regulates the bets
  * and supervises the races.
  */
-public class Broker extends Thread {
+public class Broker extends Thread implements BrokerInt {
     /**
      * Current state of the broker lifecycle.
      */
@@ -94,6 +93,7 @@ public class Broker extends Thread {
      * Method that returns the current Broker state.
      * @return Current Broker state.
      */
+    @Override
     public BrokerState getBrokerState() {
         return this.state;
     }
@@ -102,6 +102,7 @@ public class Broker extends Thread {
      * Updates the current Broker state.
      * @param state The new Broker state.
      */
+    @Override
     public void setBrokerState(BrokerState state) {
         this.state = state;
     }

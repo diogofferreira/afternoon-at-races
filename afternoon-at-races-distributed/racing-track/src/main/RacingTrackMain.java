@@ -3,7 +3,7 @@ package main;
 import communication.RacingTrackAPS;
 import communication.ServerCom;
 import sharedRegions.RacingTrack;
-import sharedRegionsInterfaces.RacingTrackInterface;
+import sharedRegions.RacingTrackInterface;
 import stubs.ControlCentreStub;
 import stubs.GeneralRepositoryStub;
 

@@ -1,7 +1,7 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Spectator;
+import entities.BrokerInt;
+import entities.SpectatorInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -11,15 +11,12 @@ import utils.Bet;
 import utils.BetState;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * The Betting Centre is a shared region where all the bets are registered,
@@ -125,7 +122,8 @@ public class BettingCentre {
      *                          General Repository.
      * @param stable Reference to an instance of the shared region Stable.
      */
-    public BettingCentre(GeneralRepositoryStub generalRepository, StableStub stable) {
+    public BettingCentre(GeneralRepositoryStub generalRepository,
+                         StableStub stable) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (stable == null)
@@ -265,10 +263,10 @@ public class BettingCentre {
      * @param raceID The current raceID.
      */
     public void acceptTheBets(int raceID) {
-        Broker b;
+        BrokerInt b;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         b.setBrokerState(BrokerState.WAITING_FOR_BETS);
         generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
 
@@ -316,12 +314,12 @@ public class BettingCentre {
      * @return The Horse's index on the current race that the Spectator bet on.
      */
     public int placeABet() {
-        Spectator s;
+        SpectatorInt s;
         Bet bet;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt)Thread.currentThread();
         s.setSpectatorState(SpectatorState.PLACING_A_BET);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.PLACING_A_BET);
@@ -397,11 +395,11 @@ public class BettingCentre {
      * waiting to collect their rewards.
      */
     public void honourTheBets() {
-        Broker b;
+        BrokerInt b;
         Bet bet;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
+        b = (BrokerInt)Thread.currentThread();
         b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
         generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
 
@@ -441,16 +439,15 @@ public class BettingCentre {
      * Method invoked by each one of the winning Spectators.
      * They change their state to COLLECTING_THE_GAINS and block in queue waiting
      * for their rewards.
-     * @param spectatorID The ID of the Spectator collecting his/her gains.
      * @return The value the Spectator won.
      */
-    public double goCollectTheGains(int spectatorID) {
-        Spectator s;
+    public double goCollectTheGains() {
+        SpectatorInt s;
         double winningValue;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
+        s = (SpectatorInt)Thread.currentThread();
         s.setSpectatorState(SpectatorState.COLLECTING_THE_GAINS);
         generalRepository.setSpectatorState(s.getID(),
                 SpectatorState.COLLECTING_THE_GAINS);
@@ -462,14 +459,14 @@ public class BettingCentre {
         }
 
         // add to pending collections queue
-        pendingHonours.add(spectatorID);
+        pendingHonours.add(s.getID());
 
         // spectator waits queue
         while (true) {
             // notify broker queue
             waitingForHonours.signalAll();
 
-            if (!pendingHonours.contains(spectatorID)) break;
+            if (!pendingHonours.contains(s.getID())) break;
 
             try {
                 waitingForCash.await();
@@ -479,8 +476,8 @@ public class BettingCentre {
 
         // get winning value
         winningValue = 0;
-        if (validatedHonours.containsKey(spectatorID))
-            winningValue = validatedHonours.get(spectatorID) / winners.length;
+        if (validatedHonours.containsKey(s.getID()))
+            winningValue = validatedHonours.get(s.getID()) / winners.length;
 
         mutex.unlock();
 

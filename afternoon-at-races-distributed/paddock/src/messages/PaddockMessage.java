@@ -8,6 +8,10 @@ public class PaddockMessage implements Serializable {
     // method type
     private int method;
 
+    // implicit info
+    private int raceID;
+    private int raceIdx;
+
     // entity id
     private int entityId;
 
@@ -21,11 +25,26 @@ public class PaddockMessage implements Serializable {
         this.entityId = entityId;
     }
 
+    public PaddockMessage(PaddockMessageTypes method, int raceID, int raceIdx, int entityId) {
+        this.method = method.getId();
+        this.raceID = raceID;
+        this.raceIdx = raceIdx;
+        this.entityId = entityId;
+    }
+
     public int getMethod() {
         return method;
     }
 
     public int getEntityId() {
         return entityId;
+    }
+
+    public int getRaceID() {
+        return raceID;
+    }
+
+    public int getRaceIdx() {
+        return raceIdx;
     }
 }

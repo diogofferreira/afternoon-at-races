@@ -97,16 +97,13 @@ public class BettingCentreStub {
         return inMessage.isAreThereAnyWinners();
     }
 
-    public double goCollectTheGains(int spectatorID) {
+    public double goCollectTheGains() {
         Spectator s;
         BettingCentreMessage inMessage;
 
-        if (spectatorID < 0 || spectatorID > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-            throw new IllegalArgumentException("Invalid spectator ID");
-
         s = (Spectator) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, spectatorID));
+                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

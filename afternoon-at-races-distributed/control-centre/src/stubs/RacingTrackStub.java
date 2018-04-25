@@ -61,7 +61,9 @@ public class RacingTrackStub {
 
         h = (Horse) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED, h.getRaceIdx()));
+                RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED,
+                h.getRaceID(), h.getRaceIdx(), h.getAgility(),
+                h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -86,7 +88,9 @@ public class RacingTrackStub {
             throw new IllegalArgumentException("Invalid horse step");
 
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.MAKE_A_MOVE, step, h.getID()));
+                RacingTrackMessageTypes.MAKE_A_MOVE, step, h.getRaceID(),
+                h.getRaceIdx(), h.getAgility(), h.getCurrentPosition(),
+                h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -96,16 +100,18 @@ public class RacingTrackStub {
         }
 
         h.setHorseState(HorseState.RUNNING);
+        h.updateCurrentPosition(step);
     }
 
     public void proceedToStartLine() {
-        // Rever este método devido às atualizações de estado
         Horse h;
         RacingTrackMessage inMessage;
 
         h = (Horse) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.PROCEED_TO_START_LINE, h.getID()));
+                RacingTrackMessageTypes.PROCEED_TO_START_LINE,
+                h.getRaceID(), h.getRaceIdx(), h.getAgility(),
+                h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

@@ -1,7 +1,6 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
+import entities.HorseInt;
 import main.EventVariables;
 import states.HorseState;
 import stubs.GeneralRepositoryStub;
@@ -196,11 +195,11 @@ public class Stable {
      * It is waken up by the Broker to proceed to Paddock or when the event ends.
      */
     public void proceedToStable() {
-        Horse h;
+        HorseInt h;
 
         mutex.lock();
 
-        h = (Horse) (Thread.currentThread());
+        h = (HorseInt) (Thread.currentThread());
 
         h.setRaceID(lineups[h.getID()] / EventVariables.NUMBER_OF_HORSES_PER_RACE);
         h.setRaceIdx(lineups[h.getID()] % EventVariables.NUMBER_OF_HORSES_PER_RACE);
@@ -240,8 +239,6 @@ public class Stable {
      * event.
      */
     public void entertainTheGuests() {
-        Broker b;
-
         mutex.lock();
 
         // notify all horses-jockeys to go celebrate

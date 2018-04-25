@@ -1,7 +1,6 @@
 package stubs;
 
 import communication.ClientCom;
-import entities.Horse;
 import main.EventVariables;
 import messageTypes.StableMessageTypes;
 import messages.StableMessage;

@@ -167,7 +167,7 @@ public class RacingTrack {
 
         // notify next horse in FIFO
         // update current position
-        h.setCurrentPosition(step);
+        h.updateCurrentPosition(step);
         generalRepository.setHorsePosition(h.getRaceIdx(),
                 h.getCurrentPosition(),
                 h.getCurrentStep());

@@ -3,7 +3,7 @@ package main;
 import communication.ServerCom;
 import communication.StableAPS;
 import sharedRegions.*;
-import sharedRegionsInterfaces.StableInterface;
+import sharedRegions.StableInterface;
 import stubs.GeneralRepositoryStub;
 
 /**

@@ -36,13 +36,21 @@ public class BrokerMain {
          */
 
         // shared regions initialization
-        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
+        /*controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
                 22401);
         stable = new StableStub("l040101-ws03.ua.pt",
                 22403);
         racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
                 22405);
         bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
+                22406);*/
+        controlCentre = new ControlCentreStub("127.0.0.1",
+                22401);
+        stable = new StableStub("127.0.0.1",
+                22403);
+        racingTrack = new RacingTrackStub("127.0.0.1",
+                22405);
+        bettingCentre = new BettingCentreStub("127.0.0.1",
                 22406);
 
         // entities initialization
