@@ -57,7 +57,11 @@ public class StableInterface {
                 if (inMessage.getAgility() < 0 ||
                         inMessage.getAgility() > EventVariables.HORSE_MAX_STEP)
                     return new StableMessage(StableMessageTypes.ERROR);
+                if (inMessage.getEntityId() < 0 ||
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
+                    return new StableMessage(StableMessageTypes.ERROR);
 
+                h.setID(inMessage.getEntityId());
                 h.setAgility(inMessage.getAgility());
                 stable.proceedToStable();
                 requests++;

@@ -197,7 +197,8 @@ public class ControlCentreStub {
 
         results = inMessage.getWinners();
 
-        if (results == null || results.length == 0) {
+        if (results == null || results.length == 0 ||
+                results.length > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
             System.out.println(Thread.currentThread().getName() +
                     " - Invalid results array - " +
                     ControlCentreMessageTypes.REPORT_RESULTS);
@@ -253,7 +254,7 @@ public class ControlCentreStub {
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
                     " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK);
+                    ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE);
             System.exit(1);
         }
 

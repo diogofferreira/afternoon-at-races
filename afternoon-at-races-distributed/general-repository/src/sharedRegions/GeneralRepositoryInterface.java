@@ -68,10 +68,10 @@ public class GeneralRepositoryInterface {
                 horseIdx = inMessage.getHorseIdx();
                 horseAgility = inMessage.getHorseAgility();
 
-                if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
                     return new GeneralRepositoryMessage(
                             GeneralRepositoryMessageTypes.ERROR);
-                if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                if (horseIdx < 0 || horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new GeneralRepositoryMessage(
                             GeneralRepositoryMessageTypes.ERROR);
                 if (horseAgility < 1 || horseAgility > EventVariables.HORSE_MAX_STEP)
@@ -88,7 +88,7 @@ public class GeneralRepositoryInterface {
                 horsePosition = inMessage.getHorsePosition();
                 horseStep = inMessage.getHorseStep();
 
-                if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                if (horseIdx < 0 || horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new GeneralRepositoryMessage(
                             GeneralRepositoryMessageTypes.ERROR);
                 if (horsePosition < 0)

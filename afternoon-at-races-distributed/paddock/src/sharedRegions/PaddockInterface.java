@@ -56,7 +56,7 @@ public class PaddockInterface {
                 ((HorseInt) Thread.currentThread()).setRaceIdx(inMessage.getRaceIdx());
                 ((HorseInt) Thread.currentThread()).setID(inMessage.getEntityId());
 
-                paddock.goCheckHorses();
+                paddock.proceedToPaddock();
                 requests++;
                 return new PaddockMessage(PaddockMessageTypes.PROCEED_TO_PADDOCK,
                         inMessage.getEntityId());

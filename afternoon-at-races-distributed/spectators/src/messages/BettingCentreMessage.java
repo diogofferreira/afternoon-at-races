@@ -40,12 +40,9 @@ public class BettingCentreMessage implements Serializable {
     }
 
     public BettingCentreMessage(BettingCentreMessageTypes method,
-                                int raceIdOrBettedHorse, int entityId) {
+                                int raceId, int entityId) {
         this.method = method.getId();
-        if (this.method == 0)
-            this.raceId = raceIdOrBettedHorse;
-        else
-            this.bettedHorse = raceIdOrBettedHorse;
+        this.raceId = raceId;
         this.entityId = entityId;
     }
 
@@ -70,11 +67,14 @@ public class BettingCentreMessage implements Serializable {
         this.entityId = entityId;
     }
 
-    public BettingCentreMessage(BettingCentreMessageTypes method, int wallet,
-                                int strategy, int entityId) {
+    public BettingCentreMessage(BettingCentreMessageTypes method, boolean response,
+                                int wallet, int strategyOrBettedHorse, int entityId) {
         this.method = method.getId();
         this.wallet = wallet;
-        this.strategy = strategy;
+        if (response)
+            this.bettedHorse = strategyOrBettedHorse;
+        else
+            this.strategy = strategyOrBettedHorse;
         this.entityId = entityId;
     }
 

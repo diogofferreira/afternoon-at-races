@@ -80,8 +80,8 @@ public class BettingCentreStub {
     public boolean areThereAnyWinners(int[] standings) {
         BettingCentreMessage inMessage;
 
-        if (standings == null ||
-                standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
+        if (standings == null || standings.length == 0 ||
+                standings.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid standings");
 
         inMessage = exchange(new BettingCentreMessage(
@@ -140,7 +140,8 @@ public class BettingCentreStub {
 
         s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new BettingCentreMessage(
-                BettingCentreMessageTypes.PLACE_A_BET, s.getID()));
+                BettingCentreMessageTypes.PLACE_A_BET, false,
+                s.getWallet(), s.getStrategy(), s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -149,7 +150,15 @@ public class BettingCentreStub {
             System.exit(1);
         }
 
+        if (inMessage.getWallet() > s.getWallet()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - Invalid wallet value in " +
+                    BettingCentreMessageTypes.PLACE_A_BET);
+            System.exit(1);
+        }
+
         s.setSpectatorState(SpectatorState.PLACING_A_BET);
+        s.setWallet(inMessage.getWallet());
         return inMessage.getBettedHorse();
     }
 

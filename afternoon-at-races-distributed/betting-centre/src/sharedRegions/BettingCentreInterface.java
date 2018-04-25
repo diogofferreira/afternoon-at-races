@@ -51,7 +51,8 @@ public class BettingCentreInterface {
 
             case ARE_THERE_ANY_WINNERS:
                 winners = inMessage.getWinners();
-                if (winners == null || winners.length == 0)
+                if (winners == null || winners.length == 0 ||
+                        winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 
                 areThereAnyWinners = bettingCentre.areThereAnyWinners(winners);
@@ -91,12 +92,13 @@ public class BettingCentreInterface {
 
                 ((SpectatorInt) Thread.currentThread()).setID(spectatorID);
                 ((SpectatorInt) Thread.currentThread()).setStrategy(inMessage.getStrategy());
-                ((SpectatorInt) Thread.currentThread()).setID(inMessage.getWallet());
+                ((SpectatorInt) Thread.currentThread()).setWallet(inMessage.getWallet());
 
                 horseIdx = bettingCentre.placeABet();
                 return new BettingCentreMessage(
-                        BettingCentreMessageTypes.PLACE_A_BET, horseIdx,
-                        inMessage.getEntityId());
+                        BettingCentreMessageTypes.PLACE_A_BET, true,
+                        ((SpectatorInt) Thread.currentThread()).getWallet(),
+                        horseIdx, inMessage.getEntityId());
 
             default:
                 return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);

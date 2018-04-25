@@ -82,8 +82,10 @@ public class Spectator extends Thread implements SpectatorInt {
 
         while(controlCentre.waitForNextRace()) {
             // goCheckHorses
+            System.out.println("CHECK HORSES");
             paddock.goCheckHorses();
 
+            System.out.println("PLACING BET");
             // Place a bet and return the horse the spectator chose
             bettedHorse = bettingCentre.placeABet();
 
