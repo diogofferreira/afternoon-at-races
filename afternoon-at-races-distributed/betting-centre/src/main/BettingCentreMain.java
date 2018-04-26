@@ -28,13 +28,13 @@ public class BettingCentreMain {
 
         // shared regions stub initialization
         /*generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
-                22402);
+                22401);
         stable = new StableStub("l040101-ws03.ua.pt",
-                22403);*/
+                22402);*/
         generalRepository = new GeneralRepositoryStub("127.0.0.1",
-                22402);
+                22401);
         stable = new StableStub("127.0.0.1",
-                22403);
+                22402);
 
         // service establishment
         scom = new ServerCom(22406);

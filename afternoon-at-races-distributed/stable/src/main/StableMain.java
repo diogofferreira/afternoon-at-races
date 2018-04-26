@@ -27,12 +27,12 @@ public class StableMain {
 
         // shared regions stub initialization
         /*generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
-                22402);*/
+                22403);*/
         generalRepository = new GeneralRepositoryStub("127.0.0.1",
-                22402);
+                22403);
 
         // service establishment
-        scom = new ServerCom(22403);
+        scom = new ServerCom(22402);
         scom.start();
 
         // shared region initialization

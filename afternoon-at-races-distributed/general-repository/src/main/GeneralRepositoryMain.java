@@ -23,7 +23,7 @@ public class GeneralRepositoryMain {
         ServerCom scom, scomi;
 
         // service establishment
-        scom = new ServerCom(22402);
+        scom = new ServerCom(22401);
         scom.start();
 
         // shared region initialization

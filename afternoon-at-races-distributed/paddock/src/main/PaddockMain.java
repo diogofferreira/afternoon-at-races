@@ -27,15 +27,17 @@ public class PaddockMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        /*controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
-                22401);
+        /*
         generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
-                22402);*/
-
-        controlCentre = new ControlCentreStub("127.0.0.1",
                 22401);
+        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
+                22403);
+        */
+
         generalRepository = new GeneralRepositoryStub("127.0.0.1",
-                22402);
+                22401);
+        controlCentre = new ControlCentreStub("127.0.0.1",
+                22403);
 
         // service establishment
         scom = new ServerCom(22404);

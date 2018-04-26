@@ -24,29 +24,29 @@ public class BrokerMain {
 
         /**
          * LOCATIONS
-         * CC - ws01
-         * GR - ws02
-         * ST - ws03
+         * GR - ws01
+         * ST - ws02
+         * CC - ws03
          * PA - ws04
          * RT - ws05
          * BC - ws06
-         * B  - ws07
-         * H  - ws08
-         * S  - ws09
+         * H  - ws07
+         * S  - ws08
+         * B  - ws09
          */
 
         // shared regions initialization
-        /*controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
-                22401);
-        stable = new StableStub("l040101-ws03.ua.pt",
+        /*stable = new StableStub("l040101-ws03.ua.pt",
+                22402);
+        controlCentre = new ControlCentreStub("l040101-ws01.ua.pt",
                 22403);
         racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
                 22405);
         bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
                 22406);*/
-        controlCentre = new ControlCentreStub("127.0.0.1",
-                22401);
         stable = new StableStub("127.0.0.1",
+                22402);
+        controlCentre = new ControlCentreStub("127.0.0.1",
                 22403);
         racingTrack = new RacingTrackStub("127.0.0.1",
                 22405);
