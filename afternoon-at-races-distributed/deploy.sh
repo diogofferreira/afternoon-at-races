@@ -46,13 +46,19 @@ for i in ${!HOSTNAMES[@]}; do
     scp ${MODULES[$i]}.tgz $USERNAME@${HOSTNAMES[$i]}:~
 
     printf "\n\e[38;5;220m Decompressing ${MODULES[$i]} in ${HOSTNAMES[$i]}... \n\e[0m";
-    ssh $USERNAME@${HOSTNAMES[$i]} "tar -zxvf ${MODULES[$i]}.tgz && 
-        mkdir out && mkdir logs &&
-        javac -d out -sourcepath src ${MODULES[$i]}/src/main/${CLASSES[$i]}.java &&
-        rm -rf ${MODULES[$i]} &&
-        java -cp out main.${CLASSES[$i]}  &&"
+    COMMAND="rm -rf out && tar -zxvf ${MODULES[$i]}.tgz && 
+        mkdir out &&
+        javac -d out -sourcepath ${MODULES[$i]}/src ${MODULES[$i]}/src/main/${CLASSES[$i]}.java &&
+        rm -rf ${MODULES[$i]}*"
 
-    echo "\n\e[38;5;220m Cleaning local ${MODULES[$i]}... \n\e[0m";
+    if [ "${MODULES[$i]}"="general-repository" ]; then
+        COMMAND="$COMMAND && mkdir logs";
+    fi
+
+    ssh $USERNAME@${HOSTNAMES[$i]} "$COMMAND"
+    
+    ssh $USERNAME@${HOSTNAMES[$i]} "screen -d -m java -cp out main.${CLASSES[$i]} &"
+
+    printf "\n\e[38;5;220m Cleaning local ${MODULES[$i]}... \n\e[0m";
     rm ${MODULES[$i]}.tgz
-
 done
