@@ -231,7 +231,7 @@ public class ControlCentreStub {
 
         b = (BrokerInt)Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID));
+                ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +
@@ -249,7 +249,7 @@ public class ControlCentreStub {
 
         s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE));
+                ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE, s.getID()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

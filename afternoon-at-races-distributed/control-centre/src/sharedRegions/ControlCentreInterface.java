@@ -54,7 +54,7 @@ public class ControlCentreInterface {
                 boolean isThereARace = controlCentre.waitForNextRace();
                 return new ControlCentreMessage(
                         ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE,
-                        isThereARace, 0);
+                        isThereARace, inMessage.getEntityId());
 
             case PROCEED_TO_PADDOCK:
                 controlCentre.proceedToPaddock();
