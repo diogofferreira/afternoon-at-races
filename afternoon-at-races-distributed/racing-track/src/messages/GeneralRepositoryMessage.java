@@ -16,7 +16,6 @@ public class GeneralRepositoryMessage implements Serializable {
     private int brokerState;
     private int spectatorState;
     private int horseState;
-    private int raceId;
     private int raceNumber;
     private int horseIdx;
     private int horseAgility;
@@ -70,11 +69,11 @@ public class GeneralRepositoryMessage implements Serializable {
         switch (this.method) {
             case 2:
                 this.horseState = stateOrAgilityOrStep;
-                this.raceId = raceIdOrHorsePosition;
+                this.raceNumber = raceIdOrHorsePosition;
                 break;
             case 5:
                 this.horseAgility = stateOrAgilityOrStep;
-                this.raceId = raceIdOrHorsePosition;
+                this.raceNumber = raceIdOrHorsePosition;
                 break;
             case 7:
                 this.horseStep = stateOrAgilityOrStep;
@@ -94,7 +93,7 @@ public class GeneralRepositoryMessage implements Serializable {
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
                                     int raceId, double[] horsesOdd, int entityId) {
         this.method = method.getId();
-        this.raceId = raceId;
+        this.raceNumber = raceId;
         this.horsesOdd = horsesOdd;
         this.entityId = entityId;
     }
@@ -122,9 +121,6 @@ public class GeneralRepositoryMessage implements Serializable {
         return method;
     }
 
-    public int getRaceId() {
-        return raceId;
-    }
 
     public int getRaceNumber() {
         return raceNumber;
@@ -173,7 +169,6 @@ public class GeneralRepositoryMessage implements Serializable {
                 ", brokerState=" + brokerState +
                 ", spectatorState=" + spectatorState +
                 ", horseState=" + horseState +
-                ", raceId=" + raceId +
                 ", raceNumber=" + raceNumber +
                 ", horseIdx=" + horseIdx +
                 ", horseAgility=" + horseAgility +

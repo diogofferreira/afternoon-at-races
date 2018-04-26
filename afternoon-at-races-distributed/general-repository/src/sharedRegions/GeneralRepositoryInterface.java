@@ -3,7 +3,6 @@ package sharedRegions;
 import main.EventVariables;
 import messageTypes.GeneralRepositoryMessageTypes;
 import messages.GeneralRepositoryMessage;
-import sharedRegions.GeneralRepository;
 import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
@@ -40,7 +39,7 @@ public class GeneralRepositoryInterface {
 
         switch (mType) {
             case INIT_RACE:
-                raceID = inMessage.getRaceId();
+                raceID = inMessage.getRaceNumber();
 
                 if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
                     return new GeneralRepositoryMessage(
@@ -69,7 +68,7 @@ public class GeneralRepositoryInterface {
                         inMessage.getEntityId());
 
             case SET_HORSE_AGILITY:
-                raceID = inMessage.getRaceId();
+                raceID = inMessage.getRaceNumber();
                 horseIdx = inMessage.getHorseIdx();
                 horseAgility = inMessage.getHorseAgility();
 
@@ -110,7 +109,7 @@ public class GeneralRepositoryInterface {
                         inMessage.getEntityId());
 
             case SET_HORSES_ODD:
-                raceID = inMessage.getRaceId();
+                raceID = inMessage.getRaceNumber();
                 horsesOdd = inMessage.getHorsesOdd();
 
                 if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
@@ -140,7 +139,7 @@ public class GeneralRepositoryInterface {
                         inMessage.getEntityId());
 
             case SET_HORSE_STATE:
-                raceID = inMessage.getRaceId();
+                raceID = inMessage.getRaceNumber();
                 horseIdx = inMessage.getHorseIdx();
                 horseState = HorseState.getType(inMessage.getHorseState());
 

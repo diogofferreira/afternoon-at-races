@@ -15,6 +15,8 @@ public class BettingCentreInterface {
 
     private int numberOfWinners;
 
+    private int[] bettedHorses;
+
     private BettingCentre bettingCentre;
 
     public BettingCentreInterface(BettingCentre bettingCentre) {
@@ -25,6 +27,7 @@ public class BettingCentreInterface {
         this.requests = 0;
         this.raceNumber = -1;
         this.numberOfWinners = -1;
+        this.bettedHorses = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
     public BettingCentreMessage processAndReply(BettingCentreMessage inMessage) {
@@ -58,7 +61,12 @@ public class BettingCentreInterface {
                         winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 
-                numberOfWinners = winners.length;
+                if (raceNumber == EventVariables.NUMBER_OF_RACES - 1) {
+                    numberOfWinners = 0;
+                    // Set number of spectator winners
+                    for (int winner : winners)
+                        numberOfWinners += bettedHorses[winner];
+                }
 
                 areThereAnyWinners = bettingCentre.areThereAnyWinners(winners);
                 return new BettingCentreMessage(
@@ -100,6 +108,11 @@ public class BettingCentreInterface {
                 ((SpectatorInt) Thread.currentThread()).setWallet(inMessage.getWallet());
 
                 horseIdx = bettingCentre.placeABet();
+
+                // Set betted horse
+                if (raceNumber == EventVariables.NUMBER_OF_RACES - 1)
+                    bettedHorses[horseIdx] += 1;
+
                 return new BettingCentreMessage(
                         BettingCentreMessageTypes.PLACE_A_BET, true,
                         ((SpectatorInt) Thread.currentThread()).getWallet(),

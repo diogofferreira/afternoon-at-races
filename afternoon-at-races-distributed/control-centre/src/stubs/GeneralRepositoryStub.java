@@ -62,7 +62,7 @@ public class GeneralRepositoryStub {
 
         if (raceNumber < 0 || raceNumber >= EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Invalid race ID");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.INIT_RACE, raceNumber, 0));
 
