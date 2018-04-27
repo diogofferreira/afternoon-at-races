@@ -26,10 +26,10 @@ public class StableMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        /*generalRepository = new GeneralRepositoryStub("l040101-ws02.ua.pt",
-                22403);*/
+        generalRepository = new GeneralRepositoryStub("l040101-ws01.ua.pt",
+                22401);/*
         generalRepository = new GeneralRepositoryStub("127.0.0.1",
-                22403);
+                22401);*/
 
         // service establishment
         scom = new ServerCom(22402);
