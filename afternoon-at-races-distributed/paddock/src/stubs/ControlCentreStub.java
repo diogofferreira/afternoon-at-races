@@ -147,6 +147,22 @@ public class ControlCentreStub {
         return inMessage.isHaveIWon();
     }
 
+    public void openTheEvent() {
+        BrokerInt b;
+        ControlCentreMessage inMessage;
+
+        b = (BrokerInt) Thread.currentThread();
+        inMessage = exchange(new ControlCentreMessage(
+                ControlCentreMessageTypes.OPEN_THE_EVENT, 0));
+
+        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+            System.out.println(Thread.currentThread().getName() +
+                    " - An unknown error ocurred in " +
+                    ControlCentreMessageTypes.OPEN_THE_EVENT);
+            System.exit(1);
+        }
+    }
+
     public void proceedToPaddock() {
         HorseInt h;
         ControlCentreMessage inMessage;

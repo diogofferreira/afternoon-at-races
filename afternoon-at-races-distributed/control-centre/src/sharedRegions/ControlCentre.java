@@ -123,6 +123,21 @@ public class ControlCentre {
     }
 
     /**
+     * Method invoked by the Broker in order to start the event. It just simply
+     * updates the Broker state and updates the General Repository.
+     */
+    public void openTheEvent() {
+        BrokerInt b;
+        mutex.lock();
+
+        b = (BrokerInt)Thread.currentThread();
+        b.setBrokerState(BrokerState.OPENING_THE_EVENT);
+        generalRepository.setBrokerState(BrokerState.OPENING_THE_EVENT);
+
+        mutex.unlock();
+    }
+
+    /**
      * Method invoked by Broker, signaling the start of the event.
      * The Broker updates the current raceID and sets his state to
      * ANNOUNCING_NEXT_RACE, while signalling the Horses to proceed to Paddock.

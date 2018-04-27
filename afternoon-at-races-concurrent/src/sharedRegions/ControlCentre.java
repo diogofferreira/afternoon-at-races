@@ -119,6 +119,10 @@ public class ControlCentre {
         this.eventEnded = false;
     }
 
+    /**
+     * Method invoked by the Broker in order to start the event. It just simply
+     * updates the Broker state and updates the General Repository.
+     */
     public void openTheEvent() {
         Broker b;
         mutex.lock();

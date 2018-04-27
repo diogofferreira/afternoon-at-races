@@ -2,29 +2,31 @@ package messageTypes;
 
 public enum ControlCentreMessageTypes {
 
-    SUMMON_HORSES_TO_PADDOCK(0),
+    OPEN_THE_EVENT(0),
 
-    WAIT_FOR_NEXT_RACE(1),
+    SUMMON_HORSES_TO_PADDOCK(1),
 
-    PROCEED_TO_PADDOCK(2),
+    WAIT_FOR_NEXT_RACE(2),
 
-    GO_CHECK_HORSES(3),
+    PROCEED_TO_PADDOCK(3),
 
-    GO_WATCH_THE_RACE(4),
+    GO_CHECK_HORSES(4),
 
-    START_THE_RACE(5),
+    GO_WATCH_THE_RACE(5),
 
-    FINISH_THE_RACE(6),
+    START_THE_RACE(6),
 
-    REPORT_RESULTS(7),
+    FINISH_THE_RACE(7),
 
-    HAVE_I_WON(8),
+    REPORT_RESULTS(8),
 
-    CELEBRATE(9),
+    HAVE_I_WON(9),
 
-    RELAX_A_BIT(10),
+    CELEBRATE(10),
 
-    ERROR(11);
+    RELAX_A_BIT(11),
+
+    ERROR(12);
 
     /**
      * ID of the message type;
@@ -47,19 +49,25 @@ public enum ControlCentreMessageTypes {
         return this.id;
     }
 
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
     public static ControlCentreMessageTypes getType(int id) {
         switch (id) {
-            case 0: return SUMMON_HORSES_TO_PADDOCK;
-            case 1: return WAIT_FOR_NEXT_RACE;
-            case 2: return PROCEED_TO_PADDOCK;
-            case 3: return GO_CHECK_HORSES;
-            case 4: return GO_WATCH_THE_RACE;
-            case 5: return START_THE_RACE;
-            case 6: return FINISH_THE_RACE;
-            case 7: return REPORT_RESULTS;
-            case 8: return HAVE_I_WON;
-            case 9: return CELEBRATE;
-            case 10: return RELAX_A_BIT;
+            case 0: return OPEN_THE_EVENT;
+            case 1: return SUMMON_HORSES_TO_PADDOCK;
+            case 2: return WAIT_FOR_NEXT_RACE;
+            case 3: return PROCEED_TO_PADDOCK;
+            case 4: return GO_CHECK_HORSES;
+            case 5: return GO_WATCH_THE_RACE;
+            case 6: return START_THE_RACE;
+            case 7: return FINISH_THE_RACE;
+            case 8: return REPORT_RESULTS;
+            case 9: return HAVE_I_WON;
+            case 10: return CELEBRATE;
+            case 11: return RELAX_A_BIT;
             default: return null;
         }
     }

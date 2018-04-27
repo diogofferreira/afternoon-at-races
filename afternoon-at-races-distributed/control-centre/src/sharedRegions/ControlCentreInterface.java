@@ -32,6 +32,12 @@ public class ControlCentreInterface {
             return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
 
         switch (mType) {
+            case OPEN_THE_EVENT:
+                controlCentre.openTheEvent();
+                return new ControlCentreMessage(
+                        ControlCentreMessageTypes.OPEN_THE_EVENT,
+                        inMessage.getEntityId());
+
             case SUMMON_HORSES_TO_PADDOCK:
                 int raceID = inMessage.getRaceId();
 
