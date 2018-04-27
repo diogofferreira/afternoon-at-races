@@ -66,6 +66,8 @@ public class Broker extends Thread {
     public void run() {
         int[] winners;
 
+        controlCentre.openTheEvent();
+
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock
             controlCentre.summonHorsesToPaddock(i);

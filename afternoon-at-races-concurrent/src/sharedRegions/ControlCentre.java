@@ -119,6 +119,17 @@ public class ControlCentre {
         this.eventEnded = false;
     }
 
+    public void openTheEvent() {
+        Broker b;
+        mutex.lock();
+
+        b = (Broker)Thread.currentThread();
+        b.setBrokerState(BrokerState.OPENING_THE_EVENT);
+        generalRepository.setBrokerState(BrokerState.OPENING_THE_EVENT);
+
+        mutex.unlock();
+    }
+
     /**
      * Method invoked by Broker, signaling the start of the event.
      * The Broker updates the current raceID and sets his state to

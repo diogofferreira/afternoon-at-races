@@ -1,5 +1,8 @@
 package sharedRegions;
 
+import entities.Broker;
+import entities.Horse;
+import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -109,7 +112,7 @@ public class GeneralRepository {
      */
     public GeneralRepository() {
         this.mutex = new ReentrantLock();
-        this.brokerState = BrokerState.OPENING_THE_EVENT;
+        this.brokerState = null;
         this.spectatorsState = new SpectatorState[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesState = new HorseState[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
@@ -181,7 +184,7 @@ public class GeneralRepository {
             pw.printf(" Od%d N%d Ps%d Sd%s", i, i, i, i);
         pw.println();
         pw.close();
-        printState();
+        //printState();
 
         mutex.unlock();
     }
@@ -193,9 +196,14 @@ public class GeneralRepository {
     private void printState() {
         mutex.lock();
 
-        if (brokerState == BrokerState.OPENING_THE_EVENT
-                && Stream.of(spectatorsState).anyMatch(
-                        s -> s != SpectatorState.WAITING_FOR_A_RACE_TO_START)) {
+        if (brokerState == null || Stream.of(spectatorsState).anyMatch(
+                        s -> s == null)) {
+            mutex.unlock();
+            return;
+        }
+
+        if (brokerState == BrokerState.ANNOUNCING_NEXT_RACE &&
+                Stream.of(horsesState[raceNumber]).anyMatch(h -> h == null)) {
             mutex.unlock();
             return;
         }
@@ -222,6 +230,7 @@ public class GeneralRepository {
         } catch (ClassCastException e) { }
         */
 
+
         pw.printf("  %4s ", brokerState != null ? brokerState : "----");
 
 
@@ -231,7 +240,8 @@ public class GeneralRepository {
                     spectatorsWallet[i] != -1 ? spectatorsWallet[i] : "----"
             );
 
-        pw.printf("  %1d", raceNumber + 1);
+        pw.printf("  %1s", brokerState == BrokerState.OPENING_THE_EVENT ?
+                "-" : raceNumber + 1);
 
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++)
             pw.printf(" %3s  %2s ",
@@ -244,9 +254,11 @@ public class GeneralRepository {
             );
         pw.println();
 
-        pw.printf("  %1d  %2d ",
-                raceNumber + 1, raceNumber < 0 ?
-                        0 : EventVariables.RACING_TRACK_LENGTH);
+        pw.printf("  %1s  %2s ",
+                brokerState == BrokerState.OPENING_THE_EVENT ?
+                        "-" : raceNumber + 1,
+                brokerState == BrokerState.OPENING_THE_EVENT ?
+                        "--" : EventVariables.RACING_TRACK_LENGTH);
 
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++)
             pw.printf("  %1s  %4s",
