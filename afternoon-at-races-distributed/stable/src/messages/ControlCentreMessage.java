@@ -38,7 +38,7 @@ public class ControlCentreMessage implements Serializable {
     public ControlCentreMessage(ControlCentreMessageTypes method,
                                 int raceIdOrHorseIdx, int entityId) {
         this.method = method.getId();
-        if (this.method == 0)
+        if (method == ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK)
             this.raceId = raceIdOrHorseIdx;
         else
             this.horseIdx = raceIdOrHorseIdx;
@@ -48,7 +48,7 @@ public class ControlCentreMessage implements Serializable {
     public ControlCentreMessage(ControlCentreMessageTypes method,
                                 boolean isThereARaceOrHaveIWon, int entityId) {
         this.method = method.getId();
-        if (this.method == 1)
+        if (method == ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE)
             this.isThereARace = isThereARaceOrHaveIWon;
         else
             this.haveIWon = isThereARaceOrHaveIWon;
@@ -59,7 +59,7 @@ public class ControlCentreMessage implements Serializable {
     public ControlCentreMessage(ControlCentreMessageTypes method,
                                 int[] standingsOrWinners, int entityId) {
         this.method = method.getId();
-        if (this.method == 6)
+        if (method == ControlCentreMessageTypes.FINISH_THE_RACE)
             this.standings = standingsOrWinners;
         else
             this.winners = standingsOrWinners;

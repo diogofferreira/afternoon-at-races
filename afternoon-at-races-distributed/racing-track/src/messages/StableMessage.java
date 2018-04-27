@@ -72,7 +72,7 @@ public class StableMessage implements Serializable {
     public int getMethod() {
         return method;
     }
-
+    
     public int[] getHorsesId() {
         return horsesId;
     }

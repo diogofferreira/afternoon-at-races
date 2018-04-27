@@ -161,6 +161,8 @@ public class ControlCentreStub {
                     ControlCentreMessageTypes.OPEN_THE_EVENT);
             System.exit(1);
         }
+
+        b.setBrokerState(BrokerState.OPENING_THE_EVENT);
     }
 
     public void proceedToPaddock() {

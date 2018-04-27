@@ -43,17 +43,17 @@ public class GeneralRepositoryMessage implements Serializable {
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
                                     int stateOrAmountOrRaceNumber, int entityId) {
         this.method = method.getId();
-        switch (this.method) {
-            case 0:
+        switch (method) {
+            case SET_BROKER_STATE:
                 this.brokerState = stateOrAmountOrRaceNumber;
                 break;
-            case 1:
+            case SET_SPECTATOR_STATE:
                 this.spectatorState = stateOrAmountOrRaceNumber;
                 break;
-            case 3:
+            case SET_SPECTATORS_BET:
                 this.spectatorBet = stateOrAmountOrRaceNumber;
                 break;
-            case 9:
+            case INIT_RACE:
                 this.raceNumber = stateOrAmountOrRaceNumber;
                 break;
         }
@@ -66,16 +66,16 @@ public class GeneralRepositoryMessage implements Serializable {
                                     int entityId) {
         this.method = method.getId();
         this.horseIdx = horseIdx;
-        switch (this.method) {
-            case 2:
+        switch (method) {
+            case SET_HORSE_STATE:
                 this.horseState = stateOrAgilityOrStep;
                 this.raceNumber = raceIdOrHorsePosition;
                 break;
-            case 5:
+            case SET_HORSE_AGILITY:
                 this.horseAgility = stateOrAgilityOrStep;
                 this.raceNumber = raceIdOrHorsePosition;
                 break;
-            case 7:
+            case SET_HORSE_POSITION:
                 this.horseStep = stateOrAgilityOrStep;
                 this.horsePosition = raceIdOrHorsePosition;
         }
