@@ -56,6 +56,14 @@ public class BettingCentreStub {
         return inMessage;
     }
 
+    /**
+     * Method invoked by the Broker.
+     * The broker changes its state to WAITING_FOR_BETS, signals the Spectators
+     * that is accepting bets.
+     * It blocks each time it validates a new bet and wakes up the Spectators
+     * that still have pending bets.
+     * @param raceID The current raceID.
+     */
     public void acceptTheBets(int raceID) {
         BrokerInt b;
         BettingCentreMessage inMessage;
@@ -77,6 +85,11 @@ public class BettingCentreStub {
         b.setBrokerState(BrokerState.WAITING_FOR_BETS);
     }
 
+    /**
+     * Method invoked by the Broker to check if there are any winning bets.
+     * @param standings An array of horseIdxs that contains the race winners.
+     * @return True if there are any winners, false otherwise.
+     */
     public boolean areThereAnyWinners(int[] standings) {
         BettingCentreMessage inMessage;
 
@@ -97,6 +110,12 @@ public class BettingCentreStub {
         return inMessage.isAreThereAnyWinners();
     }
 
+    /**
+     * Method invoked by each one of the winning Spectators.
+     * They change their state to COLLECTING_THE_GAINS and block in queue waiting
+     * for their rewards.
+     * @return The value the Spectator won.
+     */
     public double goCollectTheGains() {
         SpectatorInt s;
         BettingCentreMessage inMessage;
@@ -116,6 +135,14 @@ public class BettingCentreStub {
         return inMessage.getWinningValue();
     }
 
+    /**
+     * Method invoked by the Broker if there were any winning bets.
+     * The Broker changes its state to SETTLING_ACCOUNTS and signals the
+     * Spectators waiting for collecting their gains that it's open for settling
+     * accounts.
+     * He blocks each time he pays a winning bet and wakes up Spectators still
+     * waiting to collect their rewards.
+     */
     public void honourTheBets() {
         BrokerInt b;
         BettingCentreMessage inMessage;
@@ -134,6 +161,13 @@ public class BettingCentreStub {
         b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
     }
 
+    /**
+     * Method invoked by each one of the Spectators to place their bet, effectively
+     * changing their state to PLACING_A_BET.
+     * They blocked in queue waiting for the Broker to validate their bet.
+     * If their bet is not accepted a new bet is generated.
+     * @return The Horse's index on the current race that the Spectator bet on.
+     */
     public int placeABet() {
         SpectatorInt s;
         BettingCentreMessage inMessage;
