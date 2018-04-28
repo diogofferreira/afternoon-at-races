@@ -5,14 +5,29 @@ import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.PaddockMessageTypes;
 import messages.PaddockMessage;
-import sharedRegions.Paddock;
 
-
+/**
+ * Interface of the Paddock server that processes the received messages,
+ * communicating with shared region, and replies to the thread that requests
+ * for the service (APS).
+ */
 public class PaddockInterface {
 
+    /**
+     * Counter that registers the number of Spectators that have already invoked
+     * the PROCEED_TO_PADDOCK method. It is useful to close the server socket.
+     */
     private int requests;
+
+    /**
+     * Instance of the Paddock shared region.
+     */
     private Paddock paddock;
 
+    /**
+     * Creates a new instance of an interface of the Paddock shared region.
+     * @param paddock Instance of the Paddock shared region.
+     */
     public PaddockInterface(Paddock paddock) {
         if (paddock == null)
             throw new IllegalArgumentException("Invalid Paddock.");
@@ -20,6 +35,16 @@ public class PaddockInterface {
         this.paddock = paddock;
     }
 
+    /**
+     * Method that processes a request coming from the APS, interacts with the
+     * shared region and returns a the response to the method invoked in the
+     * shared region.
+     * @param inMessage The client's incoming message, which contains the
+     *                  information and arguments necessary to invoke the
+     *                  corresponding method in the shared region.
+     * @return The server's outgoing message, with all the information that
+     * the invoked method returned and other entity attributes updates.
+     */
     public PaddockMessage processAndReply(PaddockMessage inMessage) {
         PaddockMessageTypes mType;
 
@@ -66,6 +91,12 @@ public class PaddockInterface {
         }
     }
 
+    /**
+     * Method that returns the counter that registers the number of Spectators
+     * that have already invoked the PROCEED_TO_PADDOCK method.
+     * @return The counter that registers the number of Spectators
+     * that have already invoked the PROCEED_TO_PADDOCK method.
+     */
     public int getRequests() {
         return requests;
     }
