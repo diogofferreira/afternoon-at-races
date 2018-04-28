@@ -67,7 +67,8 @@ public class BettingCentreAPS extends Thread
     }
 
     /**
-     *  Provide the service.
+     *  Provides the service, by reading the incoming message, letting the
+     *  shared region process it and replying to the client.
      */
     @Override
     public void run() {
