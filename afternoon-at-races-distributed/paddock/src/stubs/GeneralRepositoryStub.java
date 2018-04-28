@@ -57,6 +57,12 @@ public class GeneralRepositoryStub {
         return inMessage;
     }
 
+    /**
+     * Method that resets all the race related variables, such as the
+     * raceNumber (ID), the spectators bets, the horses odds and
+     * travelled distances.
+     * @param raceNumber The updated race number.
+     */
     public void initRace(int raceNumber) {
         GeneralRepositoryMessage inMessage;
 
@@ -74,6 +80,10 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that updates the Broker state.
+     * @param brokerState The new Broker state.
+     */
     public void setBrokerState(BrokerState brokerState) {
         GeneralRepositoryMessage inMessage;
 
@@ -92,6 +102,13 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that sets an Horse agility, i.e., the maximum step per iteration
+     * it can takes.
+     * @param raceID The raceID where the Horse will participate.
+     * @param horseIdx The raceIdx of the reference Horse.
+     * @param horseAgility The agility of the referenced Horse.
+     */
     public void setHorseAgility(int raceID, int horseIdx, int horseAgility) {
         GeneralRepositoryMessage inMessage;
 
@@ -114,6 +131,13 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Updates the Horse/Jockey pair current position (i.e., the travelled
+     * distance).
+     * @param horseIdx The raceIdx of the Horse whose position is being updated.
+     * @param horsePosition The new Horse position.
+     * @param horseStep The number of steps the Horse has already taken.
+     */
     public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
         GeneralRepositoryMessage inMessage;
 
@@ -136,6 +160,11 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that sets the odds of the Horses running on the current race.
+     * @param raceID The ID of the race where these odds are applied.
+     * @param horsesOdd Array of horses odds, indexed by their raceIdx.
+     */
     public void setHorsesOdd(int raceID, double[] horsesOdd) {
         GeneralRepositoryMessage inMessage;
 
@@ -157,6 +186,10 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that signals the horses' position in the race.
+     * @param standings horses' position in the race.
+     */
     public void setHorsesStanding(int[] standings) {
         GeneralRepositoryMessage inMessage;
 
@@ -176,6 +209,12 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that sets the reference Horse/Jockey pair state.
+     * @param raceID The ID of the race which the pair will run.
+     * @param horseIdx The raceIdx of the Horse whose state will be updated.
+     * @param horseState The next Horse state.
+     */
     public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
         GeneralRepositoryMessage inMessage;
 
@@ -199,6 +238,12 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that updates the referenced Spectator's wallet by adding the amount
+     * the amount passed as argument.
+     * @param spectatorID The ID of the Spectator whose wallet will be updated.
+     * @param amount The amount of money to add to the wallet.
+     */
     public void setSpectatorsGains(int spectatorID, int amount) {
         GeneralRepositoryMessage inMessage;
 
@@ -217,6 +262,12 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that sets the bet of the referenced Spectator on the current race.
+     * @param spectatorID The ID of the Spectator placing the bet.
+     * @param spectatorBet The value of the bet placed.
+     * @param spectatorBettedHorse The raceIdx of the Horse the Spectator bet on.
+     */
     public void setSpectatorsBet(int spectatorID, int spectatorBet,
                                 int spectatorBettedHorse) {
         GeneralRepositoryMessage inMessage;
@@ -241,6 +292,11 @@ public class GeneralRepositoryStub {
         }
     }
 
+    /**
+     * Method that updates the state of a Spectator.
+     * @param spectatorID The ID of the Spectator whose the state is updated.
+     * @param spectatorState The new state of the referenced Spectator.
+     */
     public void setSpectatorState(int spectatorID, SpectatorState spectatorState) {
         GeneralRepositoryMessage inMessage;
 

@@ -55,6 +55,10 @@ public class StableStub {
         return inMessage;
     }
 
+    /**
+     * Method invoked by the Broker to signal all horses to wake up, ending the
+     * event.
+     */
     public void entertainTheGuests() {
         StableMessage inMessage = exchange(new StableMessage(
                 StableMessageTypes.ENTERTAIN_THE_GUESTS, 0));
@@ -67,6 +71,12 @@ public class StableStub {
         }
     }
 
+    /**
+     * Method that returns the odd of all horses running on the race with ID
+     * passed as argument..
+     * @param raceID The ID of the race of the odds.
+     * @return Array with horses' odds.
+     */
     public double[] getRaceOdds(int raceID) {
         double[] raceOdds;
         StableMessage inMessage;
@@ -96,6 +106,11 @@ public class StableStub {
         return raceOdds;
     }
 
+    /**
+     * Method invoked by an Horse, where usually it gets blocked.
+     * It sets the its state to AT_THE_STABLE.
+     * It is waken up by the Broker to proceed to Paddock or when the event ends.
+     */
     public void proceedToStable() {
         HorseInt h;
         StableMessage inMessage;
@@ -132,6 +147,12 @@ public class StableStub {
         h.setRaceIdx(inMessage.getRaceIdx());
     }
 
+    /**
+     * Method invoked by the Broker to notify all horses of the current race
+     * to proceed to Paddock.
+     * @param raceID The ID of the current race; it determines which horses will
+     *               be waken up.
+     */
     public void summonHorsesToPaddock(int raceID) {
         StableMessage inMessage;
 

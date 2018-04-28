@@ -55,6 +55,17 @@ public class RacingTrackStub {
         return inMessage;
     }
 
+    /**
+     * Method invoked by each one of the participating Horses checking they have
+     * already crossed the finish line.
+     * If true, they check if they have won the race and add their ID to the
+     * corresponding list of winners.
+     * If it's the last horse crossing the finish line, it wakes up the Broker
+     * at the Control Centre and provides the list of winners.
+     * Otherwise, just wakes up the next horse that still hasn't finish the race.
+     * @return Boolean indicating whether the Horse/Jockey pair that invoked the
+     * method has already crossed the finish line or not.
+     */
     public boolean hasFinishLineBeenCrossed() {
         HorseInt h;
         RacingTrackMessage inMessage;
@@ -78,6 +89,13 @@ public class RacingTrackStub {
         return inMessage.hasFinishLineBeenCrossed();
     }
 
+    /**
+     * Method invoked by every Horse that hasn't still crossed the finish line.
+     * It generates a new step and updates its position.
+     * Finally, it wakes up the next horse in the arrival order to the Racing
+     * Track that hasn't finished the race.
+     * @param step The distance of the next step the Horse will take.
+     */
     public void makeAMove(int step) {
         HorseInt h;
         RacingTrackMessage inMessage;
@@ -103,6 +121,16 @@ public class RacingTrackStub {
         h.updateCurrentPosition(step);
     }
 
+    /**
+     * Method invoked by each one the Horses coming from the Paddock.
+     * They will update their state to AT_THE_STARTING_LINE and will block
+     * accordingly to the raceIdx of each one of them in the correspondent
+     * condition variable.
+     * The last Horse/Jockey pair to arrive also wakes up the Spectators so
+     * then can place their bets.
+     * After being waken up by the Broker to start the race, they update their
+     * state to RUNNING.
+     */
     public void proceedToStartLine() {
         HorseInt h;
         RacingTrackMessage inMessage;
@@ -123,6 +151,9 @@ public class RacingTrackStub {
         h.setHorseState(HorseState.AT_THE_STARTING_LINE);
     }
 
+    /**
+     * Method invoked by the Broker to signal the Horses to start running.
+     */
     public void startTheRace() {
         BrokerInt b;
         RacingTrackMessage inMessage;
