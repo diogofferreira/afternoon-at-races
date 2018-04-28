@@ -1,6 +1,7 @@
 package messages;
 
 import messageTypes.BettingCentreMessageTypes;
+import sharedRegions.BettingCentreInterface;
 
 import java.io.Serializable;
 import java.util.Arrays;
