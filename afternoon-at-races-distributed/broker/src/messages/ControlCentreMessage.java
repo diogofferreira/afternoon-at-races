@@ -148,8 +148,7 @@ public class ControlCentreMessage implements Serializable {
     /**
      * Method that returns an integer identifier of the method invoked on the
      * shared region.
-     * @return The identifier of the method invoked on the
-     *      * shared region.
+     * @return The identifier of the method invoked on the shared region.
      */
     public int getMethod() {
         return method;
@@ -290,6 +289,10 @@ public class ControlCentreMessage implements Serializable {
         this.entityId = entityId;
     }
 
+    /**
+     * Method that returns a textual representation of the message.
+     * @return A textual representation of the message.
+     */
     @Override
     public String toString() {
         return "ControlCentreMessage{" +

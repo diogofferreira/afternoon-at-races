@@ -172,8 +172,7 @@ public class BettingCentreMessage implements Serializable {
     /**
      * Method that returns an integer identifier of the method invoked on the
      * shared region.
-     * @return The identifier of the method invoked on the
-     *      * shared region.
+     * @return The identifier of the method invoked on the shared region.
      */
     public int getMethod() {
         return method;
