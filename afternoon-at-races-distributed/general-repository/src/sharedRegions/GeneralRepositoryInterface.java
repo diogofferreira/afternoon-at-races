@@ -166,7 +166,7 @@ public class GeneralRepositoryInterface {
 
             case SET_SPECTATOR_GAINS:
                 spectatorID = inMessage.getEntityId();
-                amount = inMessage.getSpectatorBet();
+                amount = inMessage.getSpectatorGains();
 
                 if (spectatorID < 0 ||
                         spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)

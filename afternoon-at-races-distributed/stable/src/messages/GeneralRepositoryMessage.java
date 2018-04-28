@@ -23,6 +23,7 @@ public class GeneralRepositoryMessage implements Serializable {
     private int horseStep;
     private int spectatorBet;
     private int spectatorBettedHorse;
+    private int spectatorGains;
     private int[] standings;
     private double[] horsesOdd;
 
@@ -41,20 +42,23 @@ public class GeneralRepositoryMessage implements Serializable {
     }
 
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
-                                    int stateOrAmountOrRaceNumber, int entityId) {
+                                    int stateOrAmountOrGainsOrRaceNumber, int entityId) {
         this.method = method.getId();
         switch (method) {
             case SET_BROKER_STATE:
-                this.brokerState = stateOrAmountOrRaceNumber;
+                this.brokerState = stateOrAmountOrGainsOrRaceNumber;
                 break;
             case SET_SPECTATOR_STATE:
-                this.spectatorState = stateOrAmountOrRaceNumber;
+                this.spectatorState = stateOrAmountOrGainsOrRaceNumber;
                 break;
             case SET_SPECTATORS_BET:
-                this.spectatorBet = stateOrAmountOrRaceNumber;
+                this.spectatorBet = stateOrAmountOrGainsOrRaceNumber;
+                break;
+            case SET_SPECTATOR_GAINS:
+                this.spectatorGains = stateOrAmountOrGainsOrRaceNumber;
                 break;
             case INIT_RACE:
-                this.raceNumber = stateOrAmountOrRaceNumber;
+                this.raceNumber = stateOrAmountOrGainsOrRaceNumber;
                 break;
         }
         this.entityId = entityId;
@@ -121,7 +125,6 @@ public class GeneralRepositoryMessage implements Serializable {
         return method;
     }
 
-
     public int getRaceNumber() {
         return raceNumber;
     }
@@ -150,6 +153,10 @@ public class GeneralRepositoryMessage implements Serializable {
         return spectatorBettedHorse;
     }
 
+    public int getSpectatorGains() {
+        return spectatorGains;
+    }
+
     public int[] getStandings() {
         return standings;
     }
@@ -176,6 +183,7 @@ public class GeneralRepositoryMessage implements Serializable {
                 ", horseStep=" + horseStep +
                 ", spectatorBet=" + spectatorBet +
                 ", spectatorBettedHorse=" + spectatorBettedHorse +
+                ", spectatorGains=" + spectatorGains +
                 ", standings=" + Arrays.toString(standings) +
                 ", horsesOdd=" + Arrays.toString(horsesOdd) +
                 ", entityId=" + entityId +
