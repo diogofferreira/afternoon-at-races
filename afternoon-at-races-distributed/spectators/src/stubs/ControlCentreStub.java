@@ -58,6 +58,11 @@ public class ControlCentreStub {
         return inMessage;
     }
 
+    /**
+     * Method invoked by the Broker in order to signal the spectators that the
+     * event has ended.
+     * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
+     */
     public void celebrate() {
         BrokerInt b;
         ControlCentreMessage inMessage;
@@ -76,6 +81,11 @@ public class ControlCentreStub {
         b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair to cross the finish line.
+     * The Broker will be notified to wake up and to report the results.
+     * @param standings An array of standings of the Horses that in the race.
+     */
     public void finishTheRace(int[] standings) {
         ControlCentreMessage inMessage;
 
@@ -94,6 +104,10 @@ public class ControlCentreStub {
         }
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair arriving to Paddock in order
+     * to wake up the Broker.
+     */
     public void goCheckHorses() {
         ControlCentreMessage inMessage;
 
@@ -108,6 +122,11 @@ public class ControlCentreStub {
         }
     }
 
+    /**
+     * Method invoked by each Spectator before the start of each race.
+     * They will block in WATCHING_A_RACE state until the Broker reports the
+     * results of the race.
+     */
     public void goWatchTheRace() {
         SpectatorInt s;
         ControlCentreMessage inMessage;
@@ -126,6 +145,13 @@ public class ControlCentreStub {
         s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
     }
 
+    /**
+     * Method invoked by each Spectator to verify if they betted on a winning
+     * horse.
+     * @param horseIdx The raceIdx of the horse they bet on.
+     * @return A boolean indicating if the Spectator invoking the method won
+     * his/her bet.
+     */
     public boolean haveIWon(int horseIdx) {
         SpectatorInt s;
         ControlCentreMessage inMessage;
@@ -147,6 +173,10 @@ public class ControlCentreStub {
         return inMessage.isHaveIWon();
     }
 
+    /**
+     * Method invoked by the Broker in order to start the event. It just simply
+     * updates the Broker state and updates the General Repository.
+     */
     public void openTheEvent() {
         BrokerInt b;
         ControlCentreMessage inMessage;
@@ -165,6 +195,11 @@ public class ControlCentreStub {
         b.setBrokerState(BrokerState.OPENING_THE_EVENT);
     }
 
+    /**
+     * Method invoked by the last Horse/Jockey pair of the current race to arrive
+     * to the Paddock, thus waking up all the Spectators to proceed to Paddock
+     * and appraise the horses.
+     */
     public void proceedToPaddock() {
         HorseInt h;
         ControlCentreMessage inMessage;
@@ -181,6 +216,9 @@ public class ControlCentreStub {
         }
     }
 
+    /**
+     * Last method invoked by the Spectators, changing their state to CELEBRATING.
+     */
     public void relaxABit() {
         SpectatorInt s;
         ControlCentreMessage inMessage;
@@ -199,6 +237,11 @@ public class ControlCentreStub {
         s.setSpectatorState(SpectatorState.CELEBRATING);
     }
 
+    /**
+     * Method invoked by the Broker signalling all Spectators that the results
+     * of the race have been reported.
+     * @return An array of Horses' raceIdx that won the race.
+     */
     public int[] reportResults() {
         int[] results;
         ControlCentreMessage inMessage;
@@ -226,6 +269,11 @@ public class ControlCentreStub {
         return results;
     }
 
+    /**
+     * Method invoked by the Broker.
+     * He'll wait here until the last Horse/Jockey pair to cross the finish line
+     * wakes him up.
+     */
     public void startTheRace() {
         ControlCentreMessage inMessage;
 
@@ -240,6 +288,12 @@ public class ControlCentreStub {
         }
     }
 
+    /**
+     * Method invoked by Broker, signaling the start of the event.
+     * The Broker updates the current raceID and sets his state to
+     * ANNOUNCING_NEXT_RACE, while signalling the Horses to proceed to Paddock.
+     * @param raceID The ID of the race that will take place.
+     */
     public void summonHorsesToPaddock(int raceID) {
         BrokerInt b;
         ControlCentreMessage inMessage;
@@ -261,6 +315,12 @@ public class ControlCentreStub {
         b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
     }
 
+    /**
+     * This method is invoked by every Spectator while they're waiting for
+     * a race to start.
+     * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
+     * @return True if there's still a race next.
+     */
     public boolean waitForNextRace() {
         SpectatorInt s;
         ControlCentreMessage inMessage;

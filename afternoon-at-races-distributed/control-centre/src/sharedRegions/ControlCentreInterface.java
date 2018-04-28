@@ -1,17 +1,32 @@
 package sharedRegions;
 
-import entities.BrokerInt;
 import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
-import sharedRegions.ControlCentre;
 
+/**
+ * Interface of the Control Centre server that processes the received messages,
+ * communicating with shared region, and replies to the thread that requests
+ * for the service (APS).
+ */
 public class ControlCentreInterface {
 
+    /**
+     * Counter that registers the number of Spectators that have already invoked
+     * the RELAX_A_BIT method. It is useful to close the server socket.
+     */
     private int requests;
+
+    /**
+     * Instance of the Control Centre shared region.
+     */
     private ControlCentre controlCentre;
 
+    /**
+     * Creates a new instance of an interface of the Control Centre shared region.
+     * @param controlCentre Instance of the Control Centre shared region.
+     */
     public ControlCentreInterface(ControlCentre controlCentre) {
         if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
@@ -20,6 +35,16 @@ public class ControlCentreInterface {
         this.controlCentre = controlCentre;
     }
 
+    /**
+     * Method that processes a request coming from the APS, interacts with the
+     * shared region and returns a the response to the method invoked in the
+     * shared region.
+     * @param inMessage The client's incoming message, which contains the
+     *                  information and arguments necessary to invoke the
+     *                  corresponding method in the shared region.
+     * @return The server's outgoing message, with all the information that
+     * the invoked method returned and other entity attributes updates.
+     */
     public ControlCentreMessage processAndReply(ControlCentreMessage inMessage) {
         ControlCentreMessageTypes mType;
 
@@ -140,6 +165,12 @@ public class ControlCentreInterface {
         }
     }
 
+    /**
+     * Method that returns the counter that registers the number of Spectators
+     * that have already invoked the RELAX_A_BIT method.
+     * @return The counter that registers the number of Spectators
+     * that have already invoked the RELAX_A_BIT method.
+     */
     public int getRequests() {
         return requests;
     }

@@ -4,21 +4,46 @@ import entities.SpectatorInt;
 import main.EventVariables;
 import messageTypes.BettingCentreMessageTypes;
 import messages.BettingCentreMessage;
-import sharedRegions.BettingCentre;
 
-
+/**
+ * Interface of the Betting Centre server that processes the received messages,
+ * communicating with shared region, and replies to the thread that requests
+ * for the service (APS).
+ */
 public class BettingCentreInterface {
 
+    /**
+     * Counter that registers the number of Spectators that have already
+     * collected their gains in the last race. It is useful to close the
+     * server socket.
+     */
     private int requests;
 
+    /**
+     * Current race identifier.
+     */
     private int raceNumber;
 
+    /**
+     * Number of winning bets in the current race.
+     */
     private int numberOfWinners;
 
+    /**
+     * Array of counters that register the number of Spectators that bet in
+     * the Horse that is indexed by its race index.
+     */
     private int[] bettedHorses;
 
+    /**
+     * Instance of the Betting Centre shared region.
+     */
     private BettingCentre bettingCentre;
 
+    /**
+     * Creates a new instance of an interface of the Betting Centre shared region.
+     * @param bettingCentre Instance of the Betting Centre shared region.
+     */
     public BettingCentreInterface(BettingCentre bettingCentre) {
         if (bettingCentre == null)
             throw new IllegalArgumentException("Invalid Betting Centre.");
@@ -30,6 +55,16 @@ public class BettingCentreInterface {
         this.bettedHorses = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
     }
 
+    /**
+     * Method that processes a request coming from the APS, interacts with the
+     * shared region and returns a the response to the method invoked in the
+     * shared region.
+     * @param inMessage The client's incoming message, which contains the
+     *                  information and arguments necessary to invoke the
+     *                  corresponding method in the shared region.
+     * @return The server's outgoing message, with all the information that
+     * the invoked method returned and other entity attributes updates.
+     */
     public BettingCentreMessage processAndReply(BettingCentreMessage inMessage) {
         BettingCentreMessageTypes mType;
         int raceID, spectatorID, horseIdx;
@@ -123,9 +158,19 @@ public class BettingCentreInterface {
         }
     }
 
+    /**
+     * Method that returns the counter that registers the number of Spectators
+     * that have already collected their gains in the last race.
+     * @return The counter that registers the number of Spectators
+     * that have already collected their gains in the last race.
+     */
     public int getRequests() {
         return requests;
     }
 
+    /**
+     * Method that returns the number of winning bets in the current race.
+     * @return The number of winning bets in the current race.
+     */
     public int getNumberOfWinners() { return numberOfWinners; }
 }

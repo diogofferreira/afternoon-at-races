@@ -55,6 +55,10 @@ public class PaddockStub {
         return inMessage;
     }
 
+    /**
+     * Method invoked by each one of the Spectators where they will update their
+     * state to APPRAISING_THE_HORSES and will block waiting
+     */
     public void goCheckHorses() {
         SpectatorInt s;
         PaddockMessage inMessage;
@@ -73,6 +77,10 @@ public class PaddockStub {
         s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
     }
 
+    /**
+     * Method invoked by each one of the Horses. They will change their state
+     * to AT_THE_PADDOCK and wait until all Spectators arrive to the Paddock.
+     */
     public void proceedToPaddock() {
         HorseInt h;
         PaddockMessage inMessage;
