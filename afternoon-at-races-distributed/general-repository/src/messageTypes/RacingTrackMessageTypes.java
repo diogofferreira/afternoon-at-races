@@ -1,15 +1,35 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the Racing Track server.
+ */
 public enum RacingTrackMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the Horses to proceed to the start
+     * line.
+     */
     PROCEED_TO_START_LINE(0),
 
+    /**
+     * Corresponds to the method invoked by the Broker to start a new race.
+     */
     START_THE_RACE(1),
 
+    /**
+     * Corresponds to the method invoked by the Horses to make a move in the race.
+     */
     MAKE_A_MOVE(2),
 
+    /**
+     * Corresponds to the method invoked by the Horses to check if the finish
+     * line has been crossed.
+     */
     HAS_FINISH_LINE_BEEN_CROSSED(3),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(4);
 
     /**

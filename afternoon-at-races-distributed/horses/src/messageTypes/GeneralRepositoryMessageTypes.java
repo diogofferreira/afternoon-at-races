@@ -1,27 +1,73 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the General Repository server.
+ */
 public enum GeneralRepositoryMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the servers to update the Broker
+     * state.
+     */
     SET_BROKER_STATE(0),
 
+    /**
+     * Corresponds to the method invoked by the servers to update the Spectators'
+     * state.
+     */
     SET_SPECTATOR_STATE(1),
 
+    /**
+     * Corresponds to the method invoked by the servers to update the Horses'
+     * state.
+     */
     SET_HORSE_STATE(2),
 
+    /**
+     * Corresponds to the method invoked by the servers to update the Spectators'
+     * wallet with the winning value.
+     */
     SET_SPECTATOR_GAINS(3),
 
+    /**
+     * Corresponds to the method invoked by the servers to update the Spectators'
+     * wallet with the betted value.
+     */
     SET_SPECTATORS_BET(4),
 
+    /**
+     * Corresponds to the method invoked by the servers to set the agility of the
+     * Horses in the track.
+     */
     SET_HORSE_AGILITY(5),
 
+    /**
+     * Corresponds to the method invoked by the servers to set the odd of the
+     * Horses in the track.
+     */
     SET_HORSES_ODD(6),
 
+    /**
+     * Corresponds to the method invoked by the servers to set the position of the
+     * Horses in the track.
+     */
     SET_HORSE_POSITION(7),
 
+    /**
+     * Corresponds to the method invoked by the servers to set the Horses'
+     * position in the race.
+     */
     SET_HORSES_STANDING(8),
 
+    /**
+     * Corresponds to the method invoked by the servers to set a new race in the
+     * repository.
+     */
     INIT_RACE(9),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(10);
 
     /**

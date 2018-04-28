@@ -1,15 +1,34 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the Stable server.
+ */
 public enum StableMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the servers to check the Horses' odds.
+     */
     GET_RACE_ODDS(0),
 
+    /**
+     * Corresponds to the method invoked by the Broker to summon the Horses to
+     * the Paddock.
+     */
     SUMMON_HORSES_TO_PADDOCK(1),
 
+    /**
+     * Corresponds to the method invoked by the Horses to proceed to the stable
+     */
     PROCEED_TO_STABLE(2),
 
+    /**
+     * Corresponds to the method invoked by the Broker to play host at the bar.
+     */
     ENTERTAIN_THE_GUESTS(3),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(4);
 
     /**
