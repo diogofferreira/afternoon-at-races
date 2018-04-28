@@ -1,17 +1,41 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the Betting Centre server.
+ */
 public enum BettingCentreMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the Broker to let the Spectators
+     * know that he is accepting bets.
+     */
     ACCEPT_THE_BETS(0),
 
+    /**
+     * Corresponds to the method invoked by the Spectators to place a bet.
+     */
     PLACE_A_BET(1),
 
+    /**
+     * Corresponds to the method invoked by the Broker to check if there are
+     * any winning bets.
+     */
     ARE_THERE_ANY_WINNERS(2),
 
+    /**
+     * Corresponds to the method invoked by the Broker to pay the winning bets.
+     */
     HONOUR_THE_BETS(3),
 
+    /**
+     * Corresponds to the method invoked by the Spectators with winning bets to
+     * collect their gains.
+     */
     GO_COLLECT_THE_GAINS(4),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(5);
 
     /**

@@ -1,11 +1,23 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the Paddock server.
+ */
 public enum PaddockMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the Horses that reach the Paddock.
+     */
     PROCEED_TO_PADDOCK(0),
 
+    /**
+     * Corresponds to the method invoked by the Spectators to appraise the horses.
+     */
     GO_CHECK_HORSES(1),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(2);
 
     /**

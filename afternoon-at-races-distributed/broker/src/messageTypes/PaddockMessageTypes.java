@@ -1,11 +1,23 @@
 package messageTypes;
 
+/**
+ * Message types exchanged between clients and the Paddock server.
+ */
 public enum PaddockMessageTypes {
 
+    /**
+     * Corresponds to the method invoked by the Horses that reach the Paddock.
+     */
     PROCEED_TO_PADDOCK(0),
 
+    /**
+     * Corresponds to the method invoked by the Spectators to appraise the horses.
+     */
     GO_CHECK_HORSES(1),
 
+    /**
+     * Message type that is sent in case of an error occurrence.
+     */
     ERROR(2);
 
     /**
@@ -27,5 +39,19 @@ public enum PaddockMessageTypes {
      */
     public int getId() {
         return this.id;
+    }
+
+    /**
+     * Method that returns an enum given its id.
+     * @param id The id correspondent to the enum type.
+     * @return The correspondent enum.
+     */
+    public static PaddockMessageTypes getType(int id) {
+        switch (id) {
+            case 0: return PROCEED_TO_PADDOCK;
+            case 1: return GO_CHECK_HORSES;
+            case 2: return ERROR;
+            default: return null;
+        }
     }
 }
