@@ -278,7 +278,7 @@ public class ControlCentreStub {
         ControlCentreMessage inMessage;
 
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.START_THE_RACE));
+                ControlCentreMessageTypes.START_THE_RACE, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
             System.out.println(Thread.currentThread().getName() +

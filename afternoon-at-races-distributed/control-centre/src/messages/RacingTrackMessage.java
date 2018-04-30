@@ -72,6 +72,8 @@ public class RacingTrackMessage implements Serializable {
      * @param error Type of the message (in this case an error message).
      */
     public RacingTrackMessage(RacingTrackMessageTypes error) {
+        if (error != RacingTrackMessageTypes.ERROR)
+            throw new IllegalArgumentException("Not an error message!");
         this.method = error.getId();
     }
 
