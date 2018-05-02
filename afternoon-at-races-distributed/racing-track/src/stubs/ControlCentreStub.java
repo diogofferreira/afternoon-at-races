@@ -72,9 +72,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.CELEBRATE, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.CELEBRATE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.CELEBRATE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -97,9 +99,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.FINISH_THE_RACE, standings, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.FINISH_THE_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.FINISH_THE_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -115,9 +119,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.GO_CHECK_HORSES, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.GO_CHECK_HORSES);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.GO_CHECK_HORSES + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -136,9 +142,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.GO_WATCH_THE_RACE, s.getID()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.GO_WATCH_THE_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.GO_WATCH_THE_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -164,9 +172,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.HAVE_I_WON, horseIdx, s.getID()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.HAVE_I_WON);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.HAVE_I_WON + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -186,9 +196,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.OPEN_THE_EVENT, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.OPEN_THE_EVENT);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.OPEN_THE_EVENT + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -209,9 +221,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.PROCEED_TO_PADDOCK);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.PROCEED_TO_PADDOCK + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -228,9 +242,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.RELAX_A_BIT, s.getID()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.RELAX_A_BIT);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.RELAX_A_BIT + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -250,9 +266,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.REPORT_RESULTS, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.REPORT_RESULTS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.REPORT_RESULTS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -281,9 +299,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.START_THE_RACE, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.START_THE_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.START_THE_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -306,9 +326,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID, 0));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -330,9 +352,11 @@ public class ControlCentreStub {
                 ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE, s.getID()));
 
         if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 

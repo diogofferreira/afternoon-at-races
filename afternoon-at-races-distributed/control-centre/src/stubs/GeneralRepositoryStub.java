@@ -73,9 +73,11 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.INIT_RACE, raceNumber, 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.INIT_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.INIT_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -95,9 +97,11 @@ public class GeneralRepositoryStub {
                 brokerState.getId(), 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_BROKER_STATE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_BROKER_STATE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -124,9 +128,11 @@ public class GeneralRepositoryStub {
                 horseIdx, horseAgility, ((HorseInt)Thread.currentThread()).getID()));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_HORSE_AGILITY);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_HORSE_AGILITY + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -153,9 +159,11 @@ public class GeneralRepositoryStub {
                 horseIdx, horseStep, ((HorseInt)Thread.currentThread()).getID()));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_HORSE_POSITION);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_HORSE_POSITION + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -179,9 +187,11 @@ public class GeneralRepositoryStub {
                 horsesOdd, 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_HORSES_ODD);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_HORSES_ODD + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -202,9 +212,11 @@ public class GeneralRepositoryStub {
                 standings, 0));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_HORSES_STANDING);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_HORSES_STANDING + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -231,9 +243,11 @@ public class GeneralRepositoryStub {
                 ((HorseInt)Thread.currentThread()).getID()));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_HORSE_STATE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_HORSE_STATE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -255,9 +269,11 @@ public class GeneralRepositoryStub {
                 spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -285,9 +301,11 @@ public class GeneralRepositoryStub {
                 spectatorBet, spectatorBettedHorse, spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_SPECTATORS_BET);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_SPECTATORS_BET + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -310,9 +328,11 @@ public class GeneralRepositoryStub {
                 spectatorState.getId(), spectatorID));
 
         if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }

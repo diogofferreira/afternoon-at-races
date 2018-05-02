@@ -23,25 +23,35 @@ public class RacingTrackInterface {
         int step;
         boolean hasFinishLineBeenCrossed;
 
-        System.out.println(inMessage.toString());
-
         if ((mType = RacingTrackMessageTypes.getType(inMessage.getMethod())) == null)
             return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
 
         switch (mType) {
             case HAS_FINISH_LINE_BEEN_CROSSED:
                 if (inMessage.getRaceID() < 0 ||
-                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getRaceIdx() < 0 ||
-                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES) {
+                    inMessage.setErrorMessage("Invalid horse ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getCurrentPosition() < 0
-                        || inMessage.getCurrentStep() < 0)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        || inMessage.getCurrentStep() < 0) {
+                    inMessage.setErrorMessage("Invalid horse position and/or step");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((HorseInt) Thread.currentThread()).setRaceID(
                         inMessage.getRaceID());
@@ -64,20 +74,35 @@ public class RacingTrackInterface {
             case MAKE_A_MOVE:
                 step = inMessage.getStep();
 
-                if (step < 1 || step > EventVariables.HORSE_MAX_STEP)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                if (step < 1 || step > EventVariables.HORSE_MAX_STEP) {
+                    inMessage.setErrorMessage("Invalid horse step");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getRaceID() < 0 ||
-                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getRaceIdx() < 0 ||
-                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES) {
+                    inMessage.setErrorMessage("Invalid horse ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getCurrentPosition() < 0
-                        || inMessage.getCurrentStep() < 0)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        || inMessage.getCurrentStep() < 0) {
+                    inMessage.setErrorMessage("Invalid horse position and/or step");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((HorseInt) Thread.currentThread()).setRaceID(
                         inMessage.getRaceID());
@@ -96,17 +121,29 @@ public class RacingTrackInterface {
 
             case PROCEED_TO_START_LINE:
                 if (inMessage.getRaceID() < 0 ||
-                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getRaceIdx() < 0 ||
-                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES) {
+                    inMessage.setErrorMessage("Invalid horse ID");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getCurrentPosition() < 0
-                        || inMessage.getCurrentStep() < 0)
-                    return new RacingTrackMessage(RacingTrackMessageTypes.ERROR);
+                        || inMessage.getCurrentStep() < 0) {
+                    inMessage.setErrorMessage("Invalid horse position and/or step");
+                    inMessage.setMethod(RacingTrackMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((HorseInt) Thread.currentThread()).setRaceID(
                         inMessage.getRaceID());

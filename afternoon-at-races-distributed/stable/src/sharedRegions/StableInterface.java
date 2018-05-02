@@ -24,8 +24,6 @@ public class StableInterface {
         double[] odds;
         HorseInt h;
 
-        System.out.println(inMessage.toString());
-
         if ((mType = StableMessageTypes.getType(inMessage.getMethod())) == null)
             return new StableMessage(StableMessageTypes.ERROR);
 
@@ -33,8 +31,11 @@ public class StableInterface {
             case GET_RACE_ODDS:
                 raceID = inMessage.getRaceId();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new StableMessage(StableMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(StableMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 odds = stable.getRaceOdds(raceID);
                 return new StableMessage(StableMessageTypes.GET_RACE_ODDS,
@@ -43,8 +44,11 @@ public class StableInterface {
             case SUMMON_HORSES_TO_PADDOCK:
                 raceID = inMessage.getRaceId();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new StableMessage(StableMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(StableMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 stable.summonHorsesToPaddock(raceID);
                 return new StableMessage(
@@ -55,11 +59,17 @@ public class StableInterface {
                 h = (HorseInt) Thread.currentThread();
 
                 if (inMessage.getAgility() < 0 ||
-                        inMessage.getAgility() > EventVariables.HORSE_MAX_STEP)
-                    return new StableMessage(StableMessageTypes.ERROR);
+                        inMessage.getAgility() > EventVariables.HORSE_MAX_STEP) {
+                    inMessage.setErrorMessage("Invalid horse agility");
+                    inMessage.setMethod(StableMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
-                    return new StableMessage(StableMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES) {
+                    inMessage.setErrorMessage("Invalid horse ID");
+                    inMessage.setMethod(StableMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 h.setID(inMessage.getEntityId());
                 h.setAgility(inMessage.getAgility());

@@ -68,6 +68,11 @@ public class RacingTrackMessage implements Serializable {
     private int entityId;
 
     /**
+     * Textual representation of an error message;
+     */
+    private String errorMessage;
+
+    /**
      * Constructor (for error messages).
      * @param error Type of the message (in this case an error message).
      */
@@ -171,6 +176,15 @@ public class RacingTrackMessage implements Serializable {
     }
 
     /**
+     * Method that returns an integer identifier of the method invoked on the
+     * shared region.
+     * @param method The method invoked on the shared region.
+     */
+    public void setMethod(RacingTrackMessageTypes method) {
+        this.method = method.getId();
+    }
+
+    /**
      * Method that returns the current Horses' step number.
      * @return The current Horses' step number.
      */
@@ -240,6 +254,22 @@ public class RacingTrackMessage implements Serializable {
      */
     public int getEntityId() {
         return entityId;
+    }
+
+    /**
+     * Method that returns the textual representation of an error message.
+     * @return The textual representation of an error message.
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * Method that sets the textual representation of an error message.
+     * @param errorMessage  The textual representation of an error message.
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     /**

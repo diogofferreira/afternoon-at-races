@@ -68,9 +68,11 @@ public class PaddockStub {
                 PaddockMessageTypes.GO_CHECK_HORSES, s.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    PaddockMessageTypes.GO_CHECK_HORSES);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    PaddockMessageTypes.GO_CHECK_HORSES + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -91,9 +93,11 @@ public class PaddockStub {
                 h.getRaceIdx(), h.getID()));
 
         if (inMessage.getMethod() == PaddockMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    PaddockMessageTypes.PROCEED_TO_PADDOCK);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    PaddockMessageTypes.PROCEED_TO_PADDOCK + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 

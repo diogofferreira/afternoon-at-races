@@ -64,9 +64,11 @@ public class StableStub {
                 StableMessageTypes.ENTERTAIN_THE_GUESTS, 0));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    StableMessageTypes.ENTERTAIN_THE_GUESTS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    StableMessageTypes.ENTERTAIN_THE_GUESTS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }
@@ -88,9 +90,11 @@ public class StableStub {
                 StableMessageTypes.GET_RACE_ODDS, raceID, 0));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    StableMessageTypes.GET_RACE_ODDS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    StableMessageTypes.GET_RACE_ODDS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -120,9 +124,11 @@ public class StableStub {
                 StableMessageTypes.PROCEED_TO_STABLE, h.getAgility(), h.getID()));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    StableMessageTypes.PROCEED_TO_STABLE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    StableMessageTypes.PROCEED_TO_STABLE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -163,9 +169,11 @@ public class StableStub {
                 StableMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID, 0));
 
         if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    StableMessageTypes.SUMMON_HORSES_TO_PADDOCK);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    StableMessageTypes.SUMMON_HORSES_TO_PADDOCK + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
     }

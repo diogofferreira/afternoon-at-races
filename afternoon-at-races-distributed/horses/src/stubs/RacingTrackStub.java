@@ -77,9 +77,11 @@ public class RacingTrackStub {
                 h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -111,9 +113,11 @@ public class RacingTrackStub {
                 h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    RacingTrackMessageTypes.MAKE_A_MOVE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    RacingTrackMessageTypes.MAKE_A_MOVE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -142,9 +146,11 @@ public class RacingTrackStub {
                 h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    RacingTrackMessageTypes.PROCEED_TO_START_LINE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    RacingTrackMessageTypes.PROCEED_TO_START_LINE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -163,9 +169,11 @@ public class RacingTrackStub {
                 RacingTrackMessageTypes.START_THE_RACE, 0));
 
         if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    RacingTrackMessageTypes.START_THE_RACE);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    RacingTrackMessageTypes.START_THE_RACE + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 

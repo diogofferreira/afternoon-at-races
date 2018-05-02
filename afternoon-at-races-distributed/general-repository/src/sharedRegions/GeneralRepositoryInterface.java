@@ -32,8 +32,6 @@ public class GeneralRepositoryInterface {
         HorseState horseState;
         SpectatorState spectatorState;
 
-        System.out.println(inMessage.toString());
-
         if ((mType = GeneralRepositoryMessageTypes.getType(inMessage.getMethod())) == null)
             return new GeneralRepositoryMessage(GeneralRepositoryMessageTypes.ERROR);
 
@@ -41,9 +39,11 @@ public class GeneralRepositoryInterface {
             case INIT_RACE:
                 raceID = inMessage.getRaceNumber();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.initRace(raceID);
                 return new GeneralRepositoryMessage(
@@ -53,9 +53,11 @@ public class GeneralRepositoryInterface {
             case SET_BROKER_STATE:
                 brokerState = BrokerState.getType(inMessage.getBrokerState());
 
-                if (brokerState == null)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (brokerState == null) {
+                    inMessage.setErrorMessage("Invalid broker state");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setBrokerState(brokerState);
 
@@ -72,15 +74,21 @@ public class GeneralRepositoryInterface {
                 horseIdx = inMessage.getHorseIdx();
                 horseAgility = inMessage.getHorseAgility();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horseIdx < 0 || horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horseAgility < 1 || horseAgility > EventVariables.HORSE_MAX_STEP)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horseIdx < 0 || horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horseAgility < 1 || horseAgility > EventVariables.HORSE_MAX_STEP) {
+                    inMessage.setErrorMessage("Invalid horse agility");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setHorseAgility(raceID, horseIdx, horseAgility);
                 return new GeneralRepositoryMessage(
@@ -92,15 +100,22 @@ public class GeneralRepositoryInterface {
                 horsePosition = inMessage.getHorsePosition();
                 horseStep = inMessage.getHorseStep();
 
-                if (horseIdx < 0 || horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horsePosition < 0)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horseStep < 0)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (horseIdx < 0 ||
+                        horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horsePosition < 0) {
+                    inMessage.setErrorMessage("Invalid horse position");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horseStep < 0) {
+                    inMessage.setErrorMessage("Invalid horse step");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setHorsePosition(
                         horseIdx, horsePosition, horseStep);
@@ -112,13 +127,17 @@ public class GeneralRepositoryInterface {
                 raceID = inMessage.getRaceNumber();
                 horsesOdd = inMessage.getHorsesOdd();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (horsesOdd == null ||
-                        horsesOdd.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        horsesOdd.length != EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse odds array");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setHorsesOdd(raceID, horsesOdd);
                 return new GeneralRepositoryMessage(
@@ -129,9 +148,11 @@ public class GeneralRepositoryInterface {
                 standings = inMessage.getStandings();
 
                 if (standings == null ||
-                        standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid standings array");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setHorsesStanding(standings);
                 return new GeneralRepositoryMessage(
@@ -143,15 +164,22 @@ public class GeneralRepositoryInterface {
                 horseIdx = inMessage.getHorseIdx();
                 horseState = HorseState.getType(inMessage.getHorseState());
 
-                if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horseIdx < 0 || horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (horseState == null)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                if (raceID < 0 || raceID > EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horseIdx < 0 ||
+                        horseIdx > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (horseState == null) {
+                    inMessage.setErrorMessage("Invalid horse state");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setHorseState(raceID, horseIdx, horseState);
 
@@ -169,9 +197,11 @@ public class GeneralRepositoryInterface {
                 amount = inMessage.getSpectatorGains();
 
                 if (spectatorID < 0 ||
-                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectator ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setSpectatorGains(spectatorID, amount);
                 return new GeneralRepositoryMessage(
@@ -185,16 +215,22 @@ public class GeneralRepositoryInterface {
                 spectatorBettedHorse = inMessage.getSpectatorBettedHorse();
 
                 if (spectatorID < 0 ||
-                        spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (spectatorBet < 0)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        spectatorID > EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectator ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (spectatorBet < 0) {
+                    inMessage.setErrorMessage("Invalid spectator bet");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (spectatorBettedHorse < 0 ||
-                        spectatorBettedHorse > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        spectatorBettedHorse > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid spectator betted horse");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setSpectatorsBet(
                         spectatorID, spectatorBet, spectatorBettedHorse);
@@ -212,12 +248,16 @@ public class GeneralRepositoryInterface {
                     requests++;
 
                 if (spectatorID < 0 ||
-                        spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
-                if (spectatorState == null)
-                    return new GeneralRepositoryMessage(
-                            GeneralRepositoryMessageTypes.ERROR);
+                        spectatorID > EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectator ID");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
+                if (spectatorState == null) {
+                    inMessage.setErrorMessage("Invalid spectator state");
+                    inMessage.setMethod(GeneralRepositoryMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 generalRepository.setSpectatorState(spectatorID, spectatorState);
 

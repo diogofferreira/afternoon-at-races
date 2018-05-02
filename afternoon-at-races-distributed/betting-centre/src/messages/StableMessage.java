@@ -60,6 +60,11 @@ public class StableMessage implements Serializable {
     private int entityId;
 
     /**
+     * Textual representation of an error message;
+     */
+    private String errorMessage;
+
+    /**
      * Constructor (for error messages).
      * @param error Type of the message (in this case an error message).
      */
@@ -150,6 +155,15 @@ public class StableMessage implements Serializable {
     }
 
     /**
+     * Method that returns an integer identifier of the method invoked on the
+     * shared region.
+     * @param method The method invoked on the shared region.
+     */
+    public void setMethod(StableMessageTypes method) {
+        this.method = method.getId();
+    }
+
+    /**
      * Method that returns an array of Horse/Jockey pair IDs that will
      * store the lineups for all races.
      * @return An array of Horse/Jockey pair IDs that will
@@ -203,6 +217,22 @@ public class StableMessage implements Serializable {
      */
     public int getEntityId() {
         return entityId;
+    }
+
+    /**
+     * Method that returns the textual representation of an error message.
+     * @return The textual representation of an error message.
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * Method that sets the textual representation of an error message.
+     * @param errorMessage  The textual representation of an error message.
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     /**

@@ -72,8 +72,6 @@ public class BettingCentreInterface {
         boolean areThereAnyWinners;
         double amount;
 
-        System.out.println(inMessage.toString());
-
         if ((mType = BettingCentreMessageTypes.getType(inMessage.getMethod())) == null)
             return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
 
@@ -82,8 +80,11 @@ public class BettingCentreInterface {
                 raceID = inMessage.getRaceId();
                 raceNumber = raceID;
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
-                    return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid raceID");
+                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 bettingCentre.acceptTheBets(raceID);
                 return new BettingCentreMessage(
@@ -93,8 +94,11 @@ public class BettingCentreInterface {
             case ARE_THERE_ANY_WINNERS:
                 winners = inMessage.getWinners();
                 if (winners == null || winners.length == 0 ||
-                        winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+                        winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid winners array");
+                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 if (raceNumber == EventVariables.NUMBER_OF_RACES - 1) {
                     numberOfWinners = 0;
@@ -112,8 +116,11 @@ public class BettingCentreInterface {
                 spectatorID = inMessage.getEntityId();
 
                 if (spectatorID < 0 ||
-                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
-                    return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectatorID");
+                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((SpectatorInt) Thread.currentThread()).setID(spectatorID);
 
@@ -135,8 +142,11 @@ public class BettingCentreInterface {
             case PLACE_A_BET:
                 spectatorID = inMessage.getEntityId();
                 if (spectatorID < 0 ||
-                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
-                    return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectator ID");
+                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((SpectatorInt) Thread.currentThread()).setID(spectatorID);
                 ((SpectatorInt) Thread.currentThread()).setStrategy(inMessage.getStrategy());

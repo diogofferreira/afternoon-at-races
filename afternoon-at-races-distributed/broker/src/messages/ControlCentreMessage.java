@@ -65,6 +65,11 @@ public class ControlCentreMessage implements Serializable {
     private int entityId;
 
     /**
+     * Textual representation of an error message;
+     */
+    private String errorMessage;
+
+    /**
      * Constructor (for error messages).
      * @param error Type of the message (in this case an error message).
      */
@@ -155,12 +160,12 @@ public class ControlCentreMessage implements Serializable {
     }
 
     /**
-     * Method that sets an integer identifier of the method invoked on the
+     * Method that returns an integer identifier of the method invoked on the
      * shared region.
-     * @param method The identifier of the method invoked on the shared region.
+     * @param method The method invoked on the shared region.
      */
-    public void setMethod(int method) {
-        this.method = method;
+    public void setMethod(ControlCentreMessageTypes method) {
+        this.method = method.getId();
     }
 
     /**
@@ -287,6 +292,22 @@ public class ControlCentreMessage implements Serializable {
      */
     public void setEntityId(int entityId) {
         this.entityId = entityId;
+    }
+
+    /**
+     * Method that returns the textual representation of an error message.
+     * @return The textual representation of an error message.
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * Method that sets the textual representation of an error message.
+     * @param errorMessage  The textual representation of an error message.
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     /**

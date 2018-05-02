@@ -76,9 +76,11 @@ public class BettingCentreStub {
                 BettingCentreMessageTypes.ACCEPT_THE_BETS, raceID, 0));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    BettingCentreMessageTypes.ACCEPT_THE_BETS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    BettingCentreMessageTypes.ACCEPT_THE_BETS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -101,9 +103,11 @@ public class BettingCentreStub {
                 BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS, standings, 0));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -125,9 +129,11 @@ public class BettingCentreStub {
                 BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    BettingCentreMessageTypes.GO_COLLECT_THE_GAINS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    BettingCentreMessageTypes.GO_COLLECT_THE_GAINS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -152,9 +158,11 @@ public class BettingCentreStub {
                 BettingCentreMessageTypes.HONOUR_THE_BETS, 0));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    BettingCentreMessageTypes.HONOUR_THE_BETS);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    BettingCentreMessageTypes.HONOUR_THE_BETS + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 
@@ -178,9 +186,11 @@ public class BettingCentreStub {
                 s.getWallet(), s.getStrategy(), s.getID()));
 
         if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
-            System.out.println(Thread.currentThread().getName() +
-                    " - An unknown error ocurred in " +
-                    BettingCentreMessageTypes.PLACE_A_BET);
+            System.out.println("[" + Thread.currentThread().getName() + "] " +
+                    " An error ocurred in " +
+                    BettingCentreMessageTypes.PLACE_A_BET + ": " +
+                    inMessage.getErrorMessage());
+            System.out.println(inMessage);
             System.exit(1);
         }
 

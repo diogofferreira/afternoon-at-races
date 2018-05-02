@@ -48,16 +48,17 @@ public class PaddockInterface {
     public PaddockMessage processAndReply(PaddockMessage inMessage) {
         PaddockMessageTypes mType;
 
-        System.out.println(inMessage.toString());
-
         if ((mType = PaddockMessageTypes.getType(inMessage.getMethod())) == null)
             return new PaddockMessage(PaddockMessageTypes.ERROR);
 
         switch (mType) {
             case GO_CHECK_HORSES:
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS)
-                    return new PaddockMessage(PaddockMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS) {
+                    inMessage.setErrorMessage("Invalid spectator ID");
+                    inMessage.setMethod(PaddockMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((SpectatorInt) Thread.currentThread()).setID(inMessage.getEntityId());
 
@@ -68,14 +69,23 @@ public class PaddockInterface {
 
             case PROCEED_TO_PADDOCK:
                 if (inMessage.getRaceID() < 0 ||
-                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES)
-                    return new PaddockMessage(PaddockMessageTypes.ERROR);
+                        inMessage.getRaceID() >= EventVariables.NUMBER_OF_RACES) {
+                    inMessage.setErrorMessage("Invalid race ID");
+                    inMessage.setMethod(PaddockMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getRaceIdx() < 0 ||
-                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
-                    return new PaddockMessage(PaddockMessageTypes.ERROR);
+                        inMessage.getRaceIdx() >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+                    inMessage.setErrorMessage("Invalid horse Idx");
+                    inMessage.setMethod(PaddockMessageTypes.ERROR);
+                    return inMessage;
+                }
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES)
-                    return new PaddockMessage(PaddockMessageTypes.ERROR);
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_HORSES) {
+                    inMessage.setErrorMessage("Invalid horse ID");
+                    inMessage.setMethod(PaddockMessageTypes.ERROR);
+                    return inMessage;
+                }
 
                 ((HorseInt) Thread.currentThread()).setRaceID(inMessage.getRaceID());
                 ((HorseInt) Thread.currentThread()).setRaceIdx(inMessage.getRaceIdx());
