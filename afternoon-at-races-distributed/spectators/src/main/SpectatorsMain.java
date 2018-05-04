@@ -1,5 +1,6 @@
 package main;
 
+import communication.HostsInfo;
 import entities.Spectator;
 import stubs.*;
 
@@ -19,13 +20,17 @@ public class SpectatorsMain {
         BettingCentreStub bettingCentre;            // instance of Betting Centre
 
         // shared regions initialization
-        controlCentre = new ControlCentreStub("l040101-ws03.ua.pt",
-                22403);
-        paddock = new PaddockStub("l040101-ws04.ua.pt",
-                22404);
-        bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
-                22406);/*
-        controlCentre = new ControlCentreStub("127.0.0.1",
+        controlCentre = new ControlCentreStub(
+                HostsInfo.CONTROL_CENTRE_HOSTNAME,
+                HostsInfo.CONTROL_CENTRE_PORT);
+        paddock = new PaddockStub(
+                HostsInfo.PADDOCK_HOSTNAME,
+                HostsInfo.PADDOCK_PORT);
+        bettingCentre = new BettingCentreStub(
+                HostsInfo.BETTING_CENTRE_HOSTNAME,
+                HostsInfo.BETTING_CENTRE_PORT);
+
+        /*controlCentre = new ControlCentreStub("127.0.0.1",
                 22403);
         paddock = new PaddockStub("127.0.0.1",
                 22404);

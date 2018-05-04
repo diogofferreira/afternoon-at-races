@@ -75,7 +75,8 @@ public class BettingCentreStub {
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.ACCEPT_THE_BETS, raceID, 0));
 
-        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                BettingCentreMessageTypes.ACCEPT_THE_BETS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     BettingCentreMessageTypes.ACCEPT_THE_BETS + ": " +
@@ -102,7 +103,8 @@ public class BettingCentreStub {
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS, standings, 0));
 
-        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS + ": " +
@@ -128,7 +130,8 @@ public class BettingCentreStub {
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.GO_COLLECT_THE_GAINS, s.getID()));
 
-        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                BettingCentreMessageTypes.GO_COLLECT_THE_GAINS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     BettingCentreMessageTypes.GO_COLLECT_THE_GAINS + ": " +
@@ -157,7 +160,8 @@ public class BettingCentreStub {
         inMessage = exchange(new BettingCentreMessage(
                 BettingCentreMessageTypes.HONOUR_THE_BETS, 0));
 
-        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                BettingCentreMessageTypes.HONOUR_THE_BETS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     BettingCentreMessageTypes.HONOUR_THE_BETS + ": " +
@@ -185,7 +189,8 @@ public class BettingCentreStub {
                 BettingCentreMessageTypes.PLACE_A_BET, false,
                 s.getWallet(), s.getStrategy(), s.getID()));
 
-        if (inMessage.getMethod() == BettingCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                BettingCentreMessageTypes.PLACE_A_BET.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     BettingCentreMessageTypes.PLACE_A_BET + ": " +

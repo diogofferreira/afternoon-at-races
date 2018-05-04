@@ -1,10 +1,12 @@
 package main;
 
+import communication.HostsInfo;
 import entities.Horse;
 import stubs.PaddockStub;
 import stubs.RacingTrackStub;
 import stubs.StableStub;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI;
 import java.util.Random;
 
 /**
@@ -25,14 +27,17 @@ public class HorsesMain {
         RacingTrackStub racingTrack;            // instance of Racing Track
 
         // shared regions initialization
-        stable = new StableStub("l040101-ws02.ua.pt",
-                22402);
-        paddock = new PaddockStub("l040101-ws04.ua.pt",
-                22404);
-        racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
-                22405);/*
+        stable = new StableStub(
+                HostsInfo.STABLE_HOSTNAME,
+                HostsInfo.STABLE_PORT);
+        paddock = new PaddockStub(
+                HostsInfo.PADDOCK_HOSTNAME,
+                HostsInfo.PADDOCK_PORT);
+        racingTrack = new RacingTrackStub(
+                HostsInfo.RACING_TRACK_HOSTNAME,
+                HostsInfo.RACING_TRACK_PORT);
 
-        stable = new StableStub("127.0.0.1",
+        /*stable = new StableStub("127.0.0.1",
                 22402);
         paddock = new PaddockStub("127.0.0.1",
                 22404);

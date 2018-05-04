@@ -1,5 +1,6 @@
 package main;
 
+import communication.HostsInfo;
 import communication.ServerCom;
 import communication.StableAPS;
 import sharedRegions.*;
@@ -26,13 +27,14 @@ public class StableMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        generalRepository = new GeneralRepositoryStub("l040101-ws01.ua.pt",
-                22401);/*
-        generalRepository = new GeneralRepositoryStub("127.0.0.1",
+        generalRepository = new GeneralRepositoryStub(
+                HostsInfo.GENERAL_REPOSITORY_HOSTNAME,
+                HostsInfo.GENERAL_REPOSITORY_PORT);
+        /*generalRepository = new GeneralRepositoryStub("127.0.0.1",
                 22401);*/
 
         // service establishment
-        scom = new ServerCom(22402);
+        scom = new ServerCom(HostsInfo.STABLE_PORT);
         scom.start();
 
         // shared region initialization

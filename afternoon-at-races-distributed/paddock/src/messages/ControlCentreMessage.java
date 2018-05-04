@@ -71,12 +71,24 @@ public class ControlCentreMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public ControlCentreMessage(ControlCentreMessageTypes error) {
-        if (error != ControlCentreMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public ControlCentreMessage(ControlCentreMessage inMessage,
+                                String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = ControlCentreMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.raceId = inMessage.getRaceId();
+        this.standings = inMessage.getStandings();
+        this.horseIdx = inMessage.getHorseIdx();
+        this.isThereARace = inMessage.isThereARace();
+        this.winners = inMessage.getWinners();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

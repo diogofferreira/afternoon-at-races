@@ -1,5 +1,6 @@
 package main;
 
+import communication.HostsInfo;
 import entities.Broker;
 import stubs.BettingCentreStub;
 import stubs.ControlCentreStub;
@@ -36,15 +37,19 @@ public class BrokerMain {
          */
 
         // shared regions initialization
-        stable = new StableStub("l040101-ws02.ua.pt",
-                22402);
-        controlCentre = new ControlCentreStub("l040101-ws03.ua.pt",
-                22403);
-        racingTrack = new RacingTrackStub("l040101-ws05.ua.pt",
-                22405);
-        bettingCentre = new BettingCentreStub("l040101-ws06.ua.pt",
-                22406);/*
-        stable = new StableStub("127.0.0.1",
+        stable = new StableStub(
+                HostsInfo.STABLE_HOSTNAME,
+                HostsInfo.STABLE_PORT);
+        controlCentre = new ControlCentreStub(
+                HostsInfo.CONTROL_CENTRE_HOSTNAME,
+                HostsInfo.CONTROL_CENTRE_PORT);
+        racingTrack = new RacingTrackStub(
+                HostsInfo.RACING_TRACK_HOSTNAME,
+                HostsInfo.RACING_TRACK_PORT);
+        bettingCentre = new BettingCentreStub(
+                HostsInfo.BETTING_CENTRE_HOSTNAME,
+                HostsInfo.BETTING_CENTRE_PORT);
+        /*stable = new StableStub("127.0.0.1",
                 22402);
         controlCentre = new ControlCentreStub("127.0.0.1",
                 22403);

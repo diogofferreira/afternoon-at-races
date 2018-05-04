@@ -1,6 +1,7 @@
 package main;
 
 import communication.GeneralRepositoryAPS;
+import communication.HostsInfo;
 import communication.ServerCom;
 import sharedRegions.GeneralRepository;
 import sharedRegions.GeneralRepositoryInterface;
@@ -23,7 +24,7 @@ public class GeneralRepositoryMain {
         ServerCom scom, scomi;
 
         // service establishment
-        scom = new ServerCom(22401);
+        scom = new ServerCom(HostsInfo.GENERAL_REPOSITORY_PORT);
         scom.start();
 
         // shared region initialization

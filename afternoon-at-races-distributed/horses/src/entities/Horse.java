@@ -108,23 +108,18 @@ public class Horse extends Thread implements HorseInt {
      * Horse/Jockey pair lifecycle.
      */
     public void run() {
-        System.out.println("PROCEED TO STABLE " + this.id);
         // Start at the stable
         stable.proceedToStable();
-        System.out.println("PROCEED TO PADDOCK " + this.id);
 
         // when called, proceed to paddock to be appraised
         paddock.proceedToPaddock();
-        System.out.println("PROCEED TO STARTLINE " + this.id);
 
         // proceed to the starting line
         racingTrack.proceedToStartLine();
-        System.out.println("RUN " + this.id);
 
         // while not crossed the finish line, keep moving
         while (!racingTrack.hasFinishLineBeenCrossed())
             racingTrack.makeAMove(makeAStep());
-        System.out.println("END RACE " + this.id);
 
         // wait at the stable until the broker ends the event
         stable.proceedToStable();

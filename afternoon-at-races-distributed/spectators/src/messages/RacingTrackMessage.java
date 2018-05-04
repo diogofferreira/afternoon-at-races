@@ -74,12 +74,25 @@ public class RacingTrackMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public RacingTrackMessage(RacingTrackMessageTypes error) {
-        if (error != RacingTrackMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public RacingTrackMessage(RacingTrackMessage inMessage, String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = RacingTrackMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.raceID = inMessage.getRaceID();
+        this.raceIdx = inMessage.getRaceIdx();
+        this.agility = inMessage.getAgility();
+        this.currentPosition = inMessage.getCurrentPosition();
+        this.currentStep = inMessage.getCurrentStep();
+        this.step = inMessage.getStep();
+        this.hasFinishLineBeenCrossed = inMessage.hasFinishLineBeenCrossed();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

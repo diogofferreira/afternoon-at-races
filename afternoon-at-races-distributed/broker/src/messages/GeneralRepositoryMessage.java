@@ -104,12 +104,32 @@ public class GeneralRepositoryMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public GeneralRepositoryMessage(GeneralRepositoryMessageTypes error) {
-        if (error != GeneralRepositoryMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public GeneralRepositoryMessage(GeneralRepositoryMessage inMessage,
+                                String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = GeneralRepositoryMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.brokerState = inMessage.getBrokerState();
+        this.spectatorState = inMessage.getSpectatorState();
+        this.horseState = inMessage.getHorseState();
+        this.raceNumber = inMessage.getRaceNumber();
+        this.horseIdx = inMessage.getHorseIdx();
+        this.horseAgility = inMessage.getHorseAgility();
+        this.horsePosition = inMessage.getHorsePosition();
+        this.horseStep = inMessage.getHorseStep();
+        this.spectatorBet = inMessage.getSpectatorBet();
+        this.spectatorBettedHorse = inMessage.getSpectatorBettedHorse();
+        this.spectatorGains = inMessage.getSpectatorGains();
+        this.standings = inMessage.getStandings();
+        this.horsesOdd = inMessage.getHorsesOdd();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

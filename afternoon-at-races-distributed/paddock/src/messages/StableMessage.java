@@ -66,12 +66,23 @@ public class StableMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public StableMessage(StableMessageTypes error) {
-        if (error != StableMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public StableMessage(StableMessage inMessage, String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = StableMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.raceId = inMessage.getRaceId();
+        this.raceIdx = inMessage.getRaceIdx();
+        this.agility = inMessage.getAgility();
+        this.horsesId = inMessage.getHorsesId();
+        this.raceOdds = inMessage.getRaceOdds();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

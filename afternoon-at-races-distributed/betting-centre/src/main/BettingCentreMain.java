@@ -1,6 +1,7 @@
 package main;
 
 import communication.BettingCentreAPS;
+import communication.HostsInfo;
 import communication.ServerCom;
 import sharedRegions.*;
 import sharedRegions.BettingCentreInterface;
@@ -26,17 +27,20 @@ public class BettingCentreMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
-        generalRepository = new GeneralRepositoryStub("l040101-ws01.ua.pt",
-                22401);
-        stable = new StableStub("l040101-ws02.ua.pt",
-                22402);/*
+        generalRepository = new GeneralRepositoryStub(
+                HostsInfo.GENERAL_REPOSITORY_HOSTNAME,
+                HostsInfo.GENERAL_REPOSITORY_PORT);
+        stable = new StableStub(
+                HostsInfo.STABLE_HOSTNAME,
+                HostsInfo.STABLE_PORT);
+        /*
         generalRepository = new GeneralRepositoryStub("127.0.0.1",
                 22401);
         stable = new StableStub("127.0.0.1",
                 22402);*/
 
         // service establishment
-        scom = new ServerCom(22406);
+        scom = new ServerCom(HostsInfo.BETTING_CENTRE_PORT);
         scom.start();
 
         // shared region initialization

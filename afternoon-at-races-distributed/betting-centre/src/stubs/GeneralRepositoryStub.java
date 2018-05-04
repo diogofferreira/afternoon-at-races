@@ -72,7 +72,8 @@ public class GeneralRepositoryStub {
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.INIT_RACE, raceNumber, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.INIT_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.INIT_RACE + ": " +
@@ -91,12 +92,13 @@ public class GeneralRepositoryStub {
 
         if (brokerState == null)
             throw new IllegalArgumentException("Invalid broker state");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_BROKER_STATE,
                 brokerState.getId(), 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_BROKER_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_BROKER_STATE + ": " +
@@ -122,12 +124,13 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid horse idx");
         if (horseAgility < 1 || horseAgility > EventVariables.HORSE_MAX_STEP)
             throw new IllegalArgumentException("Invalid horse agility");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_AGILITY, raceID,
                 horseIdx, horseAgility, ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_AGILITY.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_AGILITY + ": " +
@@ -153,12 +156,13 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid horse position");
         if (horseStep < 0)
             throw new IllegalArgumentException("Invalid horse step");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSE_POSITION, horsePosition,
                 horseIdx, horseStep, ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_POSITION.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_POSITION + ": " +
@@ -181,12 +185,13 @@ public class GeneralRepositoryStub {
         if (horsesOdd == null ||
                 horsesOdd.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid horse odds");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSES_ODD, raceID,
                 horsesOdd, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSES_ODD.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSES_ODD + ": " +
@@ -206,12 +211,13 @@ public class GeneralRepositoryStub {
         if (standings == null ||
                 standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid horse standings");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_HORSES_STANDING,
                 standings, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSES_STANDING.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSES_STANDING + ": " +
@@ -242,7 +248,8 @@ public class GeneralRepositoryStub {
                 horseIdx, horseState.getId(),
                 ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_STATE + ": " +
@@ -263,12 +270,13 @@ public class GeneralRepositoryStub {
 
         if (spectatorID < 0 || spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
             throw new IllegalArgumentException("Invalid spectator ID");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, amount,
                 spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS + ": " +
@@ -295,12 +303,13 @@ public class GeneralRepositoryStub {
         if (spectatorBettedHorse < 0 ||
                 spectatorBettedHorse >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
             throw new IllegalArgumentException("Invalid horse idx");
-        
+
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.SET_SPECTATORS_BET,
                 spectatorBet, spectatorBettedHorse, spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATORS_BET.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATORS_BET + ": " +
@@ -327,7 +336,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,
                 spectatorState.getId(), spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE + ": " +

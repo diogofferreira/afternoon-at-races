@@ -76,7 +76,8 @@ public class RacingTrackStub {
                 h.getRaceID(), h.getRaceIdx(), h.getAgility(),
                 h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
-        if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     RacingTrackMessageTypes.HAS_FINISH_LINE_BEEN_CROSSED + ": " +
@@ -112,7 +113,8 @@ public class RacingTrackStub {
                 h.getRaceIdx(), h.getAgility(), h.getCurrentPosition(),
                 h.getCurrentStep(), h.getID()));
 
-        if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                RacingTrackMessageTypes.MAKE_A_MOVE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     RacingTrackMessageTypes.MAKE_A_MOVE + ": " +
@@ -145,7 +147,8 @@ public class RacingTrackStub {
                 h.getRaceID(), h.getRaceIdx(), h.getAgility(),
                 h.getCurrentPosition(), h.getCurrentStep(), h.getID()));
 
-        if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                RacingTrackMessageTypes.PROCEED_TO_START_LINE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     RacingTrackMessageTypes.PROCEED_TO_START_LINE + ": " +
@@ -168,7 +171,8 @@ public class RacingTrackStub {
         inMessage = exchange(new RacingTrackMessage(
                 RacingTrackMessageTypes.START_THE_RACE, 0));
 
-        if (inMessage.getMethod() == RacingTrackMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                RacingTrackMessageTypes.START_THE_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     RacingTrackMessageTypes.START_THE_RACE + ": " +

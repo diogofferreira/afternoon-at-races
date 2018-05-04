@@ -49,10 +49,12 @@ public class ControlCentreInterface {
         ControlCentreMessageTypes mType;
 
         if ((mType = ControlCentreMessageTypes.getType(inMessage.getMethod())) == null)
-            return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+            return new ControlCentreMessage(
+                    inMessage, "Invalid message type");
 
         if (inMessage.getEntityId() < 0)
-            return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+            return new ControlCentreMessage(
+                    inMessage, "Invalid entity ID");
 
         switch (mType) {
             case OPEN_THE_EVENT:
@@ -64,11 +66,9 @@ public class ControlCentreInterface {
             case SUMMON_HORSES_TO_PADDOCK:
                 int raceID = inMessage.getRaceId();
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
-                    inMessage.setErrorMessage("Invalid raceID");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
+                    return new ControlCentreMessage(
+                        inMessage, "Invalid race ID");
 
                 controlCentre.summonHorsesToPaddock(inMessage.getRaceId());
                 return new ControlCentreMessage(
@@ -77,11 +77,9 @@ public class ControlCentreInterface {
 
             case WAIT_FOR_NEXT_RACE:
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS) {
-                    inMessage.setErrorMessage("Invalid spectator ID");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new ControlCentreMessage(
+                            inMessage, "Invalid spectator ID");
 
                 ((SpectatorInt) Thread.currentThread()).setID(
                         inMessage.getEntityId());
@@ -105,11 +103,9 @@ public class ControlCentreInterface {
 
             case GO_WATCH_THE_RACE:
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS) {
-                    inMessage.setErrorMessage("Invalid spectator ID");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new ControlCentreMessage(
+                            inMessage, "Invalid spectator ID");
 
                 ((SpectatorInt) Thread.currentThread()).setID(
                         inMessage.getEntityId());
@@ -128,11 +124,9 @@ public class ControlCentreInterface {
                 int[] standings = inMessage.getStandings();
 
                 if (standings == null ||
-                        standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-                    inMessage.setErrorMessage("Invalid standings array");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        standings.length != EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                    return new ControlCentreMessage(
+                            inMessage, "Invalid standings array");
 
                 controlCentre.finishTheRace(standings);
                 return new ControlCentreMessage(
@@ -150,11 +144,9 @@ public class ControlCentreInterface {
                 int horseIdx = inMessage.getHorseIdx();
 
                 if (horseIdx < 0 ||
-                        horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-                    inMessage.setErrorMessage("Invalid horse Idx");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                    return new ControlCentreMessage(
+                            inMessage, "Invalid horse Idx");
 
                 haveIWon = controlCentre.haveIWon(horseIdx);
                 return new ControlCentreMessage(
@@ -169,11 +161,9 @@ public class ControlCentreInterface {
 
             case RELAX_A_BIT:
                 if (inMessage.getEntityId() < 0 ||
-                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS) {
-                    inMessage.setErrorMessage("Invalid spectator ID");
-                    inMessage.setMethod(ControlCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        inMessage.getEntityId() >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new ControlCentreMessage(
+                            inMessage, "Invalid spectator ID");
 
                 ((SpectatorInt) Thread.currentThread()).setID(
                         inMessage.getEntityId());
@@ -185,7 +175,8 @@ public class ControlCentreInterface {
                         inMessage.getEntityId());
 
             default:
-                return new ControlCentreMessage(ControlCentreMessageTypes.ERROR);
+                return new ControlCentreMessage(
+                        inMessage, "Invalid message type");
         }
     }
 

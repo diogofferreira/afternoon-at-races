@@ -47,12 +47,20 @@ public class PaddockMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public PaddockMessage(PaddockMessageTypes error) {
-        if (error != PaddockMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public PaddockMessage(PaddockMessage inMessage, String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = PaddockMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.raceId = inMessage.getRaceID();
+        this.raceIdx = inMessage.getRaceIdx();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

@@ -77,12 +77,26 @@ public class BettingCentreMessage implements Serializable {
 
     /**
      * Constructor (for error messages).
-     * @param error Type of the message (in this case an error message).
+     * @param inMessage Message which contains an error.
+     * @param errorMessage Textual representation of the error.
      */
-    public BettingCentreMessage(BettingCentreMessageTypes error) {
-        if (error != BettingCentreMessageTypes.ERROR)
-            throw new IllegalArgumentException("Not an error message!");
-        this.method = error.getId();
+    public BettingCentreMessage(BettingCentreMessage inMessage,
+                                String errorMessage) {
+        if (inMessage == null)
+            throw new IllegalArgumentException("Invalid inMessage");
+        if (errorMessage == null)
+            throw new IllegalArgumentException("Invalid error description");
+
+        this.method = BettingCentreMessageTypes.ERROR.getId();
+        this.errorMessage = errorMessage;
+        this.wallet = inMessage.getWallet();
+        this.strategy = inMessage.getStrategy();
+        this.raceId = inMessage.getRaceId();
+        this.winners = inMessage.getWinners();
+        this.areThereAnyWinners = inMessage.isAreThereAnyWinners();
+        this.winningValue = inMessage.getWinningValue();
+        this.bettedHorse = inMessage.getBettedHorse();
+        this.entityId = inMessage.getEntityId();
     }
 
     /**

@@ -63,7 +63,8 @@ public class StableStub {
         StableMessage inMessage = exchange(new StableMessage(
                 StableMessageTypes.ENTERTAIN_THE_GUESTS, 0));
 
-        if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                StableMessageTypes.ENTERTAIN_THE_GUESTS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     StableMessageTypes.ENTERTAIN_THE_GUESTS + ": " +
@@ -89,7 +90,8 @@ public class StableStub {
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.GET_RACE_ODDS, raceID, 0));
 
-        if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                StableMessageTypes.GET_RACE_ODDS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     StableMessageTypes.GET_RACE_ODDS + ": " +
@@ -123,7 +125,8 @@ public class StableStub {
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.PROCEED_TO_STABLE, h.getAgility(), h.getID()));
 
-        if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                StableMessageTypes.PROCEED_TO_STABLE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     StableMessageTypes.PROCEED_TO_STABLE + ": " +
@@ -168,7 +171,8 @@ public class StableStub {
         inMessage = exchange(new StableMessage(
                 StableMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID, 0));
 
-        if (inMessage.getMethod() == StableMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                StableMessageTypes.SUMMON_HORSES_TO_PADDOCK.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     StableMessageTypes.SUMMON_HORSES_TO_PADDOCK + ": " +

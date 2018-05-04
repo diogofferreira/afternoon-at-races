@@ -73,18 +73,17 @@ public class BettingCentreInterface {
         double amount;
 
         if ((mType = BettingCentreMessageTypes.getType(inMessage.getMethod())) == null)
-            return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+            return new BettingCentreMessage(
+                    inMessage, "Invalid message type");
 
         switch (mType) {
             case ACCEPT_THE_BETS:
                 raceID = inMessage.getRaceId();
                 raceNumber = raceID;
 
-                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES) {
-                    inMessage.setErrorMessage("Invalid raceID");
-                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
+                    return new BettingCentreMessage(
+                            inMessage, "Invalid race ID");
 
                 bettingCentre.acceptTheBets(raceID);
                 return new BettingCentreMessage(
@@ -94,11 +93,9 @@ public class BettingCentreInterface {
             case ARE_THERE_ANY_WINNERS:
                 winners = inMessage.getWinners();
                 if (winners == null || winners.length == 0 ||
-                        winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE) {
-                    inMessage.setErrorMessage("Invalid winners array");
-                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        winners.length > EventVariables.NUMBER_OF_HORSES_PER_RACE)
+                    return new BettingCentreMessage(
+                            inMessage, "Invalid winners array");
 
                 if (raceNumber == EventVariables.NUMBER_OF_RACES - 1) {
                     numberOfWinners = 0;
@@ -109,18 +106,16 @@ public class BettingCentreInterface {
 
                 areThereAnyWinners = bettingCentre.areThereAnyWinners(winners);
                 return new BettingCentreMessage(
-                        BettingCentreMessageTypes.ACCEPT_THE_BETS,
+                        BettingCentreMessageTypes.ARE_THERE_ANY_WINNERS,
                         areThereAnyWinners, inMessage.getEntityId());
 
             case GO_COLLECT_THE_GAINS:
                 spectatorID = inMessage.getEntityId();
 
                 if (spectatorID < 0 ||
-                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS) {
-                    inMessage.setErrorMessage("Invalid spectatorID");
-                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new BettingCentreMessage(
+                            inMessage, "Invalid spectator ID");
 
                 ((SpectatorInt) Thread.currentThread()).setID(spectatorID);
 
@@ -142,11 +137,9 @@ public class BettingCentreInterface {
             case PLACE_A_BET:
                 spectatorID = inMessage.getEntityId();
                 if (spectatorID < 0 ||
-                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS) {
-                    inMessage.setErrorMessage("Invalid spectator ID");
-                    inMessage.setMethod(BettingCentreMessageTypes.ERROR);
-                    return inMessage;
-                }
+                        spectatorID >= EventVariables.NUMBER_OF_SPECTATORS)
+                    return new BettingCentreMessage(
+                            inMessage, "Invalid spectator ID");
 
                 ((SpectatorInt) Thread.currentThread()).setID(spectatorID);
                 ((SpectatorInt) Thread.currentThread()).setStrategy(inMessage.getStrategy());
@@ -164,7 +157,8 @@ public class BettingCentreInterface {
                         horseIdx, inMessage.getEntityId());
 
             default:
-                return new BettingCentreMessage(BettingCentreMessageTypes.ERROR);
+                return new BettingCentreMessage(
+                        inMessage, "Invalid message type");
         }
     }
 

@@ -1,5 +1,6 @@
 package main;
 
+import communication.HostsInfo;
 import communication.RacingTrackAPS;
 import communication.ServerCom;
 import sharedRegions.RacingTrack;
@@ -27,20 +28,20 @@ public class RacingTrackMain {
         ServerCom scom, scomi;
 
         // shared regions stub initialization
+        generalRepository = new GeneralRepositoryStub(
+                HostsInfo.GENERAL_REPOSITORY_HOSTNAME,
+                HostsInfo.GENERAL_REPOSITORY_PORT);
+        controlCentre = new ControlCentreStub(
+                HostsInfo.CONTROL_CENTRE_HOSTNAME,
+                HostsInfo.CONTROL_CENTRE_PORT);
 
-        generalRepository = new GeneralRepositoryStub("l040101-ws01.ua.pt",
-                22401);
-        controlCentre = new ControlCentreStub("l040101-ws03.ua.pt",
-                22403);
-        /*
-
-        generalRepository = new GeneralRepositoryStub("127.0.0.1",
+        /*generalRepository = new GeneralRepositoryStub("127.0.0.1",
                 22401);
         controlCentre = new ControlCentreStub("127.0.0.1",
                 22403);*/
 
         // service establishment
-        scom = new ServerCom(22405);
+        scom = new ServerCom(HostsInfo.RACING_TRACK_PORT);
         scom.start();
 
         // shared region initialization

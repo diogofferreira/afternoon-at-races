@@ -72,7 +72,8 @@ public class GeneralRepositoryStub {
         inMessage = exchange(new GeneralRepositoryMessage(
                 GeneralRepositoryMessageTypes.INIT_RACE, raceNumber, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.INIT_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.INIT_RACE + ": " +
@@ -96,7 +97,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_BROKER_STATE,
                 brokerState.getId(), 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_BROKER_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_BROKER_STATE + ": " +
@@ -127,7 +129,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_HORSE_AGILITY, raceID,
                 horseIdx, horseAgility, ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_AGILITY.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_AGILITY + ": " +
@@ -158,7 +161,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_HORSE_POSITION, horsePosition,
                 horseIdx, horseStep, ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_POSITION.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_POSITION + ": " +
@@ -186,7 +190,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_HORSES_ODD, raceID,
                 horsesOdd, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSES_ODD.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSES_ODD + ": " +
@@ -211,7 +216,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_HORSES_STANDING,
                 standings, 0));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSES_STANDING.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSES_STANDING + ": " +
@@ -242,7 +248,8 @@ public class GeneralRepositoryStub {
                 horseIdx, horseState.getId(),
                 ((HorseInt)Thread.currentThread()).getID()));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_HORSE_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_HORSE_STATE + ": " +
@@ -268,7 +275,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS, amount,
                 spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS + ": " +
@@ -300,7 +308,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_SPECTATORS_BET,
                 spectatorBet, spectatorBettedHorse, spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATORS_BET.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATORS_BET + ": " +
@@ -327,7 +336,8 @@ public class GeneralRepositoryStub {
                 GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,
                 spectatorState.getId(), spectatorID));
 
-        if (inMessage.getMethod() == GeneralRepositoryMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE + ": " +

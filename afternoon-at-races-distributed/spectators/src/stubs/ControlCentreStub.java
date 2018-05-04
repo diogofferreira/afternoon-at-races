@@ -71,7 +71,7 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.CELEBRATE, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() != ControlCentreMessageTypes.CELEBRATE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.CELEBRATE + ": " +
@@ -98,7 +98,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.FINISH_THE_RACE, standings, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.FINISH_THE_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.FINISH_THE_RACE + ": " +
@@ -118,7 +119,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.GO_CHECK_HORSES, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.GO_CHECK_HORSES.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.GO_CHECK_HORSES + ": " +
@@ -141,7 +143,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.GO_WATCH_THE_RACE, s.getID()));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.GO_WATCH_THE_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.GO_WATCH_THE_RACE + ": " +
@@ -171,7 +174,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.HAVE_I_WON, horseIdx, s.getID()));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.HAVE_I_WON.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.HAVE_I_WON + ": " +
@@ -195,7 +199,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.OPEN_THE_EVENT, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.OPEN_THE_EVENT.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.OPEN_THE_EVENT + ": " +
@@ -220,7 +225,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.PROCEED_TO_PADDOCK.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.PROCEED_TO_PADDOCK + ": " +
@@ -241,7 +247,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.RELAX_A_BIT, s.getID()));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.RELAX_A_BIT.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.RELAX_A_BIT + ": " +
@@ -265,7 +272,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.REPORT_RESULTS, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.REPORT_RESULTS.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.REPORT_RESULTS + ": " +
@@ -298,7 +306,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.START_THE_RACE, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.START_THE_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.START_THE_RACE + ": " +
@@ -325,7 +334,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK, raceID, 0));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK + ": " +
@@ -351,7 +361,8 @@ public class ControlCentreStub {
         inMessage = exchange(new ControlCentreMessage(
                 ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE, s.getID()));
 
-        if (inMessage.getMethod() == ControlCentreMessageTypes.ERROR.getId()) {
+        if (inMessage.getMethod() !=
+                ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE.getId()) {
             System.out.println("[" + Thread.currentThread().getName() + "] " +
                     " An error ocurred in " +
                     ControlCentreMessageTypes.WAIT_FOR_NEXT_RACE + ": " +
