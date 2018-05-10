@@ -1,9 +1,11 @@
 package states;
 
+import java.io.Serializable;
+
 /**
  * Definition of the Spectator states.
  */
-public enum SpectatorState {
+public enum SpectatorState implements Serializable {
     /**
      * Spectator waiting for a race to start.
      */

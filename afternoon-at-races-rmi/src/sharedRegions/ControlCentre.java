@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import interfaces.ControlCentreInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
  * The Control Centre is a shared region where the Broker will supervise the race
  * and where the Spectators will watch the races.
  */
-public class ControlCentre {
+public class ControlCentre implements ControlCentreInt {
 
     /**
      * Instance of a monitor.
@@ -121,6 +122,7 @@ public class ControlCentre {
      * Method invoked by the Broker in order to start the event. It just simply
      * updates the Broker state and updates the General Repository.
      */
+    @Override
     public void openTheEvent() {
         mutex.lock();
 
@@ -135,6 +137,7 @@ public class ControlCentre {
      * ANNOUNCING_NEXT_RACE, while signalling the Horses to proceed to Paddock.
      * @param raceID The ID of the race that will take place.
      */
+    @Override
     public void summonHorsesToPaddock(int raceID) {
         mutex.lock();
 
@@ -166,6 +169,7 @@ public class ControlCentre {
      *                    await for the next race.
      * @return True if there's still a race next.
      */
+    @Override
     public boolean waitForNextRace(int spectatorID) {
         boolean isThereARace;
 
@@ -193,6 +197,7 @@ public class ControlCentre {
      * to the Paddock, thus waking up all the Spectators to proceed to Paddock
      * and appraise the horses.
      */
+    @Override
     public void proceedToPaddock() {
         mutex.lock();
 
@@ -207,6 +212,7 @@ public class ControlCentre {
      * Method invoked by the last Horse/Jockey pair arriving to Paddock in order
      * to wake up the Broker.
      */
+    @Override
     public void goCheckHorses() {
         mutex.lock();
 
@@ -223,6 +229,7 @@ public class ControlCentre {
      * results of the race.
      * @param spectatorID ID of the Spectator watching the race.
      */
+    @Override
     public void goWatchTheRace(int spectatorID) {
         mutex.lock();
 
@@ -249,6 +256,7 @@ public class ControlCentre {
      * He'll wait here until the last Horse/Jockey pair to cross the finish line
      * wakes him up.
      */
+    @Override
     public void startTheRace() {
         mutex.lock();
 
@@ -268,6 +276,7 @@ public class ControlCentre {
      * The Broker will be notified to wake up and to report the results.
      * @param standings An array of standings of the Horses that in the race.
      */
+    @Override
     public void finishTheRace(int[] standings) {
         mutex.lock();
 
@@ -287,6 +296,7 @@ public class ControlCentre {
      * of the race have been reported.
      * @return An array of Horses' raceIdx that won the race.
      */
+    @Override
     public int[] reportResults() {
         int w[];
         mutex.lock();
@@ -313,6 +323,7 @@ public class ControlCentre {
      * @return A boolean indicating if the Spectator invoking the method won
      * his/her bet.
      */
+    @Override
     public boolean haveIWon(int horseIdx) {
         boolean won;
         mutex.lock();
@@ -331,6 +342,7 @@ public class ControlCentre {
      * event has ended.
      * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
      */
+    @Override
     public void celebrate() {
         mutex.lock();
 
@@ -348,6 +360,7 @@ public class ControlCentre {
      * @param spectatorID ID of the Spectator that will celebrate after the
      *                    event has ended.
      */
+    @Override
     public void relaxABit(int spectatorID) {
         mutex.lock();
 

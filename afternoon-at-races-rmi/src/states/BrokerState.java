@@ -1,9 +1,11 @@
 package states;
 
+import java.io.Serializable;
+
 /**
  * Definition of the Broker states.
  */
-public enum BrokerState {
+public enum BrokerState implements Serializable {
     /**
      * Broker is opening the event.
      */

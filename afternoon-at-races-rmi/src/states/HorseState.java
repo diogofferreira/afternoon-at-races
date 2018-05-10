@@ -1,9 +1,11 @@
 package states;
 
+import java.io.Serializable;
+
 /**
  * Definition of the Horse/Jockey pair states.
  */
-public enum HorseState {
+public enum HorseState implements Serializable {
     /**
      * Horse/Jockey pair is at the stable.
      */
