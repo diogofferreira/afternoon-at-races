@@ -1,124 +1,115 @@
 package interfaces;
 
+import states.BrokerState;
+import states.HorseState;
+import states.SpectatorState;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
  * This data type defines the operational interface of a remote object
- * of type/shared region Control Centre.
+ * of type/shared region General Repository.
  */
-public interface ControlCentreInt extends Remote {
+public interface GeneralRepositoryInt extends Remote {
 
     /**
-     * Execution of remote method openTheEvent.
-     * Method invoked by the Broker in order to start the event. It just simply
-     * updates the Broker state and updates the General Repository.
+     * Execution of remote method setBrokerState.
+     * Method that updates the Broker state.
+     * @param brokerState The new Broker state.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void openTheEvent() throws RemoteException;
+    void setBrokerState(BrokerState brokerState) throws RemoteException;
 
     /**
-     * Execution of remote method summonHorsesToPaddock.
-     * Method invoked by Broker, signaling the start of the event.
-     * The Broker updates the current raceID and sets his state to
-     * ANNOUNCING_NEXT_RACE, while signalling the Horses to proceed to Paddock.
-     * @param raceID The ID of the race that will take place.
-     *               @throws RemoteException if the invocation of the remote method fails.
-     */
-    void summonHorsesToPaddock(int raceID) throws RemoteException;
-
-    /**
-     * Execution of remote method waitForNextRace.
-     * This method is invoked by every Spectator while they're waiting for
-     * a race to start.
-     * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
-     * @param spectatorID ID of the Spectator arriving to the Control Centre to
-     *                    await for the next race.
-     * @return True if there's still a race next.
+     * Execution of remote method setSpectatorState.
+     * Method that updates the state of a Spectator.
+     * @param spectatorId The ID of the Spectator whose the state is updated.
+     * @param spectatorState The new state of the referenced Spectator.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    boolean waitForNextRace(int spectatorID) throws RemoteException;
+    void setSpectatorState(int spectatorId, SpectatorState spectatorState)
+            throws RemoteException;
 
     /**
-     * Execution of remote method proceedToPaddock.
-     * Method invoked by the last Horse/Jockey pair of the current race to arrive
-     * to the Paddock, thus waking up all the Spectators to proceed to Paddock
-     * and appraise the horses.
+     * Execution of remote method setSpectatorGains.
+     * Method that updates the referenced Spectator's wallet by adding the amount
+     * the amount passed as argument.
+     * @param spectatorId The ID of the Spectator whose wallet will be updated.
+     * @param amount The amount of money to add to the wallet.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void proceedToPaddock() throws RemoteException;
-
+    void setSpectatorGains(int spectatorId, int amount) throws RemoteException;
     /**
-     * Execution of remote method goCheckHorses.
-     * Method invoked by the last Horse/Jockey pair arriving to Paddock in order
-     * to wake up the Broker.
+     * Execution of remote method setHorseState.
+     * Method that sets the reference Horse/Jockey pair state.
+     * @param raceID The ID of the race which the pair will run.
+     * @param horseIdx The raceIdx of the Horse whose state will be updated.
+     * @param horseState The next Horse state.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void goCheckHorses() throws RemoteException;
+    void setHorseState(int raceID, int horseIdx, HorseState horseState)
+            throws RemoteException;
 
     /**
-     * Execution of remote method goWatchTheRace.
-     * Method invoked by each Spectator before the start of each race.
-     * They will block in WATCHING_A_RACE state until the Broker reports the
-     * results of the race.
-     * @param spectatorID ID of the Spectator watching the race.
+     * Execution of remote method setHorseAgility.
+     * Method that sets an Horse agility, i.e., the maximum step per iteration
+     * it can takes.
+     * @param raceID The raceID where the Horse will participate.
+     * @param horseIdx The raceIdx of the reference Horse.
+     * @param horseAgility The agility of the referenced Horse.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void goWatchTheRace(int spectatorID) throws RemoteException;
+    void setHorseAgility(int raceID, int horseIdx, int horseAgility)
+            throws RemoteException;
 
     /**
-     * Execution of remote method startTheRace.
-     * Method invoked by the Broker.
-     * He'll wait here until the last Horse/Jockey pair to cross the finish line
-     * wakes him up.
+     * Execution of remote method setSpectatorsBet.
+     * Method that sets the bet of the referenced Spectator on the current race.
+     * @param spectatorId The ID of the Spectator placing the bet.
+     * @param spectatorBet The value of the bet placed.
+     * @param spectatorBettedHorse The raceIdx of the Horse the Spectator bet on.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void startTheRace() throws RemoteException;
+    void setSpectatorsBet(int spectatorId, int spectatorBet,
+                          int spectatorBettedHorse) throws RemoteException;
 
     /**
-     * Execution of remote method finishTheRace.
-     * Method invoked by the last Horse/Jockey pair to cross the finish line.
-     * The Broker will be notified to wake up and to report the results.
-     * @param standings An array of standings of the Horses that in the race.
-     */
-    void finishTheRace(int[] standings) throws RemoteException;
-
-    /**
-     * Execution of remote method reportResults.
-     * Method invoked by the Broker signalling all Spectators that the results
-     * of the race have been reported.
-     * @return An array of Horses' raceIdx that won the race.
+     * Execution of remote method setHorsesOdd.
+     * Method that sets the odds of the Horses running on the current race.
+     * @param raceID The ID of the race where these odds are applied.
+     * @param horsesOdd Array of horses odds, indexed by their raceIdx.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    int[] reportResults() throws RemoteException;
+    void setHorsesOdd(int raceID, double[] horsesOdd) throws RemoteException;
 
     /**
-     * Execution of remote method haveIWon.
-     * Method invoked by each Spectator to verify if they betted on a winning
-     * horse.
-     * @param horseIdx The raceIdx of the horse they bet on.
-     * @return A boolean indicating if the Spectator invoking the method won
-     * his/her bet.
+     * Execution of remote method setHorsePosition.
+     * Updates the Horse/Jockey pair current position (i.e., the travelled
+     * distance).
+     * @param horseIdx The raceIdx of the Horse whose position is being updated.
+     * @param horsePosition The new Horse position.
+     * @param horseStep The number of steps the Horse has already taken.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    boolean haveIWon(int horseIdx) throws RemoteException;
+    void setHorsePosition(int horseIdx, int horsePosition, int horseStep)
+            throws RemoteException;
 
     /**
-     * Execution of remote method celebreate.
-     * Method invoked by the Broker in order to signal the spectators that the
-     * event has ended.
-     * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
+     * Execution of remote method setHorsesStanding.
+     * Method that signals the horses' position in the race.
+     * @param standings horses' position in the race.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void celebrate() throws RemoteException;
+    void setHorsesStanding(int[] standings) throws RemoteException;
 
     /**
-     * Execution of remote method relaxABit.
-     * Last method invoked by the Spectators, changing their state to CELEBRATING.
-     * @param spectatorID ID of the Spectator that will celebrate after the
-     *                    event has ended.
+     * Execution of remote method initRace.
+     * Method that resets all the race related variables, such as the
+     * raceNumber (ID), the spectators bets, the horses odds and
+     * travelled distances.
+     * @param raceNumber The updated race number.
      * @throws RemoteException if the invocation of the remote method fails.
      */
-    void relaxABit(int spectatorID) throws RemoteException;
-
+    void initRace(int raceNumber) throws RemoteException;
 }
