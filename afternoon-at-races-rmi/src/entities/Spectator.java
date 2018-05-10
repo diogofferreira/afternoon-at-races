@@ -1,5 +1,6 @@
 package entities;
 
+import registries.RegPlaceABet;
 import sharedRegions.*;
 import states.SpectatorState;
 
@@ -76,25 +77,37 @@ public class Spectator extends Thread {
      * Spectator lifecycle.
      */
     public void run() {
+        RegPlaceABet pab;
         int bettedHorse;
 
-        while(controlCentre.waitForNextRace()) {
+        while(controlCentre.waitForNextRace(id)) {
+            state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
+
             // goCheckHorses
             paddock.goCheckHorses(id);
             setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
             // Place a bet and return the horse the spectator chose
-            bettedHorse = bettingCentre.placeABet();
+            pab = bettingCentre.placeABet(id, strategy, wallet);
+            state = SpectatorState.PLACING_A_BET;
+            wallet = pab.getWallet();
+            bettedHorse = pab.getHorseIdx();
+
 
             // update wallet
-            controlCentre.goWatchTheRace();
+            controlCentre.goWatchTheRace(id);
+            state = SpectatorState.WATCHING_A_RACE;
 
             // Check if won the bet and collect the gains if so
-            if (controlCentre.haveIWon(bettedHorse))
-                wallet += bettingCentre.goCollectTheGains();
+            if (controlCentre.haveIWon(bettedHorse)) {
+                wallet += bettingCentre.goCollectTheGains(id);
+                state = SpectatorState.COLLECTING_THE_GAINS;
+            }
         }
+        state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
 
-        controlCentre.relaxABit();
+        controlCentre.relaxABit(id);
+        state = SpectatorState.CELEBRATING;
     }
 
     /**
@@ -122,11 +135,27 @@ public class Spectator extends Thread {
     }
 
     /**
+     * Method that sets the ID of the Spectator.
+     * @param id The new ID of the Spectator.
+     */
+    public void setID(int id) {
+        this.id = id;
+    }
+
+    /**
      * Method that returns the current amount of money in the Spectator's wallet.
      * @return The current amount of money in the Spectator's wallet.
      */
     public int getWallet() {
         return wallet;
+    }
+
+    /**
+     * Method that sets the value at the wallet of the Spectator.
+     * @param wallet The new value at the wallet of the Spectator.
+     */
+    public void setWallet(int wallet) {
+        this.wallet = wallet;
     }
 
     /**
@@ -146,4 +175,13 @@ public class Spectator extends Thread {
     public int getStrategy() {
         return strategy;
     }
+
+    /**
+     * Method that sets the betting strategy of the Spectator.
+     * @param strategy The strategy used by the Spectator.
+     */
+    public void setStrategy(int strategy) {
+        this.strategy = strategy;
+    }
+
 }

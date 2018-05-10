@@ -124,11 +124,8 @@ public class ControlCentre {
      * updates the Broker state and updates the General Repository.
      */
     public void openTheEvent() {
-        Broker b;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.OPENING_THE_EVENT);
         generalRepository.setBrokerState(BrokerState.OPENING_THE_EVENT);
 
         mutex.unlock();
@@ -141,15 +138,12 @@ public class ControlCentre {
      * @param raceID The ID of the race that will take place.
      */
     public void summonHorsesToPaddock(int raceID) {
-        Broker b;
         mutex.lock();
 
         // Restart variables
         // Notify general repository to clear all horse related info
         generalRepository.initRace(raceID);
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
         generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
 
         stable.summonHorsesToPaddock(raceID);
@@ -170,17 +164,16 @@ public class ControlCentre {
      * This method is invoked by every Spectator while they're waiting for
      * a race to start.
      * While waiting here, they update their state to WAITING_FOR_A_RACE_TO_START.
+     * @param spectatorID ID of the Spectator arriving to the Control Centre to
+     *                    await for the next race.
      * @return True if there's still a race next.
      */
-    public boolean waitForNextRace() {
-        Spectator s;
+    public boolean waitForNextRace(int spectatorID) {
         boolean isThereARace;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.WAITING_FOR_A_RACE_TO_START);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorID,
                 SpectatorState.WAITING_FOR_A_RACE_TO_START);
 
         while (!(spectatorsCanProceed || eventEnded)) {
@@ -230,14 +223,12 @@ public class ControlCentre {
      * Method invoked by each Spectator before the start of each race.
      * They will block in WATCHING_A_RACE state until the Broker reports the
      * results of the race.
+     * @param spectatorID ID of the Spectator watching the race.
      */
-    public void goWatchTheRace() {
-        Spectator s;
+    public void goWatchTheRace(int spectatorID) {
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.WATCHING_A_RACE);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorID,
                 SpectatorState.WATCHING_A_RACE);
 
         // spectators wait
@@ -343,12 +334,9 @@ public class ControlCentre {
      * Meanwhile, Broker also sets its state to PLAYING_HOST_AT_THE_BAR.
      */
     public void celebrate() {
-        Broker b;
         mutex.lock();
 
         // broker just playing host, end the afternoon
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
         generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
 
         eventEnded = true;
@@ -359,15 +347,14 @@ public class ControlCentre {
 
     /**
      * Last method invoked by the Spectators, changing their state to CELEBRATING.
+     * @param spectatorID ID of the Spectator that will celebrate after the
+     *                    event has ended.
      */
-    public void relaxABit() {
-        Spectator s;
+    public void relaxABit(int spectatorID) {
         mutex.lock();
 
         /// just relax, end the afternoon
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.CELEBRATING);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorID,
                 SpectatorState.CELEBRATING);
 
         mutex.unlock();

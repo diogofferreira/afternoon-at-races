@@ -67,13 +67,16 @@ public class Broker extends Thread {
         int[] winners;
 
         controlCentre.openTheEvent();
+        state = BrokerState.OPENING_THE_EVENT;
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock
             controlCentre.summonHorsesToPaddock(i);
+            state = BrokerState.ANNOUNCING_NEXT_RACE;
 
             // acceptsBets
             bettingCentre.acceptTheBets(i);
+            state = BrokerState.WAITING_FOR_BETS;
 
             // startTheRace
             racingTrack.startTheRace();
@@ -84,11 +87,14 @@ public class Broker extends Thread {
             winners = controlCentre.reportResults();
 
             // if there are any winners, honour those bets
-            if (bettingCentre.areThereAnyWinners(winners))
+            if (bettingCentre.areThereAnyWinners(winners)) {
                 bettingCentre.honourTheBets();
+                state = BrokerState.SETTLING_ACCOUNTS;
+            }
         }
 
         controlCentre.celebrate();
+        state = BrokerState.PLAYING_HOST_AT_THE_BAR;
         stable.entertainTheGuests();
     }
 
