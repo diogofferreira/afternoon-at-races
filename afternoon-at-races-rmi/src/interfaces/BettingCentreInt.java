@@ -1,7 +1,6 @@
 package interfaces;
 
 import registries.RegPlaceABet;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
