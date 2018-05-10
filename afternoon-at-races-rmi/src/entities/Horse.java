@@ -151,6 +151,22 @@ public class Horse extends Thread {
     }
 
     /**
+     * Method that sets the ID of the Horse/Jockey pair.
+     * @param id The new ID of the Horse/Jockey pair.
+     */
+    public void setID(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Method that returns the race ID in which the pair will participate.
+     * @return ID of the race in which the pair will participate.
+     */
+    public int getRaceID() {
+        return raceID;
+    }
+
+    /**
      * Sets the race ID in which the pair will participate.
      * @param raceID The race ID in which the horse will run.
      */
@@ -158,6 +174,14 @@ public class Horse extends Thread {
         if (raceID < 0 || raceID >= EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Invalid Race ID");
         this.raceID = raceID;
+    }
+
+    /**
+     * Method that returns the horse's index/position on the race.
+     * @return Horse's index/position on the race.
+     */
+    public int getRaceIdx() {
+        return raceIdx;
     }
 
     /**
@@ -180,19 +204,12 @@ public class Horse extends Thread {
     }
 
     /**
-     * Method that returns the race ID in which the pair will participate.
-     * @return ID of the race in which the pair will participate.
+     * Method that sets the agility of each horse, which in practice corresponds
+     * to the maximum step distance the horse can take in each iteration.
+     * @param agility The new value of agility/max step per iteration of the horse.
      */
-    public int getRaceID() {
-        return raceID;
-    }
-
-    /**
-     * Method that returns the horse's index/position on the race.
-     * @return Horse's index/position on the race.
-     */
-    public int getRaceIdx() {
-        return raceIdx;
+    public void setAgility(int agility) {
+        this.agility = agility;
     }
 
     /**
@@ -205,6 +222,15 @@ public class Horse extends Thread {
     }
 
     /**
+     * Method that sets the current position of Horse/Jockey pair.
+     * @param currentPosition The current position of the Horse/Jockey pair in
+     *                        the racing track.
+     */
+    public void setCurrentPosition(int currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    /**
      * Method that returns the number of steps the horse has already taken.
      * @return The number of steps/iterations of the horse during the race.
      */
@@ -213,10 +239,20 @@ public class Horse extends Thread {
     }
 
     /**
-     * Method that updates the current position of the pair.
+     * Method that sets the number of steps the horse has already taken.
+     * @param currentStep The number of steps/iterations that the horse has
+     *                    already taken.
+     */
+    public void setCurrentStep(int currentStep) {
+        this.currentStep = currentStep;
+    }
+
+    /**
+     * Method that updates the current position of the pair, i.e., increases the
+     * position with step steps and increments the current step by one.
      * @param step The distance of the increment/step.
      */
-    public void setCurrentPosition(int step) {
+    public void updateCurrentPosition(int step) {
         this.currentPosition += step;
         this.currentStep++;
     }

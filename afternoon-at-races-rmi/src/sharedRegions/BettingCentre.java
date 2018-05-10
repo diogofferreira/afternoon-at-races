@@ -3,6 +3,7 @@ package sharedRegions;
 import entities.Broker;
 import entities.Spectator;
 import main.EventVariables;
+import registries.RegPlaceABet;
 import states.BrokerState;
 import states.SpectatorState;
 import utils.Bet;
@@ -260,11 +261,8 @@ public class BettingCentre {
      * @param raceID The current raceID.
      */
     public void acceptTheBets(int raceID) {
-        Broker b;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.WAITING_FOR_BETS);
         generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
 
         // clear accepted and rejected bets list
@@ -308,17 +306,20 @@ public class BettingCentre {
      * changing their state to PLACING_A_BET.
      * They blocked in queue waiting for the Broker to validate their bet.
      * If their bet is not accepted a new bet is generated.
-     * @return The Horse's index on the current race that the Spectator bet on.
+     * @param spectatorID ID of the Spectator placing a bet.
+     * @param strategy Betting strategy used by the Spectator.
+     * @param wallet Amount in Spectator's wallet.
+     * @return A registry which contains the Horse's index on the current race
+     * that the Spectator bet on and the updated value of his/her wallet after
+     * placing the bet.
      */
-    public int placeABet() {
-        Spectator s;
+    public RegPlaceABet placeABet(int spectatorID, int strategy, int wallet) {
         Bet bet;
+        RegPlaceABet reg;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.PLACING_A_BET);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorID,
                 SpectatorState.PLACING_A_BET);
 
         // If it's still not accepting bets, wait
@@ -329,7 +330,7 @@ public class BettingCentre {
         }
 
         // add to waiting bets queue
-        bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
+        bet = getBet(spectatorID, strategy, wallet);
         pendingBets.add(bet);
 
         // spectator wait
@@ -341,7 +342,7 @@ public class BettingCentre {
                 break;
 
             if (bet.getState() == BetState.REJECTED) {
-                bet = getBet(s.getID(), s.getStrategy(), s.getWallet());
+                bet = getBet(spectatorID, strategy, wallet);
                 pendingBets.add(bet);
                 waitingForBet.signal();
             }
@@ -351,11 +352,11 @@ public class BettingCentre {
             } catch (InterruptedException ignored){}
         }
 
-        s.updateWallet(-bet.getValue());
+        reg = new RegPlaceABet(bet.getHorseIdx(), wallet-bet.getValue());
 
         mutex.unlock();
 
-        return bet.getHorseIdx();
+        return reg;
     }
 
     /**
@@ -392,12 +393,9 @@ public class BettingCentre {
      * waiting to collect their rewards.
      */
     public void honourTheBets() {
-        Broker b;
         Bet bet;
         mutex.lock();
 
-        b = (Broker)Thread.currentThread();
-        b.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
         generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
 
         acceptingHonours = true;
@@ -436,17 +434,16 @@ public class BettingCentre {
      * Method invoked by each one of the winning Spectators.
      * They change their state to COLLECTING_THE_GAINS and block in queue waiting
      * for their rewards.
+     * @param spectatorID ID of the Spectator that had a winning bet and now
+     *                    requests his/her gains.
      * @return The value the Spectator won.
      */
-    public double goCollectTheGains() {
-        Spectator s;
+    public double goCollectTheGains(int spectatorID) {
         double winningValue;
 
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.COLLECTING_THE_GAINS);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorID,
                 SpectatorState.COLLECTING_THE_GAINS);
 
         while (!acceptingHonours) {
@@ -456,14 +453,14 @@ public class BettingCentre {
         }
 
         // add to pending collections queue
-        pendingHonours.add(s.getID());
+        pendingHonours.add(spectatorID);
 
         // spectator waits queue
         while (true) {
             // notify broker queue
             waitingForHonours.signalAll();
 
-            if (!pendingHonours.contains(s.getID())) break;
+            if (!pendingHonours.contains(spectatorID)) break;
 
             try {
                 waitingForCash.await();
@@ -473,8 +470,8 @@ public class BettingCentre {
 
         // get winning value
         winningValue = 0;
-        if (validatedHonours.containsKey(s.getID()))
-            winningValue = validatedHonours.get(s.getID()) / winners.length;
+        if (validatedHonours.containsKey(spectatorID))
+            winningValue = validatedHonours.get(spectatorID) / winners.length;
 
         mutex.unlock();
 
