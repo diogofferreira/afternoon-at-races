@@ -9,8 +9,7 @@ import stubs.ControlCentreStub;
 import stubs.GeneralRepositoryStub;
 
 /**
- * Main class of the event.
- * It will start the racing track region.
+ * Main class that starts the Racing Track shared region server.
  */
 public class RacingTrackMain {
 

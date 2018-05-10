@@ -6,11 +6,28 @@ import messageTypes.RacingTrackMessageTypes;
 import messages.RacingTrackMessage;
 import sharedRegions.RacingTrack;
 
+/**
+ * Interface of the Racing Track server that processes the received messages,
+ * communicating with shared region, and replies to the thread that requests
+ * for the service (APS).
+ */
 public class RacingTrackInterface {
 
+    /**
+     * The counter that registers the number of Horse/Jockey pairs that have
+     * already invoked the HAS_FINISH_LINE_BEEN_CROSSED method.
+     */
     private int requests;
+
+    /**
+     * Instance of the Racing Track shared region.
+     */
     private RacingTrack racingTrack;
 
+    /**
+     * Creates a new instance of an interface of the Racing Track shared region.
+     * @param racingTrack Instance of the Racing Track shared region.
+     */
     public RacingTrackInterface(RacingTrack racingTrack) {
         if (racingTrack == null)
             throw new IllegalArgumentException("Invalid Stable.");
@@ -18,6 +35,16 @@ public class RacingTrackInterface {
         this.racingTrack = racingTrack;
     }
 
+    /**
+     * Method that processes a request coming from the APS, interacts with the
+     * shared region and returns a the response to the method invoked in the
+     * shared region.
+     * @param inMessage The client's incoming message, which contains the
+     *                  information and arguments necessary to invoke the
+     *                  corresponding method in the shared region.
+     * @return The server's outgoing message, with all the information that
+     * the invoked method returned and other entity attributes updates.
+     */
     public RacingTrackMessage processAndReply(RacingTrackMessage inMessage) {
         RacingTrackMessageTypes mType;
         int step;
@@ -148,6 +175,12 @@ public class RacingTrackInterface {
         }
     }
 
+    /**
+     * Method that returns the counter that registers the number of Horse/Jockey
+     * pairs that have already invoked the HAS_FINISH_LINE_BEEN_CROSSED method.
+     * @return The counter that registers the number of Horse/Jockey pairs
+     * that have already invoked the HAS_FINISH_LINE_BEEN_CROSSED method.
+     */
     public int getRequests() {
         return requests;
     }

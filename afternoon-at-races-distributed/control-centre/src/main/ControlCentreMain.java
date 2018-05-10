@@ -9,8 +9,7 @@ import stubs.GeneralRepositoryStub;
 import stubs.StableStub;
 
 /**
- * Main class of the event.
- * It will start the control centre region.
+ * Main class that starts the Control Centre shared region server.
  */
 public class ControlCentreMain {
 

@@ -10,8 +10,7 @@ import javax.swing.plaf.basic.BasicScrollPaneUI;
 import java.util.Random;
 
 /**
- * Main class of the event.
- * It will start all horses entities.
+ * Main class that starts the Horses entity server.
  */
 public class HorsesMain {
 

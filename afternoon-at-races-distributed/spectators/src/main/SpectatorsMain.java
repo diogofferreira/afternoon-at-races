@@ -5,8 +5,7 @@ import entities.Spectator;
 import stubs.*;
 
 /**
- * Main class of the event.
- * It will start the broker entity.
+ * Main class that starts the Spectators entity server.
  */
 public class SpectatorsMain {
 

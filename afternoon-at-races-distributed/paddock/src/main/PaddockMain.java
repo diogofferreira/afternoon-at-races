@@ -9,8 +9,7 @@ import stubs.ControlCentreStub;
 import stubs.GeneralRepositoryStub;
 
 /**
- * Main class of the event.
- * It will start the paddock region.
+ * Main class that starts the Paddock shared region server.
  */
 public class PaddockMain {
 

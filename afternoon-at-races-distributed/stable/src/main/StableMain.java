@@ -8,8 +8,7 @@ import sharedRegions.StableInterface;
 import stubs.GeneralRepositoryStub;
 
 /**
- * Main class of the event.
- * It will start the stable region.
+ * Main class that starts the Stable shared region server.
  */
 public class StableMain {
 

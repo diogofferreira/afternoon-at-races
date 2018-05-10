@@ -8,8 +8,7 @@ import stubs.RacingTrackStub;
 import stubs.StableStub;
 
 /**
- * Main class of the event.
- * It will start the broker entity.
+ * Main class that starts the Broker entity server.
  */
 public class BrokerMain {
 

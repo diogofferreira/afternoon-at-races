@@ -7,8 +7,7 @@ import sharedRegions.GeneralRepository;
 import sharedRegions.GeneralRepositoryInterface;
 
 /**
- * Main class of the event.
- * It will start the control centre region.
+ * Main class that starts the General Repository shared region server.
  */
 public class GeneralRepositoryMain {
 

@@ -7,13 +7,30 @@ import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
 
-
+/**
+ * Interface of the General Repository server that processes the received messages,
+ * communicating with shared region, and replies to the thread that requests
+ * for the service (APS).
+ */
 public class GeneralRepositoryInterface {
 
-    private GeneralRepository generalRepository;
-
+    /**
+     * Counter that registers the number of Spectators that have already invoked
+     * the SET_SPECTATOR method when the update state corresponds to CELEBRATING.
+     * It is useful to close the server socket.
+     */
     private int requests;
 
+    /**
+     * Instance of the General Repository shared region.
+     */
+    private GeneralRepository generalRepository;
+
+    /**
+     * Creates a new instance of an interface of the General Repository
+     * shared region.
+     * @param generalRepository Instance of the General Repository shared region.
+     */
     public GeneralRepositoryInterface(GeneralRepository generalRepository) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
@@ -22,6 +39,16 @@ public class GeneralRepositoryInterface {
         this.requests = 0;
     }
 
+    /**
+     * Method that processes a request coming from the APS, interacts with the
+     * shared region and returns a the response to the method invoked in the
+     * shared region.
+     * @param inMessage The client's incoming message, which contains the
+     *                  information and arguments necessary to invoke the
+     *                  corresponding method in the shared region.
+     * @return The server's outgoing message, with all the information that
+     * the invoked method returned and other entity attributes updates.
+     */
     public GeneralRepositoryMessage processAndReply(GeneralRepositoryMessage inMessage) {
         GeneralRepositoryMessageTypes mType;
         int raceID, horseIdx, horseAgility, horsePosition, horseStep,
