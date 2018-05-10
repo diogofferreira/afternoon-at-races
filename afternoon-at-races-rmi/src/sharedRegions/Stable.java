@@ -1,8 +1,7 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
 import main.EventVariables;
+import registries.RegProceedToStable;
 import states.HorseState;
 
 import java.util.*;
@@ -177,8 +176,13 @@ public class Stable {
      * Method invoked by an Horse, where usually it gets blocked.
      * It sets the its state to AT_THE_STABLE.
      * It is waken up by the Broker to proceed to Paddock or when the event ends.
+     * @param horseId ID of the Horse/Jockey pair.
+     * @param agility Agility of the horse, which in practice corresponds to the
+     *               maximum step the horse can make in each iteration.
      */
-    public void proceedToStable(int horseId, int agility) {
+    public RegProceedToStable proceedToStable(int horseId, int agility) {
+        RegProceedToStable reg;
+
         mutex.lock();
 
         int raceId = lineups[horseId] / EventVariables.NUMBER_OF_HORSES_PER_RACE;
@@ -211,7 +215,11 @@ public class Stable {
             } catch (InterruptedException ignored) { }
         }
 
+        reg = new RegProceedToStable(raceId, raceIdx);
+
         mutex.unlock();
+
+        return reg;
     }
 
     /**
@@ -219,8 +227,6 @@ public class Stable {
      * event.
      */
     public void entertainTheGuests() {
-        Broker b;
-
         mutex.lock();
 
         // notify all horses-jockeys to go celebrate

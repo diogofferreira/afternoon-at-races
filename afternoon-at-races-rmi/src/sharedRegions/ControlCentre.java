@@ -1,7 +1,5 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Spectator;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;

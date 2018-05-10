@@ -1,6 +1,7 @@
 package entities;
 
 import main.EventVariables;
+import registries.RegProceedToStable;
 import sharedRegions.Paddock;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
@@ -107,8 +108,14 @@ public class Horse extends Thread {
      * Horse/Jockey pair lifecycle.
      */
     public void run() {
+        RegProceedToStable pts;
+
         // Start at the stable
-        stable.proceedToStable(id, agility);
+        pts = stable.proceedToStable(id, agility);
+
+        // update internal atributes and state
+        raceID = pts.getRaceId();
+        raceIdx = pts.getRaceIdx();
         state = HorseState.AT_THE_STABLE;
 
         // when called, proceed to paddock to be appraised
@@ -135,7 +142,7 @@ public class Horse extends Thread {
         state = HorseState.AT_THE_FINISH_LINE;
 
         // wait at the stable until the broker ends the event
-        stable.proceedToStable();
+        stable.proceedToStable(id, agility);
     }
 
     /**
