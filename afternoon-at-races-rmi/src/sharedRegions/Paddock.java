@@ -1,7 +1,5 @@
 package sharedRegions;
 
-import entities.Horse;
-import entities.Spectator;
 import main.EventVariables;
 import states.HorseState;
 import states.SpectatorState;
@@ -92,17 +90,16 @@ public class Paddock {
     /**
      * Method invoked by each one of the Horses. They will change their state
      * to AT_THE_PADDOCK and wait until all Spectators arrive to the Paddock.
+     * @param raceId The race ID in which the horse will run.
+     * @param raceIdx The horse's index/position on the race.
      */
-    public void proceedToPaddock() {
-        Horse h;
+    public void proceedToPaddock(int raceId, int raceIdx) {
         mutex.lock();
 
         // Reset the variable
         spectatorsCanProceed = false;
 
-        h = (Horse)Thread.currentThread();
-        h.setHorseState(HorseState.AT_THE_PADDOCK);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+        generalRepository.setHorseState(raceId, raceIdx,
                 HorseState.AT_THE_PADDOCK);
 
         // last horse notify spectators
@@ -126,14 +123,12 @@ public class Paddock {
     /**
      * Method invoked by each one of the Spectators where they will update their
      * state to APPRAISING_THE_HORSES and will block waiting
+     * @param spectatorId ID of the Spectator.
      */
-    public void goCheckHorses() {
-        Spectator s;
+    public void goCheckHorses(int spectatorId) {
         mutex.lock();
 
-        s = (Spectator)Thread.currentThread();
-        s.setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
-        generalRepository.setSpectatorState(s.getID(),
+        generalRepository.setSpectatorState(spectatorId,
                 SpectatorState.APPRAISING_THE_HORSES);
 
         // last spectator notify all horses

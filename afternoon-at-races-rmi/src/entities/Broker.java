@@ -81,6 +81,7 @@ public class Broker extends Thread {
             // startTheRace
             racingTrack.startTheRace();
             controlCentre.startTheRace();
+            state = BrokerState.SUPERVISING_THE_RACE;
 
             // reportResults
             winners = controlCentre.reportResults();
