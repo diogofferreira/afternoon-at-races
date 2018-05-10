@@ -108,17 +108,31 @@ public class Horse extends Thread {
      */
     public void run() {
         // Start at the stable
-        stable.proceedToStable();
+        stable.proceedToStable(id, agility);
+        state = HorseState.AT_THE_STABLE;
 
         // when called, proceed to paddock to be appraised
-        paddock.proceedToPaddock();
+        paddock.proceedToPaddock(raceID, raceIdx);
+        state = HorseState.AT_THE_PADDOCK;
 
         // proceed to the starting line
-        racingTrack.proceedToStartLine();
+        racingTrack.proceedToStartLine(raceID, raceIdx);
+        state = HorseState.AT_THE_STARTING_LINE;
 
         // while not crossed the finish line, keep moving
-        while (!racingTrack.hasFinishLineBeenCrossed())
-            racingTrack.makeAMove(makeAStep());
+        while (!racingTrack.hasFinishLineBeenCrossed(raceID, raceIdx, currentStep,
+                                        currentPosition)) {
+            int newStep = makeAStep();
+            racingTrack.makeAMove(raceID, raceIdx, currentStep, currentPosition,
+                    newStep);
+            if (currentStep == 0)
+                state = HorseState.RUNNING;
+
+            // update position
+            setCurrentPosition(newStep);
+        }
+
+        state = HorseState.AT_THE_FINISH_LINE;
 
         // wait at the stable until the broker ends the event
         stable.proceedToStable();

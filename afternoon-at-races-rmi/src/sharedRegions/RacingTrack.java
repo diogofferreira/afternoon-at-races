@@ -1,7 +1,5 @@
 package sharedRegions;
 
-import entities.Broker;
-import entities.Horse;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -106,20 +104,19 @@ public class RacingTrack {
      * then can place their bets.
      * After being waken up by the Broker to start the race, they update their
      * state to RUNNING.
+     * @param raceId The race ID in which the horse will run.
+     * @param raceIdx The horse's index/position on the race.
      */
-    public void proceedToStartLine() {
-        Horse h;
+    public void proceedToStartLine(int raceId, int raceIdx) {
         mutex.lock();
 
-        h = (Horse)Thread.currentThread();
-        h.setHorseState(HorseState.AT_THE_STARTING_LINE);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+        generalRepository.setHorseState(raceId, raceIdx,
                 HorseState.AT_THE_STARTING_LINE);
 
         // horse waits if race hasn't started and if it isn't its turn
-        while (!(raceStarted && horseTurn == h.getRaceIdx())) {
+        while (!(raceStarted && horseTurn == raceIdx)) {
             try {
-                inMovement[h.getRaceIdx()].await();
+                inMovement[raceIdx].await();
             } catch (InterruptedException ignored) { }
         }
 
@@ -130,11 +127,8 @@ public class RacingTrack {
      * Method invoked by the Broker to signal the Horses to start running.
      */
     public void startTheRace() {
-        Broker b;
         mutex.lock();
 
-        b = (Broker) Thread.currentThread();
-        b.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
         generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
 
         // notify first horse for race start
@@ -149,28 +143,28 @@ public class RacingTrack {
      * It generates a new step and updates its position.
      * Finally, it wakes up the next horse in the arrival order to the Racing
      * Track that hasn't finished the race.
+     * @param raceId The race ID in which the horse will run.
+     * @param raceIdx The horse's index/position on the race.
+     * @param currentHorseStep The current step/iteration of the horse in the race.
+     * @param currentPosition The current position of the horse in the race.
      * @param step The distance of the next step the Horse will take.
      */
-    public void makeAMove(int step) {
-        Horse h;
+    public void makeAMove(int raceId, int raceIdx, int currentHorseStep,
+                          int currentPosition, int step) {
         int currentTurn;
         mutex.lock();
 
         currentTurn = horseTurn;
-        h = (Horse)Thread.currentThread();
 
-        if (h.getCurrentStep() == 0) {
-            h.setHorseState(HorseState.RUNNING);
-            generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+        if (currentHorseStep == 0) {
+            generalRepository.setHorseState(raceId, raceIdx,
                     HorseState.RUNNING);
         }
 
-        // notify next horse in FIFO
         // update current position
-        h.setCurrentPosition(step);
-        generalRepository.setHorsePosition(h.getRaceIdx(),
-                h.getCurrentPosition(),
-                h.getCurrentStep());
+        generalRepository.setHorsePosition(raceIdx,
+                currentPosition + step,
+                currentHorseStep + 1);
 
         // signal next horse
         do {
@@ -199,24 +193,26 @@ public class RacingTrack {
      * If it's the last horse crossing the finish line, it wakes up the Broker
      * at the Control Centre and provides the list of winners.
      * Otherwise, just wakes up the next horse that still hasn't finish the race.
+     * @param raceId The race ID in which the horse will run.
+     * @param raceIdx The horse's index/position on the race.
+     * @param currentHorseStep The current step/iteration of the horse in the race.
+     * @param currentPosition The current position of the horse in the race.
      * @return Boolean indicating whether the Horse/Jockey pair that invoked the
      * method has already crossed the finish line or not.
      */
-    public boolean hasFinishLineBeenCrossed() {
-        Horse h;
+    public boolean hasFinishLineBeenCrossed(int raceId, int raceIdx, int currentHorseStep,
+                                            int currentPosition) {
         int currentTurn;
         mutex.lock();
 
         currentTurn = horseTurn;
-        h = (Horse)Thread.currentThread();
 
-        if (h.getCurrentPosition() < EventVariables.RACING_TRACK_LENGTH) {
+        if (currentPosition < EventVariables.RACING_TRACK_LENGTH) {
             mutex.unlock();
             return false;
         }
 
-        h.setHorseState(HorseState.AT_THE_FINISH_LINE);
-        generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
+        generalRepository.setHorseState(raceId, raceIdx,
                 HorseState.AT_THE_FINISH_LINE);
 
         // add horse to arrival list
@@ -224,13 +220,13 @@ public class RacingTrack {
             raceStandings = new int [EventVariables.NUMBER_OF_HORSES_PER_RACE];
             currentPosition = 1;
         } else {
-            currentPosition = currentStep != h.getCurrentStep() ?
+            currentPosition = currentStep != currentHorseStep ?
                     currentPosition + 1 : currentPosition;
         }
 
-        currentStep = h.getCurrentStep();
+        currentStep = currentHorseStep;
 
-        raceStandings[h.getRaceIdx()] = currentPosition;
+        raceStandings[raceIdx] = currentPosition;
 
         // last horse notify broker
         if (++finishes == EventVariables.NUMBER_OF_HORSES_PER_RACE) {

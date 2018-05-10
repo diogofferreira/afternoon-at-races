@@ -80,7 +80,8 @@ public class Spectator extends Thread {
 
         while(controlCentre.waitForNextRace()) {
             // goCheckHorses
-            paddock.goCheckHorses();
+            paddock.goCheckHorses(id);
+            setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
             // Place a bet and return the horse the spectator chose
             bettedHorse = bettingCentre.placeABet();
