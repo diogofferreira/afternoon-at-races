@@ -7,17 +7,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import interfaces.ControlCentreInt;
-import interfaces.GeneralRepositoryInt;
-import interfaces.Register;
-import interfaces.StableInt;
-import sharedRegions.ControlCentre;
+import interfaces.*;
+import sharedRegions.BettingCentre;
 
 /**
  * This data type instantiates and registers a remote object that will run mobile code.
  * Communication is based in Java RMI.
  */
-public class ControlCentreMain {
+public class BettingCentreMain {
 
     /**
      * Main task.
@@ -25,8 +22,8 @@ public class ControlCentreMain {
     public static void main(String[] args) {
         Registry registry = null;
         Register reg = null;
-        ControlCentre controlCentre;
-        ControlCentreInt controlCentreStub = null;
+        BettingCentre bettingCentre;
+        BettingCentreInt bettingCentreStub = null;
         GeneralRepositoryInt generalRepositoryStub = null;
         StableInt stableStub = null;
 
@@ -60,14 +57,14 @@ public class ControlCentreMain {
         }
 
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        controlCentre = new ControlCentre(generalRepositoryStub, stableStub);
+        bettingCentre = new BettingCentre(generalRepositoryStub, stableStub);
 
         try {
-            controlCentreStub =
-                    (ControlCentreInt) UnicastRemoteObject.exportObject(
-                            controlCentre, HostsInfo.CONTROL_CENTRE_PORT);
+            bettingCentreStub =
+                    (BettingCentreInt) UnicastRemoteObject.exportObject(
+                            bettingCentre, HostsInfo.BETTING_CENTRE_PORT);
         } catch (RemoteException e) {
-            System.out.println("Control Centre stub generation exception: "
+            System.out.println("Betting Centre stub generation exception: "
                     + e.getMessage());
             e.printStackTrace();
             System.exit(1);
@@ -88,16 +85,16 @@ public class ControlCentreMain {
         }
 
         try {
-            reg.bind("ControlCentre", controlCentreStub);
+            reg.bind("BettingCentre", bettingCentreStub);
         } catch (RemoteException e) {
-            System.out.println("ControlCentre registration exception: " + e.getMessage());
+            System.out.println("BettingCentre registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println("ControlCentre already bound exception: " + e.getMessage());
+            System.out.println("BettingCentre already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ControlCentre object was registered!");
+        System.out.println("BettingCentre object was registered!");
     }
 }

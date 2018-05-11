@@ -1,5 +1,8 @@
 package entities;
 
+import interfaces.PaddockInt;
+import interfaces.RacingTrackInt;
+import interfaces.StableInt;
 import main.EventVariables;
 import registries.RegProceedToStable;
 import sharedRegions.Paddock;
@@ -7,6 +10,7 @@ import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.HorseState;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 
 /**
@@ -53,17 +57,17 @@ public class Horse extends Thread {
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableInt stable;
 
     /**
      * Instance of the shared region Paddock.
      */
-    private Paddock paddock;
+    private PaddockInt paddock;
 
     /**
      * Instance of the shared region Racing Track.
      */
-    private RacingTrack racingTrack;
+    private RacingTrackInt racingTrack;
 
     /**
      * Creates a new instance of Horse/Jockey pair.
@@ -74,8 +78,8 @@ public class Horse extends Thread {
      * @param racingTrack Reference to an instance of the shared region
      *                   Racing Track.
      */
-    public Horse(int id, int agility, Stable stable, Paddock paddock,
-                 RacingTrack racingTrack) {
+    public Horse(int id, int agility, StableInt stable, PaddockInt paddock,
+                 RacingTrackInt racingTrack) {
         if (id < 0)
             throw new IllegalArgumentException("Invalid Horse ID.");
         if (agility < 0 || agility > EventVariables.HORSE_MAX_STEP)
@@ -108,10 +112,17 @@ public class Horse extends Thread {
      * Horse/Jockey pair lifecycle.
      */
     public void run() {
-        RegProceedToStable pts;
+        RegProceedToStable pts = null;
 
         // Start at the stable
-        pts = stable.proceedToStable(id, agility);
+        try {
+            pts = stable.proceedToStable(id, agility);
+        } catch (RemoteException e) {
+            System.out.println("Stable remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // update internal atributes and state
         raceID = pts.getRaceId();
@@ -119,30 +130,58 @@ public class Horse extends Thread {
         state = HorseState.AT_THE_STABLE;
 
         // when called, proceed to paddock to be appraised
-        paddock.proceedToPaddock(raceID, raceIdx);
+        try {
+            paddock.proceedToPaddock(raceID, raceIdx);
+        } catch (RemoteException e) {
+            System.out.println("Paddock remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         state = HorseState.AT_THE_PADDOCK;
 
         // proceed to the starting line
-        racingTrack.proceedToStartLine(raceID, raceIdx);
+        try {
+            racingTrack.proceedToStartLine(raceID, raceIdx);
+        } catch (RemoteException e) {
+            System.out.println("RacingTrack remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         state = HorseState.AT_THE_STARTING_LINE;
 
         // while not crossed the finish line, keep moving
-        while (!racingTrack.hasFinishLineBeenCrossed(raceID, raceIdx, currentStep,
-                                        currentPosition)) {
-            int newStep = makeAStep();
-            racingTrack.makeAMove(raceID, raceIdx, currentStep, currentPosition,
-                    newStep);
-            if (currentStep == 0)
-                state = HorseState.RUNNING;
+        try {
+            while (!racingTrack.hasFinishLineBeenCrossed(raceID, raceIdx, currentStep,
+                    currentPosition)) {
+                int newStep = makeAStep();
+                racingTrack.makeAMove(raceID, raceIdx, currentStep, currentPosition,
+                        newStep);
+                if (currentStep == 0)
+                    state = HorseState.RUNNING;
 
-            // update position
-            setCurrentPosition(newStep);
+                // update position
+                setCurrentPosition(newStep);
+            }
+        } catch (RemoteException e) {
+            System.out.println("RacingTrack remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
 
         state = HorseState.AT_THE_FINISH_LINE;
 
         // wait at the stable until the broker ends the event
-        stable.proceedToStable(id, agility);
+        try {
+            stable.proceedToStable(id, agility);
+        } catch (RemoteException e) {
+            System.out.println("Stable remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**

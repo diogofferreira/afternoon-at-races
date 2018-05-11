@@ -1,11 +1,17 @@
 package entities;
 
+import interfaces.BettingCentreInt;
+import interfaces.ControlCentreInt;
+import interfaces.RacingTrackInt;
+import interfaces.StableInt;
 import main.EventVariables;
 import sharedRegions.BettingCentre;
 import sharedRegions.ControlCentre;
 import sharedRegions.RacingTrack;
 import sharedRegions.Stable;
 import states.BrokerState;
+
+import java.rmi.RemoteException;
 
 /**
  * The Broker is the entity that controls the event, regulates the bets
@@ -20,22 +26,22 @@ public class Broker extends Thread {
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableInt stable;
 
     /**
      * Instance of the shared region Racing Track.
      */
-    private RacingTrack racingTrack;
+    private RacingTrackInt racingTrack;
 
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreInt controlCentre;
 
     /**
      * Instance of the shared region Betting Centre.
      */
-    private BettingCentre bettingCentre;
+    private BettingCentreInt bettingCentre;
 
     /**
      * Creates a new instance of Broker.
@@ -47,8 +53,8 @@ public class Broker extends Thread {
      * @param bettingCentre Reference to an instance of the shared region
      *                      Betting Centre.
      */
-    public Broker(Stable stable, RacingTrack racingTrack,
-                  ControlCentre controlCentre, BettingCentre bettingCentre) {
+    public Broker(StableInt stable, RacingTrackInt racingTrack,
+                  ControlCentreInt controlCentre, BettingCentreInt bettingCentre) {
         if (stable == null || racingTrack == null ||
                 controlCentre == null || bettingCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
@@ -64,38 +70,102 @@ public class Broker extends Thread {
      * Broker lifecycle.
      */
     public void run() {
-        int[] winners;
+        int[] winners = null;
 
-        controlCentre.openTheEvent();
+        try {
+            controlCentre.openTheEvent();
+        } catch (RemoteException e) {
+            System.out.println("ControlCentre remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         state = BrokerState.OPENING_THE_EVENT;
 
         for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
             // summonHorsesToPaddock
-            controlCentre.summonHorsesToPaddock(i);
+            try {
+                controlCentre.summonHorsesToPaddock(i);
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             state = BrokerState.ANNOUNCING_NEXT_RACE;
 
+
             // acceptsBets
-            bettingCentre.acceptTheBets(i);
+            try {
+                bettingCentre.acceptTheBets(i);
+            } catch (RemoteException e) {
+                System.out.println("BettingCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             state = BrokerState.WAITING_FOR_BETS;
 
             // startTheRace
-            racingTrack.startTheRace();
-            controlCentre.startTheRace();
+            try {
+                racingTrack.startTheRace();
+            } catch (RemoteException e) {
+                System.out.println("RacingTrack remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+            try {
+                controlCentre.startTheRace();
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             state = BrokerState.SUPERVISING_THE_RACE;
 
             // reportResults
-            winners = controlCentre.reportResults();
+            try {
+                winners = controlCentre.reportResults();
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
 
             // if there are any winners, honour those bets
-            if (bettingCentre.areThereAnyWinners(winners)) {
-                bettingCentre.honourTheBets();
-                state = BrokerState.SETTLING_ACCOUNTS;
+            try {
+                if (bettingCentre.areThereAnyWinners(winners)) {
+                    bettingCentre.honourTheBets();
+                    state = BrokerState.SETTLING_ACCOUNTS;
+                }
+            } catch (RemoteException e) {
+                System.out.println("BettingCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
             }
         }
 
-        controlCentre.celebrate();
+        try {
+            controlCentre.celebrate();
+        } catch (RemoteException e) {
+            System.out.println("ControlCentre remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         state = BrokerState.PLAYING_HOST_AT_THE_BAR;
-        stable.entertainTheGuests();
+        try {
+            stable.entertainTheGuests();
+        } catch (RemoteException e) {
+            System.out.println("Stable remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**

@@ -1,8 +1,13 @@
 package entities;
 
+import interfaces.BettingCentreInt;
+import interfaces.ControlCentreInt;
+import interfaces.PaddockInt;
 import registries.RegPlaceABet;
 import sharedRegions.*;
 import states.SpectatorState;
+
+import java.rmi.RemoteException;
 
 /**
  * The Spectator is the entity which attends the event and bets on horses to win
@@ -32,17 +37,17 @@ public class Spectator extends Thread {
     /**
      * Instance of the shared region Paddock.
      */
-    private Paddock paddock;
+    private PaddockInt paddock;
 
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreInt controlCentre;
 
     /**
      * Instance of the shared region Betting Centre.
      */
-    private BettingCentre bettingCentre;
+    private BettingCentreInt bettingCentre;
 
     /**
      * Creates a new instance of Spectator.
@@ -55,8 +60,8 @@ public class Spectator extends Thread {
      * @param bettingCentre Reference to an instance of the shared region
      *                      Betting Centre.
      */
-    public Spectator(int id, int wallet, int strategy, Paddock paddock,
-                     ControlCentre controlCentre, BettingCentre bettingCentre) {
+    public Spectator(int id, int wallet, int strategy, PaddockInt paddock,
+                     ControlCentreInt controlCentre, BettingCentreInt bettingCentre) {
         if (paddock == null)
             throw new IllegalArgumentException("Invalid Paddock.");
         if (controlCentre == null)
@@ -77,36 +82,81 @@ public class Spectator extends Thread {
      * Spectator lifecycle.
      */
     public void run() {
-        RegPlaceABet pab;
+        RegPlaceABet pab = null;
         int bettedHorse;
 
-        while(controlCentre.waitForNextRace(id)) {
+        while(true) {
+            try {
+                if (!controlCentre.waitForNextRace(id))
+                    break;
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+            ;
             state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
 
             // goCheckHorses
-            paddock.goCheckHorses(id);
+            try {
+                paddock.goCheckHorses(id);
+            } catch (RemoteException e) {
+                System.out.println("Paddock remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             setSpectatorState(SpectatorState.APPRAISING_THE_HORSES);
 
             // Place a bet and return the horse the spectator chose
-            pab = bettingCentre.placeABet(id, strategy, wallet);
+            try {
+                pab = bettingCentre.placeABet(id, strategy, wallet);
+            } catch (RemoteException e) {
+                System.out.println("BettingCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             state = SpectatorState.PLACING_A_BET;
             wallet = pab.getWallet();
             bettedHorse = pab.getHorseIdx();
 
 
             // update wallet
-            controlCentre.goWatchTheRace(id);
+            try {
+                controlCentre.goWatchTheRace(id);
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             state = SpectatorState.WATCHING_A_RACE;
 
             // Check if won the bet and collect the gains if so
-            if (controlCentre.haveIWon(bettedHorse)) {
-                wallet += bettingCentre.goCollectTheGains(id);
-                state = SpectatorState.COLLECTING_THE_GAINS;
+            try {
+                if (controlCentre.haveIWon(bettedHorse)) {
+                    wallet += bettingCentre.goCollectTheGains(id);
+                    state = SpectatorState.COLLECTING_THE_GAINS;
+                }
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre and/or BettingCentre remote " +
+                        "invocation exception: " + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
             }
         }
         state = SpectatorState.WAITING_FOR_A_RACE_TO_START;
 
-        controlCentre.relaxABit(id);
+        try {
+            controlCentre.relaxABit(id);
+        } catch (RemoteException e) {
+            System.out.println("ControlCentre remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         state = SpectatorState.CELEBRATING;
     }
 

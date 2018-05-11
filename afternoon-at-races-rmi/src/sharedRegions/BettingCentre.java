@@ -1,5 +1,8 @@
 package sharedRegions;
 
+import interfaces.BettingCentreInt;
+import interfaces.GeneralRepositoryInt;
+import interfaces.StableInt;
 import main.EventVariables;
 import registries.RegPlaceABet;
 import states.BrokerState;
@@ -7,6 +10,7 @@ import states.SpectatorState;
 import utils.Bet;
 import utils.BetState;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
@@ -19,7 +23,7 @@ import java.util.stream.IntStream;
  * The Betting Centre is a shared region where all the bets are registered,
  * verified and honoured.
  */
-public class BettingCentre {
+public class BettingCentre implements BettingCentreInt {
 
     /**
      * Instance of a monitor.
@@ -106,12 +110,12 @@ public class BettingCentre {
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableInt stable;
 
     /**
      * Instance of the shared region General Repository.
      */
-    private GeneralRepository generalRepository;
+    private GeneralRepositoryInt generalRepository;
 
     /**
      * Creates a new instance of Betting Centre.
@@ -119,7 +123,7 @@ public class BettingCentre {
      *                          General Repository.
      * @param stable Reference to an instance of the shared region Stable.
      */
-    public BettingCentre(GeneralRepository generalRepository, Stable stable) {
+    public BettingCentre(GeneralRepositoryInt generalRepository, StableInt stable) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (stable == null)
@@ -158,8 +162,13 @@ public class BettingCentre {
                     bet.getHorseIdx() < EventVariables.NUMBER_OF_HORSES_PER_RACE) {
                 bet.setState(BetState.ACCEPTED);
                 validatedBets.add(bet);
-                generalRepository.setSpectatorsBet(bet.getSpectatorID(),
-                        bet.getValue(), bet.getHorseIdx());
+                try {
+                    generalRepository.setSpectatorsBet(bet.getSpectatorID(),
+                            bet.getValue(), bet.getHorseIdx());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
             } else
                 bet.setState(BetState.REJECTED);
         }
@@ -258,10 +267,18 @@ public class BettingCentre {
      * that still have pending bets.
      * @param raceID The current raceID.
      */
+    @Override
     public void acceptTheBets(int raceID) {
         mutex.lock();
 
-        generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
+        try {
+            generalRepository.setBrokerState(BrokerState.WAITING_FOR_BETS);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // clear accepted and rejected bets list
         validatedBets.clear();
@@ -272,7 +289,14 @@ public class BettingCentre {
 
         // Update raceID and start accepting bets
         currentRaceID = raceID;
-        raceOdds = stable.getRaceOdds(currentRaceID);
+        try {
+            raceOdds = stable.getRaceOdds(currentRaceID);
+        } catch (RemoteException e) {
+            System.out.println("Stable remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // Signals spectators that now broker is accepting bets
         acceptingBets = true;
@@ -311,14 +335,22 @@ public class BettingCentre {
      * that the Spectator bet on and the updated value of his/her wallet after
      * placing the bet.
      */
+    @Override
     public RegPlaceABet placeABet(int spectatorID, int strategy, int wallet) {
         Bet bet;
         RegPlaceABet reg;
 
         mutex.lock();
 
-        generalRepository.setSpectatorState(spectatorID,
-                SpectatorState.PLACING_A_BET);
+        try {
+            generalRepository.setSpectatorState(spectatorID,
+                    SpectatorState.PLACING_A_BET);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // If it's still not accepting bets, wait
         while (!acceptingBets) {
@@ -362,6 +394,7 @@ public class BettingCentre {
      * @param winners An array of horseIdxs that contains the race winners.
      * @return True if there are any winners, false otherwise.
      */
+    @Override
     public boolean areThereAnyWinners(int[] winners) {
         boolean areThereWinners;
 
@@ -390,11 +423,17 @@ public class BettingCentre {
      * He blocks each time he pays a winning bet and wakes up Spectators still
      * waiting to collect their rewards.
      */
+    @Override
     public void honourTheBets() {
         Bet bet;
         mutex.lock();
 
-        generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
+        try {
+            generalRepository.setBrokerState(BrokerState.SETTLING_ACCOUNTS);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         acceptingHonours = true;
 
@@ -419,7 +458,16 @@ public class BettingCentre {
                             (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
                     generalRepository.setSpectatorGains(spectatorID,
                             (int)(bet.getValue() * raceOdds[bet.getHorseIdx()]));
-                } catch (ArrayIndexOutOfBoundsException e) { }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                } catch (RemoteException e) {
+                    System.out.println("GeneralRepository remote invocation exception: "
+                            + e.getMessage());
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+
             }
         }
 
@@ -436,13 +484,21 @@ public class BettingCentre {
      *                    requests his/her gains.
      * @return The value the Spectator won.
      */
+    @Override
     public double goCollectTheGains(int spectatorID) {
         double winningValue;
 
         mutex.lock();
 
-        generalRepository.setSpectatorState(spectatorID,
-                SpectatorState.COLLECTING_THE_GAINS);
+        try {
+            generalRepository.setSpectatorState(spectatorID,
+                    SpectatorState.COLLECTING_THE_GAINS);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         while (!acceptingHonours) {
             try {

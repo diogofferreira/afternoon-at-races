@@ -1,10 +1,13 @@
 package sharedRegions;
 
 import interfaces.ControlCentreInt;
+import interfaces.GeneralRepositoryInt;
+import interfaces.StableInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,12 +86,12 @@ public class ControlCentre implements ControlCentreInt {
     /**
      * Instance of the shared region General Repository.
      */
-    private GeneralRepository generalRepository;
+    private GeneralRepositoryInt generalRepository;
 
     /**
      * Instance of the shared region Stable.
      */
-    private Stable stable;
+    private StableInt stable;
 
     /**
      * Creates a new instance of Control Centre.
@@ -96,7 +99,7 @@ public class ControlCentre implements ControlCentreInt {
      *                          General Repository.
      * @param stable Reference to an instance of the shared region Stable.
      */
-    public ControlCentre(GeneralRepository generalRepository, Stable stable) {
+    public ControlCentre(GeneralRepositoryInt generalRepository, StableInt stable) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (stable == null)
@@ -126,7 +129,14 @@ public class ControlCentre implements ControlCentreInt {
     public void openTheEvent() {
         mutex.lock();
 
-        generalRepository.setBrokerState(BrokerState.OPENING_THE_EVENT);
+        try {
+            generalRepository.setBrokerState(BrokerState.OPENING_THE_EVENT);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         mutex.unlock();
     }
@@ -143,11 +153,24 @@ public class ControlCentre implements ControlCentreInt {
 
         // Restart variables
         // Notify general repository to clear all horse related info
-        generalRepository.initRace(raceID);
+        try {
+            generalRepository.initRace(raceID);
+            generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-        generalRepository.setBrokerState(BrokerState.ANNOUNCING_NEXT_RACE);
-
-        stable.summonHorsesToPaddock(raceID);
+        try {
+            stable.summonHorsesToPaddock(raceID);
+        } catch (RemoteException e) {
+            System.out.println("Stable remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // broker wait
         while (!spectatorsInPaddock) {
@@ -175,8 +198,15 @@ public class ControlCentre implements ControlCentreInt {
 
         mutex.lock();
 
-        generalRepository.setSpectatorState(spectatorID,
-                SpectatorState.WAITING_FOR_A_RACE_TO_START);
+        try {
+            generalRepository.setSpectatorState(spectatorID,
+                    SpectatorState.WAITING_FOR_A_RACE_TO_START);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         while (!(spectatorsCanProceed || eventEnded)) {
             // spectators wait
@@ -233,8 +263,15 @@ public class ControlCentre implements ControlCentreInt {
     public void goWatchTheRace(int spectatorID) {
         mutex.lock();
 
-        generalRepository.setSpectatorState(spectatorID,
-                SpectatorState.WATCHING_A_RACE);
+        try {
+            generalRepository.setSpectatorState(spectatorID,
+                    SpectatorState.WATCHING_A_RACE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // spectators wait
         while (!reportsPosted) {
@@ -301,7 +338,14 @@ public class ControlCentre implements ControlCentreInt {
         int w[];
         mutex.lock();
 
-        generalRepository.setHorsesStanding(standings);
+        try {
+            generalRepository.setHorsesStanding(standings);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // set winners list
         w = IntStream.range(0, standings.length).
@@ -347,7 +391,14 @@ public class ControlCentre implements ControlCentreInt {
         mutex.lock();
 
         // broker just playing host, end the afternoon
-        generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        try {
+            generalRepository.setBrokerState(BrokerState.PLAYING_HOST_AT_THE_BAR);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         eventEnded = true;
         waitForRace.signalAll();
@@ -365,8 +416,15 @@ public class ControlCentre implements ControlCentreInt {
         mutex.lock();
 
         /// just relax, end the afternoon
-        generalRepository.setSpectatorState(spectatorID,
-                SpectatorState.CELEBRATING);
+        try {
+            generalRepository.setSpectatorState(spectatorID,
+                    SpectatorState.CELEBRATING);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         mutex.unlock();
     }

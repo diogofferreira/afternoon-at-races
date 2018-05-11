@@ -1,9 +1,12 @@
 package sharedRegions;
 
+import interfaces.GeneralRepositoryInt;
+import interfaces.StableInt;
 import main.EventVariables;
 import registries.RegProceedToStable;
 import states.HorseState;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
@@ -13,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * The Stable is a shared region where horses rest before and after the races.
  */
-public class Stable {
+public class Stable implements StableInt {
 
     /**
      * Instance of a monitor.
@@ -61,7 +64,7 @@ public class Stable {
     /**
      * Instance of the shared region General Repository.
      */
-    private GeneralRepository generalRepository;
+    private GeneralRepositoryInt generalRepository;
 
     /**
      * Creates a new instance of Stable.
@@ -70,7 +73,7 @@ public class Stable {
      * @param horsesIds Array of all the participant Horse/Jockey pairs ids to
      *                  generate the lineups.
      */
-    public Stable(GeneralRepository generalRepository, int[] horsesIds) {
+    public Stable(GeneralRepositoryInt generalRepository, int[] horsesIds) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (horsesIds.length != EventVariables.NUMBER_OF_HORSES)
@@ -135,7 +138,14 @@ public class Stable {
             raceOdds[raceID][i] = oddSum / horsesAgility[raceID][i];
         }
 
-        generalRepository.setHorsesOdd(raceID, raceOdds[raceID]);
+        try {
+            generalRepository.setHorsesOdd(raceID, raceOdds[raceID]);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -144,6 +154,7 @@ public class Stable {
      * @param raceID The ID of the race of the odds.
      * @return Array with horses' odds.
      */
+    @Override
     public double[] getRaceOdds(int raceID) {
         double[] toRtn;
 
@@ -162,6 +173,7 @@ public class Stable {
      * @param raceID The ID of the current race; it determines which horses will
      *               be waken up.
      */
+    @Override
     public void summonHorsesToPaddock(int raceID) {
         mutex.lock();
 
@@ -180,6 +192,7 @@ public class Stable {
      * @param agility Agility of the horse, which in practice corresponds to the
      *               maximum step the horse can make in each iteration.
      */
+    @Override
     public RegProceedToStable proceedToStable(int horseId, int agility) {
         RegProceedToStable reg;
 
@@ -191,8 +204,14 @@ public class Stable {
         // set horse agility in general repository
         if (horsesAgility[raceId][raceIdx] == 0) {
             horsesAgility[raceId][raceIdx] = agility;
-            generalRepository.setHorseAgility(
-                    raceId, raceIdx, agility);
+            try {
+                generalRepository.setHorseAgility(raceId, raceIdx, agility);
+            } catch (RemoteException e) {
+                System.out.println("GeneralRepository remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
 
         for (int i = 0; i < horsesAgility[raceId].length; i++) {
@@ -203,8 +222,15 @@ public class Stable {
         }
 
         // update horse state
-        generalRepository.setHorseState(raceId, raceIdx,
-                HorseState.AT_THE_STABLE);
+        try {
+            generalRepository.setHorseState(raceId, raceIdx,
+                    HorseState.AT_THE_STABLE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // only waits if it's not time to celebrate or if broker has not notified
         // that it can proceed to paddock
@@ -226,6 +252,7 @@ public class Stable {
      * Method invoked by the Broker to signal all horses to wake up, ending the
      * event.
      */
+    @Override
     public void entertainTheGuests() {
         mutex.lock();
 

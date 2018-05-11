@@ -1,23 +1,21 @@
 package main;
 
-import java.rmi.registry.Registry;
-import java.rmi.registry.LocateRegistry;
+import interfaces.GeneralRepositoryInt;
+import interfaces.Register;
+import sharedRegions.GeneralRepository;
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-
-import interfaces.ControlCentreInt;
-import interfaces.GeneralRepositoryInt;
-import interfaces.Register;
-import interfaces.StableInt;
-import sharedRegions.ControlCentre;
 
 /**
  * This data type instantiates and registers a remote object that will run mobile code.
  * Communication is based in Java RMI.
  */
-public class ControlCentreMain {
+public class GeneralRepositoryMain {
 
     /**
      * Main task.
@@ -25,10 +23,8 @@ public class ControlCentreMain {
     public static void main(String[] args) {
         Registry registry = null;
         Register reg = null;
-        ControlCentre controlCentre;
-        ControlCentreInt controlCentreStub = null;
+        GeneralRepository generalRepository;
         GeneralRepositoryInt generalRepositoryStub = null;
-        StableInt stableStub = null;
 
         /* create and install the security manager */
         if (System.getSecurityManager() == null)
@@ -46,28 +42,15 @@ public class ControlCentreMain {
         }
         System.out.println("RMI registry was created!");
 
-        try {
-            generalRepositoryStub = (GeneralRepositoryInt) registry.lookup("GeneralRepository");
-            stableStub = (StableInt) registry.lookup("Stable");
-        } catch (RemoteException e) {
-            System.out.println("Shared Region look up exception: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
-        } catch (NotBoundException e) {
-            System.out.println("Shared Region not bound exception: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
-        }
-
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        controlCentre = new ControlCentre(generalRepositoryStub, stableStub);
+        generalRepository = new GeneralRepository();
 
         try {
-            controlCentreStub =
-                    (ControlCentreInt) UnicastRemoteObject.exportObject(
-                            controlCentre, HostsInfo.CONTROL_CENTRE_PORT);
+            generalRepositoryStub =
+                    (GeneralRepositoryInt) UnicastRemoteObject.exportObject(
+                            generalRepository, HostsInfo.GENERAL_REPOSITORY_PORT);
         } catch (RemoteException e) {
-            System.out.println("Control Centre stub generation exception: "
+            System.out.println("General Repository stub generation exception: "
                     + e.getMessage());
             e.printStackTrace();
             System.exit(1);
@@ -88,16 +71,16 @@ public class ControlCentreMain {
         }
 
         try {
-            reg.bind("ControlCentre", controlCentreStub);
+            reg.bind("GeneralRepository", generalRepositoryStub);
         } catch (RemoteException e) {
-            System.out.println("ControlCentre registration exception: " + e.getMessage());
+            System.out.println("GeneralRepository registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println("ControlCentre already bound exception: " + e.getMessage());
+            System.out.println("GeneralRepository already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ControlCentre object was registered!");
+        System.out.println("GeneralRepository object was registered!");
     }
 }

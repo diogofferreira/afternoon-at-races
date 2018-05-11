@@ -1,9 +1,13 @@
 package sharedRegions;
 
+import interfaces.ControlCentreInt;
+import interfaces.GeneralRepositoryInt;
+import interfaces.PaddockInt;
 import main.EventVariables;
 import states.HorseState;
 import states.SpectatorState;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * The Paddock is a shared region where horses are appraised by the spectators
  * before the race takes place.
  */
-public class Paddock {
+public class Paddock implements PaddockInt {
 
     /**
      * Instance of a monitor.
@@ -51,15 +55,15 @@ public class Paddock {
     /**
      * Instance of the shared region General Repository.
      */
-    private GeneralRepository generalRepository;
+    private GeneralRepositoryInt generalRepository;
 
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreInt controlCentre;
 
-    public Paddock(GeneralRepository generalRepository,
-                   ControlCentre controlCentre) {
+    public Paddock(GeneralRepositoryInt generalRepository,
+                   ControlCentreInt controlCentre) {
         if (generalRepository == null || controlCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
@@ -93,18 +97,34 @@ public class Paddock {
      * @param raceId The race ID in which the horse will run.
      * @param raceIdx The horse's index/position on the race.
      */
+    @Override
     public void proceedToPaddock(int raceId, int raceIdx) {
         mutex.lock();
 
         // Reset the variable
         spectatorsCanProceed = false;
 
-        generalRepository.setHorseState(raceId, raceIdx,
-                HorseState.AT_THE_PADDOCK);
+        try {
+            generalRepository.setHorseState(raceId, raceIdx,
+                    HorseState.AT_THE_PADDOCK);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // last horse notify spectators
-        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE)
-            controlCentre.proceedToPaddock();
+        if (++horsesInPaddock == EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+            try {
+                controlCentre.proceedToPaddock();
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
 
         // horse wait in paddock
         while (spectatorsInPaddock < EventVariables.NUMBER_OF_SPECTATORS) {
@@ -125,15 +145,30 @@ public class Paddock {
      * state to APPRAISING_THE_HORSES and will block waiting
      * @param spectatorId ID of the Spectator.
      */
+    @Override
     public void goCheckHorses(int spectatorId) {
         mutex.lock();
 
-        generalRepository.setSpectatorState(spectatorId,
-                SpectatorState.APPRAISING_THE_HORSES);
+        try {
+            generalRepository.setSpectatorState(spectatorId,
+                    SpectatorState.APPRAISING_THE_HORSES);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // last spectator notify all horses
         if (++spectatorsInPaddock == EventVariables.NUMBER_OF_SPECTATORS) {
-            controlCentre.goCheckHorses();
+            try {
+                controlCentre.goCheckHorses();
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
             horses.signalAll();
         }
 

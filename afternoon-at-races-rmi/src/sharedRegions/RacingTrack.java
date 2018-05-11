@@ -1,9 +1,13 @@
 package sharedRegions;
 
+import interfaces.ControlCentreInt;
+import interfaces.GeneralRepositoryInt;
+import interfaces.RacingTrackInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * The Racing Track is a shared region where race effectively takes place, i.e.,
  * where the Horses run.
  */
-public class RacingTrack {
+public class RacingTrack implements RacingTrackInt {
 
     /**
      * Instance of a monitor.
@@ -60,12 +64,12 @@ public class RacingTrack {
     /**
      * Instance of the shared region Control Centre.
      */
-    private ControlCentre controlCentre;
+    private ControlCentreInt controlCentre;
 
     /**
      * Instance of the shared region General Repository.
      */
-    private GeneralRepository generalRepository;
+    private GeneralRepositoryInt generalRepository;
 
     /**
      * Creates a new instance of Racing Track.
@@ -74,8 +78,8 @@ public class RacingTrack {
      * @param controlCentre Reference to an instance of the shared region
      *                          Control Centre.
      */
-    public RacingTrack(GeneralRepository generalRepository,
-                       ControlCentre controlCentre) {
+    public RacingTrack(GeneralRepositoryInt generalRepository,
+                       ControlCentreInt controlCentre) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (controlCentre == null)
@@ -110,8 +114,15 @@ public class RacingTrack {
     public void proceedToStartLine(int raceId, int raceIdx) {
         mutex.lock();
 
-        generalRepository.setHorseState(raceId, raceIdx,
-                HorseState.AT_THE_STARTING_LINE);
+        try {
+            generalRepository.setHorseState(raceId, raceIdx,
+                    HorseState.AT_THE_STARTING_LINE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // horse waits if race hasn't started and if it isn't its turn
         while (!(raceStarted && horseTurn == raceIdx)) {
@@ -129,7 +140,14 @@ public class RacingTrack {
     public void startTheRace() {
         mutex.lock();
 
-        generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        try {
+            generalRepository.setBrokerState(BrokerState.SUPERVISING_THE_RACE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // notify first horse for race start
         raceStarted = true;
@@ -157,14 +175,27 @@ public class RacingTrack {
         currentTurn = horseTurn;
 
         if (currentHorseStep == 0) {
-            generalRepository.setHorseState(raceId, raceIdx,
-                    HorseState.RUNNING);
+            try {
+                generalRepository.setHorseState(raceId, raceIdx,
+                        HorseState.RUNNING);
+            } catch (RemoteException e) {
+                System.out.println("GeneralRepository remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
 
         // update current position
-        generalRepository.setHorsePosition(raceIdx,
-                currentPosition + step,
-                currentHorseStep + 1);
+        try {
+            generalRepository.setHorsePosition(raceIdx, currentPosition + step,
+                    currentHorseStep + 1);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // signal next horse
         do {
@@ -212,8 +243,15 @@ public class RacingTrack {
             return false;
         }
 
-        generalRepository.setHorseState(raceId, raceIdx,
-                HorseState.AT_THE_FINISH_LINE);
+        try {
+            generalRepository.setHorseState(raceId, raceIdx,
+                    HorseState.AT_THE_FINISH_LINE);
+        } catch (RemoteException e) {
+            System.out.println("GeneralRepository remote invocation exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         // add horse to arrival list
         if (raceStandings == null) {
@@ -241,7 +279,14 @@ public class RacingTrack {
             horseTurn = 0;
             raceStarted = false;
 
-            controlCentre.finishTheRace(raceStandings);
+            try {
+                controlCentre.finishTheRace(raceStandings);
+            } catch (RemoteException e) {
+                System.out.println("ControlCentre remote invocation exception: "
+                        + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
 
             raceStandings = null;
 

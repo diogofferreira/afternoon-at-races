@@ -7,17 +7,16 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import interfaces.ControlCentreInt;
 import interfaces.GeneralRepositoryInt;
 import interfaces.Register;
 import interfaces.StableInt;
-import sharedRegions.ControlCentre;
+import sharedRegions.Stable;
 
 /**
  * This data type instantiates and registers a remote object that will run mobile code.
  * Communication is based in Java RMI.
  */
-public class ControlCentreMain {
+public class StableMain {
 
     /**
      * Main task.
@@ -25,10 +24,10 @@ public class ControlCentreMain {
     public static void main(String[] args) {
         Registry registry = null;
         Register reg = null;
-        ControlCentre controlCentre;
-        ControlCentreInt controlCentreStub = null;
-        GeneralRepositoryInt generalRepositoryStub = null;
+        Stable stable;
         StableInt stableStub = null;
+        GeneralRepositoryInt generalRepositoryStub = null;
+        int[] horsesIdx;                        // array of horses indexes
 
         /* create and install the security manager */
         if (System.getSecurityManager() == null)
@@ -48,7 +47,6 @@ public class ControlCentreMain {
 
         try {
             generalRepositoryStub = (GeneralRepositoryInt) registry.lookup("GeneralRepository");
-            stableStub = (StableInt) registry.lookup("Stable");
         } catch (RemoteException e) {
             System.out.println("Shared Region look up exception: " + e.getMessage());
             e.printStackTrace();
@@ -59,15 +57,21 @@ public class ControlCentreMain {
             System.exit(1);
         }
 
+        // generate races lineup (just placing all ids in an array to later be
+        // shuffled at the stable)
+        horsesIdx = new int[EventVariables.NUMBER_OF_HORSES];
+        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
+            horsesIdx[i] = i;
+
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        controlCentre = new ControlCentre(generalRepositoryStub, stableStub);
+        stable = new Stable(generalRepositoryStub, horsesIdx);
 
         try {
-            controlCentreStub =
-                    (ControlCentreInt) UnicastRemoteObject.exportObject(
-                            controlCentre, HostsInfo.CONTROL_CENTRE_PORT);
+            stableStub =
+                    (Stable) UnicastRemoteObject.exportObject(
+                            stable, HostsInfo.STABLE_PORT);
         } catch (RemoteException e) {
-            System.out.println("Control Centre stub generation exception: "
+            System.out.println("Stable stub generation exception: "
                     + e.getMessage());
             e.printStackTrace();
             System.exit(1);
@@ -88,16 +92,16 @@ public class ControlCentreMain {
         }
 
         try {
-            reg.bind("ControlCentre", controlCentreStub);
+            reg.bind("Stable", stableStub);
         } catch (RemoteException e) {
-            System.out.println("ControlCentre registration exception: " + e.getMessage());
+            System.out.println("Stable registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println("ControlCentre already bound exception: " + e.getMessage());
+            System.out.println("Stable already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ControlCentre object was registered!");
+        System.out.println("Stable object was registered!");
     }
 }

@@ -3,6 +3,7 @@ package sharedRegions;
 import entities.Broker;
 import entities.Horse;
 import entities.Spectator;
+import interfaces.GeneralRepositoryInt;
 import main.EventVariables;
 import states.BrokerState;
 import states.HorseState;
@@ -22,7 +23,7 @@ import java.util.stream.Stream;
  * update their state and other variables relevant to the event.
  * All of the changes are reported into a file (log).
  */
-public class GeneralRepository {
+public class GeneralRepository implements GeneralRepositoryInt {
 
     /**
      * Instance of a monitor.
@@ -292,6 +293,7 @@ public class GeneralRepository {
      * Method that updates the Broker state.
      * @param brokerState The new Broker state.
      */
+    @Override
     public void setBrokerState(BrokerState brokerState) {
         mutex.lock();
 
@@ -306,6 +308,7 @@ public class GeneralRepository {
      * @param spectatorId The ID of the Spectator whose the state is updated.
      * @param spectatorState The new state of the referenced Spectator.
      */
+    @Override
     public void setSpectatorState(int spectatorId, SpectatorState spectatorState) {
         mutex.lock();
 
@@ -330,6 +333,7 @@ public class GeneralRepository {
      * @param spectatorId The ID of the Spectator whose wallet will be updated.
      * @param amount The amount of money to add to the wallet.
      */
+    @Override
     public void setSpectatorGains(int spectatorId, int amount) {
         mutex.lock();
 
@@ -344,6 +348,7 @@ public class GeneralRepository {
      * @param horseIdx The raceIdx of the Horse whose state will be updated.
      * @param horseState The next Horse state.
      */
+    @Override
     public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
         mutex.lock();
 
@@ -365,6 +370,7 @@ public class GeneralRepository {
      * @param horseIdx The raceIdx of the reference Horse.
      * @param horseAgility The agility of the referenced Horse.
      */
+    @Override
     public void setHorseAgility(int raceID, int horseIdx, int horseAgility) {
         mutex.lock();
 
@@ -379,6 +385,7 @@ public class GeneralRepository {
      * @param spectatorBet The value of the bet placed.
      * @param spectatorBettedHorse The raceIdx of the Horse the Spectator bet on.
      */
+    @Override
     public void setSpectatorsBet(int spectatorId, int spectatorBet,
                                  int spectatorBettedHorse) {
         mutex.lock();
@@ -397,6 +404,7 @@ public class GeneralRepository {
      * @param raceID The ID of the race where these odds are applied.
      * @param horsesOdd Array of horses odds, indexed by their raceIdx.
      */
+    @Override
     public void setHorsesOdd(int raceID, double[] horsesOdd) {
         mutex.lock();
 
@@ -412,6 +420,7 @@ public class GeneralRepository {
      * @param horsePosition The new Horse position.
      * @param horseStep The number of steps the Horse has already taken.
      */
+    @Override
     public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
         mutex.lock();
 
@@ -426,6 +435,7 @@ public class GeneralRepository {
      * Method that signals the horses' position in the race.
      * @param standings horses' position in the race.
      */
+    @Override
     public void setHorsesStanding(int[] standings) {
         mutex.lock();
 
@@ -441,6 +451,7 @@ public class GeneralRepository {
      * travelled distances.
      * @param raceNumber The updated race number.
      */
+    @Override
     public void initRace(int raceNumber) {
         this.raceNumber = raceNumber;
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];

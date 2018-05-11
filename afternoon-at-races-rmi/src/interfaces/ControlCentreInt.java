@@ -80,6 +80,7 @@ public interface ControlCentreInt extends Remote {
      * Method invoked by the last Horse/Jockey pair to cross the finish line.
      * The Broker will be notified to wake up and to report the results.
      * @param standings An array of standings of the Horses that in the race.
+     * @throws RemoteException if the invocation of the remote method fails.
      */
     void finishTheRace(int[] standings) throws RemoteException;
 

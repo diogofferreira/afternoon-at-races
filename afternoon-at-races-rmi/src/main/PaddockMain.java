@@ -7,17 +7,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import interfaces.ControlCentreInt;
-import interfaces.GeneralRepositoryInt;
-import interfaces.Register;
-import interfaces.StableInt;
-import sharedRegions.ControlCentre;
+import interfaces.*;
+import sharedRegions.Paddock;
 
 /**
  * This data type instantiates and registers a remote object that will run mobile code.
  * Communication is based in Java RMI.
  */
-public class ControlCentreMain {
+public class PaddockMain {
 
     /**
      * Main task.
@@ -25,10 +22,10 @@ public class ControlCentreMain {
     public static void main(String[] args) {
         Registry registry = null;
         Register reg = null;
-        ControlCentre controlCentre;
-        ControlCentreInt controlCentreStub = null;
+        Paddock paddock;
+        PaddockInt paddockStub = null;
         GeneralRepositoryInt generalRepositoryStub = null;
-        StableInt stableStub = null;
+        ControlCentreInt controlCentreStub = null;
 
         /* create and install the security manager */
         if (System.getSecurityManager() == null)
@@ -48,7 +45,7 @@ public class ControlCentreMain {
 
         try {
             generalRepositoryStub = (GeneralRepositoryInt) registry.lookup("GeneralRepository");
-            stableStub = (StableInt) registry.lookup("Stable");
+            controlCentreStub = (ControlCentreInt) registry.lookup("ControlCentre");
         } catch (RemoteException e) {
             System.out.println("Shared Region look up exception: " + e.getMessage());
             e.printStackTrace();
@@ -60,14 +57,14 @@ public class ControlCentreMain {
         }
 
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        controlCentre = new ControlCentre(generalRepositoryStub, stableStub);
+        paddock = new Paddock(generalRepositoryStub, controlCentreStub);
 
         try {
-            controlCentreStub =
-                    (ControlCentreInt) UnicastRemoteObject.exportObject(
-                            controlCentre, HostsInfo.CONTROL_CENTRE_PORT);
+            paddockStub =
+                    (PaddockInt) UnicastRemoteObject.exportObject(
+                            paddock, HostsInfo.PADDOCK_PORT);
         } catch (RemoteException e) {
-            System.out.println("Control Centre stub generation exception: "
+            System.out.println("Paddock stub generation exception: "
                     + e.getMessage());
             e.printStackTrace();
             System.exit(1);
@@ -88,16 +85,16 @@ public class ControlCentreMain {
         }
 
         try {
-            reg.bind("ControlCentre", controlCentreStub);
+            reg.bind("Paddock", paddockStub);
         } catch (RemoteException e) {
-            System.out.println("ControlCentre registration exception: " + e.getMessage());
+            System.out.println("Paddock registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println("ControlCentre already bound exception: " + e.getMessage());
+            System.out.println("Paddock already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ControlCentre object was registered!");
+        System.out.println("Paddock object was registered!");
     }
 }

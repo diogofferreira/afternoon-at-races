@@ -74,7 +74,7 @@ public interface GeneralRepositoryInt extends Remote {
      * @throws RemoteException if the invocation of the remote method fails.
      */
     void setSpectatorsBet(int spectatorId, int spectatorBet,
-                                 int spectatorBettedHorse) throws RemoteException;
+                          int spectatorBettedHorse) throws RemoteException;
 
     /**
      * Execution of remote method setHorsesOdd.
@@ -114,5 +114,4 @@ public interface GeneralRepositoryInt extends Remote {
      * @throws RemoteException if the invocation of the remote method fails.
      */
     void initRace(int raceNumber) throws RemoteException;
-
 }
