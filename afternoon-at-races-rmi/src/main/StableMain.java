@@ -36,8 +36,8 @@ public class StableMain {
 
         try {
             registry = LocateRegistry.getRegistry(
-                    HostsInfo.GENERAL_REPOSITORY_HOSTNAME,
-                    HostsInfo.GENERAL_REPOSITORY_PORT);
+                    HostsInfo.REGISTRY_HOSTNAME,
+                    HostsInfo.REGISTRY_PORT);
         } catch (RemoteException e) {
             System.out.println("RMI registry creation exception: " + e.getMessage());
             e.printStackTrace();
@@ -67,9 +67,8 @@ public class StableMain {
         stable = new Stable(generalRepositoryStub, horsesIdx);
 
         try {
-            stableStub =
-                    (Stable) UnicastRemoteObject.exportObject(
-                            stable, HostsInfo.STABLE_PORT);
+            stableStub = (Stable) UnicastRemoteObject.exportObject(
+                    stable, HostsInfo.STABLE_PORT);
         } catch (RemoteException e) {
             System.out.println("Stable stub generation exception: "
                     + e.getMessage());

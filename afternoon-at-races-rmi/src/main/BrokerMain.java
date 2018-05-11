@@ -32,8 +32,8 @@ public class BrokerMain {
 
         try {
             registry = LocateRegistry.getRegistry(
-                    HostsInfo.GENERAL_REPOSITORY_HOSTNAME,
-                    HostsInfo.GENERAL_REPOSITORY_PORT);
+                    HostsInfo.REGISTRY_HOSTNAME,
+                    HostsInfo.REGISTRY_PORT);
         } catch (RemoteException e) {
             System.out.println("RMI registry creation exception: " + e.getMessage());
             e.printStackTrace();

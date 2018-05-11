@@ -6,6 +6,11 @@ package main;
  */
 public class HostsInfo {
     /**
+     * Hostname of the Registry server.
+     */
+    public static final String REGISTRY_HOSTNAME = "l040101-ws01.ua.pt";
+
+    /**
      * Hostname of the General Repository server.
      */
     public static final String GENERAL_REPOSITORY_HOSTNAME = "l040101-ws01.ua.pt";
@@ -49,6 +54,11 @@ public class HostsInfo {
      * Hostname of the Broker server.
      */
     public static final String BROKER_HOSTNAME = "l040101-ws09.ua.pt";
+
+    /**
+     * Port number of the Registry server.
+     */
+    public static final int REGISTRY_PORT = 22410;
 
     /**
      * Port number of the General Repository server.
