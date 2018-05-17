@@ -38,7 +38,7 @@ for i in ${!HOSTNAMES[@]}; do
     scp ${FOLDER}.tgz $USERNAME@${HOSTNAMES[$i]}:~
 
     printf "\n\e[38;5;220m Decompressing source folder in ${HOSTNAMES[$i]}... \n\e[0m";
-    COMMAND="rm -rf out && tar -zxvf ${FOLDER}.tgz && mkdir -p out &&
+    COMMAND="rm -rf out && tar -zxvf ${FOLDER}.tgz &&
         cd ${FOLDER}/src && sh build.sh ${CLASSES[$i]} && cd"
 
     

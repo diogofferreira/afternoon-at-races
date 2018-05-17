@@ -17,7 +17,7 @@ CLIENTCLASSES=(
 
 javac utils/*.java states/*.java registries/*.java interfaces/*.java sharedRegions/*.java registry/*.java main/*.java
 
-if [ "$x" = "GeneralRepositoryMain" ]; then
+if [ "$1" = "GeneralRepositoryMain" ]; then
     # Copy Register directory
     cp -r out-registry ~/
     cp interfaces/Register.class ~/out-registry/interfaces/
@@ -28,7 +28,7 @@ if [ "$x" = "GeneralRepositoryMain" ]; then
     mkdir -p /home/sd0401/Public/classes/interfaces
     cp interfaces/*.class /home/sd0401/Public/classes/interfaces
     cp set-rmiregistry.sh /home/sd0401
-    cp set-rmiregistry-alt.sh /home/sd0401
+    cp set-rmiregistry-local.sh /home/sd0401
 fi
 
 # Copy Client directory

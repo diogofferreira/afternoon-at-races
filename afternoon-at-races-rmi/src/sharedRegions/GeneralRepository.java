@@ -5,6 +5,7 @@ import entities.Horse;
 import entities.Spectator;
 import interfaces.GeneralRepositoryInt;
 import main.EventVariables;
+import main.GeneralRepositoryMain;
 import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
@@ -108,6 +109,12 @@ public class GeneralRepository implements GeneralRepositoryInt {
     private int celebrating;
 
     /**
+     * Counter to check how many requests were made to the General Repository
+     * in order to end its life cycle.
+     */
+    private int requests;
+
+    /**
      * Creates a new instance of General Repository.
      * It also creates a new file (log) and prints the its header.
      */
@@ -129,6 +136,7 @@ public class GeneralRepository implements GeneralRepositoryInt {
         this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.celebrating = 0;
+        this.requests = 0;
 
         // Set up initial values for spectators info
         for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
@@ -324,6 +332,14 @@ public class GeneralRepository implements GeneralRepositoryInt {
 
         printState();
 
+        // Update counter
+        if (spectatorState == SpectatorState.CELEBRATING) {
+            requests++;
+            if (requests == (EventVariables.NUMBER_OF_HORSES_PER_RACE * 2
+                    + EventVariables.NUMBER_OF_SPECTATORS))
+                GeneralRepositoryMain.wakeUp();
+        }
+
         mutex.unlock();
     }
 
@@ -359,6 +375,15 @@ public class GeneralRepository implements GeneralRepositoryInt {
         }
         if (raceID == raceNumber && horseState != HorseState.RUNNING)
             printState();
+
+        // Update internal counters
+        if (raceID == EventVariables.NUMBER_OF_RACES - 1
+                && horseState == HorseState.AT_THE_STABLE) {
+            requests++;
+            if (requests == (EventVariables.NUMBER_OF_HORSES_PER_RACE * 2
+                    + EventVariables.NUMBER_OF_SPECTATORS))
+                GeneralRepositoryMain.wakeUp();
+        }
 
         mutex.unlock();
     }
