@@ -4,6 +4,7 @@ import interfaces.ControlCentreInt;
 import interfaces.GeneralRepositoryInt;
 import interfaces.PaddockInt;
 import main.EventVariables;
+import main.PaddockMain;
 import states.HorseState;
 import states.SpectatorState;
 
@@ -61,6 +62,12 @@ public class Paddock implements PaddockInt {
      * Instance of the shared region Control Centre.
      */
     private ControlCentreInt controlCentre;
+
+    /**
+     * Counter to check how many requests were made to the Paddock
+     * in order to end its life cycle.
+     */
+    private int requests;
 
     public Paddock(GeneralRepositoryInt generalRepository,
                    ControlCentreInt controlCentre) {
@@ -137,6 +144,11 @@ public class Paddock implements PaddockInt {
         if (--horsesInPaddock == 0)
             proceedToBettingCentre();
 
+        // Update internal requests counter
+        if (++requests == EventVariables.NUMBER_OF_HORSES +
+                (EventVariables.NUMBER_OF_SPECTATORS * EventVariables.NUMBER_OF_RACES))
+            PaddockMain.wakeUp();
+
         mutex.unlock();
     }
 
@@ -178,6 +190,12 @@ public class Paddock implements PaddockInt {
                 spectators.await();
             } catch (InterruptedException ignored) { }
         }
+
+        // Update internal requests counter
+        if (++requests == EventVariables.NUMBER_OF_HORSES +
+                (EventVariables.NUMBER_OF_SPECTATORS * EventVariables.NUMBER_OF_RACES))
+            PaddockMain.wakeUp();
+
         mutex.unlock();
     }
 }

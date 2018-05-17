@@ -3,6 +3,7 @@ package sharedRegions;
 import interfaces.GeneralRepositoryInt;
 import interfaces.StableInt;
 import main.EventVariables;
+import main.StableMain;
 import registries.RegProceedToStable;
 import states.HorseState;
 
@@ -67,6 +68,12 @@ public class Stable implements StableInt {
     private GeneralRepositoryInt generalRepository;
 
     /**
+     * Counter to check how many requests were made to the Stable
+     * in order to end its life cycle.
+     */
+    private int requests;
+
+    /**
      * Creates a new instance of Stable.
      * @param generalRepository Reference to an instance of the shared region
      *                          General Repository.
@@ -84,6 +91,7 @@ public class Stable implements StableInt {
         this.inStable = new Condition[EventVariables.NUMBER_OF_RACES];
         this.canCelebrate = false;
         this.canProceed = new boolean[EventVariables.NUMBER_OF_RACES];
+        this.requests = 0;
 
         this.lineups = new int[EventVariables.NUMBER_OF_HORSES];
 
@@ -243,6 +251,9 @@ public class Stable implements StableInt {
 
         reg = new RegProceedToStable(raceId, raceIdx);
 
+        if (++requests == (EventVariables.NUMBER_OF_HORSES * 2 + 1))
+            StableMain.wakeUp();
+
         mutex.unlock();
 
         return reg;
@@ -260,6 +271,9 @@ public class Stable implements StableInt {
         canCelebrate = true;
         for (Condition horsesInRace : inStable)
             horsesInRace.signalAll();
+
+        if (++requests == (EventVariables.NUMBER_OF_HORSES * 2 + 1))
+            StableMain.wakeUp();
 
         mutex.unlock();
     }

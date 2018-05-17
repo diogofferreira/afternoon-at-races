@@ -4,6 +4,7 @@ import interfaces.ControlCentreInt;
 import interfaces.GeneralRepositoryInt;
 import interfaces.RacingTrackInt;
 import main.EventVariables;
+import main.RacingTrackMain;
 import states.BrokerState;
 import states.HorseState;
 
@@ -72,6 +73,12 @@ public class RacingTrack implements RacingTrackInt {
     private GeneralRepositoryInt generalRepository;
 
     /**
+     * Counter to check how many requests were made to the Racing Track
+     * in order to end its life cycle.
+     */
+    private int requests;
+
+    /**
      * Creates a new instance of Racing Track.
      * @param generalRepository Reference to an instance of the shared region
      *                          General Repository.
@@ -97,6 +104,7 @@ public class RacingTrack implements RacingTrackInt {
         this.finishes = 0;
         this.horseTurn = 0;
         this.raceStarted = false;
+        this.requests = 0;
     }
 
     /**
@@ -303,6 +311,10 @@ public class RacingTrack implements RacingTrackInt {
             if (horseTurn != currentTurn)
                 inMovement[horseTurn].signal();
         }
+
+        if (++requests == EventVariables.NUMBER_OF_HORSES)
+            RacingTrackMain.wakeUp();
+
         mutex.unlock();
 
         return true;
