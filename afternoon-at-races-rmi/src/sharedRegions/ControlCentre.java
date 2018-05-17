@@ -3,6 +3,7 @@ package sharedRegions;
 import interfaces.ControlCentreInt;
 import interfaces.GeneralRepositoryInt;
 import interfaces.StableInt;
+import main.ControlCentreMain;
 import main.EventVariables;
 import states.BrokerState;
 import states.SpectatorState;
@@ -94,6 +95,12 @@ public class ControlCentre implements ControlCentreInt {
     private StableInt stable;
 
     /**
+     * Counter to check how many requests were made to the Control Centre
+     * in order to end its life cycle.
+     */
+    private int requests;
+
+    /**
      * Creates a new instance of Control Centre.
      * @param generalRepository Reference to an instance of the shared region
      *                          General Repository.
@@ -119,6 +126,7 @@ public class ControlCentre implements ControlCentreInt {
         this.reportsPosted = false;
         this.spectatorsLeavingRace = 0;
         this.eventEnded = false;
+        this.requests = 0;
     }
 
     /**
@@ -425,6 +433,10 @@ public class ControlCentre implements ControlCentreInt {
             e.printStackTrace();
             System.exit(1);
         }
+
+        requests++;
+        if (requests == EventVariables.NUMBER_OF_SPECTATORS)
+            ControlCentreMain.wakeUp();
 
         mutex.unlock();
     }
