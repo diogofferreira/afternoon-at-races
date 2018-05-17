@@ -1,11 +1,15 @@
 package main;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import interfaces.ControlCentreInt;
 import interfaces.GeneralRepositoryInt;
@@ -20,15 +24,35 @@ import sharedRegions.ControlCentre;
 public class ControlCentreMain {
 
     /**
+     * Instance of a monitor.
+     */
+    private static Lock mutex;
+
+    /**
+     * Condition variable where the main thread waits until the shared region
+     * ends its life cycle to unbind it in the registry.
+     */
+    private static Condition shutdown;
+
+    /**
+     * Boolean that is true if the shared region has already ended its execution.
+     */
+    private static boolean ended;
+
+    /**
      * Main task.
      */
     public static void main(String[] args) {
         Registry registry = null;
         Register reg = null;
         ControlCentre controlCentre;
+        String objectName;
         ControlCentreInt controlCentreStub = null;
         GeneralRepositoryInt generalRepositoryStub = null;
         StableInt stableStub = null;
+        mutex = new ReentrantLock();
+        shutdown = mutex.newCondition();
+        ended = false;
 
         /* create and install the security manager */
         if (System.getSecurityManager() == null)
@@ -61,13 +85,14 @@ public class ControlCentreMain {
 
         /* instantiate a remote object that runs mobile code and generate a stub for it */
         controlCentre = new ControlCentre(generalRepositoryStub, stableStub);
+        objectName = "ControlCentre";
 
         try {
             controlCentreStub =
                     (ControlCentreInt) UnicastRemoteObject.exportObject(
                             controlCentre, HostsInfo.CONTROL_CENTRE_PORT);
         } catch (RemoteException e) {
-            System.out.println("Control Centre stub generation exception: "
+            System.out.println(objectName + " stub generation exception: "
                     + e.getMessage());
             e.printStackTrace();
             System.exit(1);
@@ -88,16 +113,62 @@ public class ControlCentreMain {
         }
 
         try {
-            reg.bind("ControlCentre", controlCentreStub);
+            reg.bind(objectName, controlCentreStub);
         } catch (RemoteException e) {
-            System.out.println("ControlCentre registration exception: " + e.getMessage());
+            System.out.println(objectName + " registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println("ControlCentre already bound exception: " + e.getMessage());
+            System.out.println(objectName + " already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ControlCentre object was registered!");
+        System.out.println(objectName + " object was registered!");
+
+        mutex.lock();
+
+        while (!ended) {
+            try {
+                shutdown.await();
+            } catch (InterruptedException ignored) { }
+        }
+
+        mutex.unlock();
+
+        try {
+            reg.unbind(objectName);
+        } catch (RemoteException e) {
+            System.out.println(objectName + " unregistration exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e) {
+            System.out.println(objectName + " not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println(objectName + " object was unregistered!");
+
+        try {
+            UnicastRemoteObject.unexportObject(generalRepositoryStub, true);
+        } catch (NoSuchObjectException e) {
+            System.out.println(objectName + " stub destruction exception: "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("Stub was destroyed!");
+    }
+
+    /**
+     * Method that signals the main thread to unbind the shared region from the
+     * registry.
+     */
+    public static void wakeUp() {
+        mutex.lock();
+
+        ended = true;
+        shutdown.signal();
+
+        mutex.unlock();
     }
 }

@@ -108,7 +108,6 @@ public class GeneralRepositoryMain {
         }
         System.out.println(objectName + " object was registered!");
 
-
         mutex.lock();
 
         while (!ended) {

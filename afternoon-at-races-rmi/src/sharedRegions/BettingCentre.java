@@ -3,6 +3,7 @@ package sharedRegions;
 import interfaces.BettingCentreInt;
 import interfaces.GeneralRepositoryInt;
 import interfaces.StableInt;
+import main.BettingCentreMain;
 import main.EventVariables;
 import registries.RegPlaceABet;
 import states.BrokerState;
@@ -118,6 +119,17 @@ public class BettingCentre implements BettingCentreInt {
     private GeneralRepositoryInt generalRepository;
 
     /**
+     * Counter to check how many requests were made to the Betting Centre
+     * in order to end its life cycle.
+     */
+    private int requests;
+
+    /**
+     * Number of winning bets in the current race;
+     */
+    private int numberOfWinners;
+
+    /**
      * Creates a new instance of Betting Centre.
      * @param generalRepository Reference to an instance of the shared region
      *                          General Repository.
@@ -145,6 +157,8 @@ public class BettingCentre implements BettingCentreInt {
 
         this.generalRepository = generalRepository;
         this.stable = stable;
+        this.numberOfWinners = -1;
+        this.requests = 0;
     }
 
     /**
@@ -410,6 +424,8 @@ public class BettingCentre implements BettingCentreInt {
 
         areThereWinners = !winningBets.isEmpty();
 
+        numberOfWinners = winningBets.size();
+
         mutex.unlock();
 
         return areThereWinners;
@@ -473,6 +489,13 @@ public class BettingCentre implements BettingCentreInt {
 
         acceptingHonours = false;
 
+        if (currentRaceID == EventVariables.NUMBER_OF_RACES - 1) {
+            requests++;
+
+            if (requests != numberOfWinners + 1)
+                BettingCentreMain.wakeUp();
+        }
+
         mutex.unlock();
     }
 
@@ -526,6 +549,13 @@ public class BettingCentre implements BettingCentreInt {
         winningValue = 0;
         if (validatedHonours.containsKey(spectatorID))
             winningValue = validatedHonours.get(spectatorID) / winners.length;
+
+        if (currentRaceID == EventVariables.NUMBER_OF_RACES - 1) {
+            requests++;
+
+            if (requests != numberOfWinners + 1)
+                BettingCentreMain.wakeUp();
+        }
 
         mutex.unlock();
 
