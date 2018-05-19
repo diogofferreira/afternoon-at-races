@@ -17,10 +17,12 @@ import interfaces.StableInt;
 import sharedRegions.Stable;
 
 /**
- * This data type instantiates and registers a remote object that will run mobile code.
+ * This data type instantiates and registers a remote object, in this particular
+ * case the Stable shared region, that will run mobile code.
  * Communication is based in Java RMI.
  */
 public class StableMain {
+
     /**
      * Instance of a monitor.
      */
@@ -38,7 +40,13 @@ public class StableMain {
     private static boolean ended;
 
     /**
-     * Main task.
+     * Main task that instantiates the remote object and its stub.
+     * It also instantiates the Locate Registry that has the RMI registrations
+     * for the other shared regions. If this shared region needs a stub of another,
+     * it looks it up on the registry before instantiating its own remote object.
+     * Finally it binds its stub on the Registry Handler so other shared regions
+     * and/or clients can access its methods.
+     * After its lifecyle ends, it unbinds the previous registration.
      */
     public static void main(String[] args) {
         Registry registry = null;
@@ -62,20 +70,24 @@ public class StableMain {
                     HostsInfo.REGISTRY_HOSTNAME,
                     HostsInfo.REGISTRY_PORT);
         } catch (RemoteException e) {
-            System.out.println("RMI registry creation exception: " + e.getMessage());
+            System.out.println("RMI registry creation exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
         System.out.println("RMI registry was created!");
 
         try {
-            generalRepositoryStub = (GeneralRepositoryInt) registry.lookup("GeneralRepository");
+            generalRepositoryStub = (GeneralRepositoryInt)
+                    registry.lookup("GeneralRepository");
         } catch (RemoteException e) {
-            System.out.println("Shared Region look up exception: " + e.getMessage());
+            System.out.println("Shared Region look up exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("Shared Region not bound exception: " + e.getMessage());
+            System.out.println("Shared Region not bound exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -91,7 +103,7 @@ public class StableMain {
         objectName = "Stable";
 
         try {
-            stableStub = (Stable) UnicastRemoteObject.exportObject(
+            stableStub = (StableInt) UnicastRemoteObject.exportObject(
                     stable, HostsInfo.STABLE_PORT);
         } catch (RemoteException e) {
             System.out.println(objectName + " stub generation exception: "
@@ -105,11 +117,13 @@ public class StableMain {
         try {
             reg = (Register) registry.lookup("RegisterHandler");
         } catch (RemoteException e) {
-            System.out.println("RegisterRemoteObject lookup exception: " + e.getMessage());
+            System.out.println("RegisterRemoteObject lookup exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("RegisterRemoteObject not bound exception: " + e.getMessage());
+            System.out.println("RegisterRemoteObject not bound exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -117,11 +131,13 @@ public class StableMain {
         try {
             reg.bind(objectName, stableStub);
         } catch (RemoteException e) {
-            System.out.println(objectName + " registration exception: " + e.getMessage());
+            System.out.println(objectName + " registration exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e) {
-            System.out.println(objectName + " already bound exception: " + e.getMessage());
+            System.out.println(objectName + " already bound exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -139,11 +155,13 @@ public class StableMain {
         try {
             reg.unbind(objectName);
         } catch (RemoteException e) {
-            System.out.println(objectName + " unregistration exception: " + e.getMessage());
+            System.out.println(objectName + " unregistration exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println(objectName + " not bound exception: " + e.getMessage());
+            System.out.println(objectName + " not bound exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }

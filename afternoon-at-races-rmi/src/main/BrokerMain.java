@@ -6,17 +6,20 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import entities.Broker;
-import entities.Spectator;
 import interfaces.*;
 
 /**
- * This data type instantiates and registers a remote object that will run mobile code.
+ * This data type instantiates an active entity, in this case the Broker,
+ * which looks up for remote shared regions on Locate Registry and executes
+ * their methods remotely.
  * Communication is based in Java RMI.
  */
 public class BrokerMain {
 
     /**
-     * Main task.
+     * Main task that instantiates an active entity.
+     * It also instantiates the Locate Registry that has the RMI registrations
+     * for the other shared regions, so that it can execute its methods remotely.
      */
     public static void main(String[] args) {
         Registry registry = null;
@@ -35,7 +38,8 @@ public class BrokerMain {
                     HostsInfo.REGISTRY_HOSTNAME,
                     HostsInfo.REGISTRY_PORT);
         } catch (RemoteException e) {
-            System.out.println("RMI registry creation exception: " + e.getMessage());
+            System.out.println("RMI registry creation exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -43,15 +47,20 @@ public class BrokerMain {
 
         try {
             stableStub = (StableInt) registry.lookup("Stable");
-            controlCentreStub = (ControlCentreInt) registry.lookup("ControlCentre");
-            racingTrackStub = (RacingTrackInt) registry.lookup("RacingTrack");
-            bettingCentreStub = (BettingCentreInt) registry.lookup("BettingCentre");
+            controlCentreStub = (ControlCentreInt)
+                    registry.lookup("ControlCentre");
+            racingTrackStub = (RacingTrackInt)
+                    registry.lookup("RacingTrack");
+            bettingCentreStub = (BettingCentreInt)
+                    registry.lookup("BettingCentre");
         } catch (RemoteException e) {
-            System.out.println("Shared Region look up exception: " + e.getMessage());
+            System.out.println("Shared Region look up exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("Shared Region not bound exception: " + e.getMessage());
+            System.out.println("Shared Region not bound exception: " +
+                    e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }

@@ -35,7 +35,7 @@ public class ServerRegisterRemoteObject {
 
         try {
             regEngineStub = (Register) UnicastRemoteObject.exportObject(
-                    regEngine, HostsInfo.REGISTRY_PORT);
+                    regEngine, HostsInfo.REG_ENGINE_PORT);
         } catch (RemoteException e) {
             System.out.println("RegisterRemoteObject stub generation exception: "
                     + e.getMessage());

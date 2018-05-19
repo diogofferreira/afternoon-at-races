@@ -8,6 +8,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import interfaces.Register;
+import main.HostsInfo;
 
 /**
  * This data type defines a generic functionality to register remote objects
@@ -28,7 +29,7 @@ public class RegisterRemoteObject implements Register {
      *
      * @serialField sconi
      */
-    private int rmiRegPortNumb = 1099;
+    private int rmiRegPortNumb = HostsInfo.REGISTRY_PORT;
 
     /**
      * Instantiation of a registering object.

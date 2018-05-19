@@ -162,7 +162,7 @@ public class Horse extends Thread {
                     state = HorseState.RUNNING;
 
                 // update position
-                setCurrentPosition(newStep);
+                updateCurrentPosition(newStep);
             }
         } catch (RemoteException e) {
             System.out.println("RacingTrack remote invocation exception: "

@@ -1,4 +1,5 @@
-java -Djava.rmi.server.codebase="http://ruib-laptop1.ieeta.pt/ruib/classes/"\
+cd out-registry
+java -Djava.rmi.server.codebase="http://l040101-ws01.ua.pt/sd0401/classes/"\
      -Djava.rmi.server.useCodebaseOnly=true\
      -Djava.security.policy=java.policy\
      registry.ServerRegisterRemoteObject

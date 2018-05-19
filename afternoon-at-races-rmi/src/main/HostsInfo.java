@@ -58,7 +58,12 @@ public class HostsInfo {
     /**
      * Port number of the Registry server.
      */
-    public static final int REGISTRY_PORT = 22410;
+    public static final int REGISTRY_PORT = 22400;
+
+    /**
+     * Port number of the Registry Handler server.
+     */
+    public static final int REG_ENGINE_PORT = 22407;
 
     /**
      * Port number of the General Repository server.
@@ -89,19 +94,4 @@ public class HostsInfo {
      * Port number of the Betting Centre server.
      */
     public static final int BETTING_CENTRE_PORT = 22406;
-
-    /**
-     * Port number of the Horses server.
-     */
-    public static final int HORSES_PORT = 22407;
-
-    /**
-     * Port number of the Spectators server.
-     */
-    public static final int SPECTATORS_PORT = 22408;
-
-    /**
-     * Port number of the Broker server.
-     */
-    public static final int BROKER_PORT = 22409;
 }

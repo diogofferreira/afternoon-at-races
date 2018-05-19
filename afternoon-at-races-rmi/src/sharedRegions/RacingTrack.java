@@ -239,7 +239,8 @@ public class RacingTrack implements RacingTrackInt {
      * @return Boolean indicating whether the Horse/Jockey pair that invoked the
      * method has already crossed the finish line or not.
      */
-    public boolean hasFinishLineBeenCrossed(int raceId, int raceIdx, int currentHorseStep,
+    public boolean hasFinishLineBeenCrossed(int raceId, int raceIdx,
+                                            int currentHorseStep,
                                             int currentPosition) {
         int currentTurn;
         mutex.lock();
@@ -301,7 +302,8 @@ public class RacingTrack implements RacingTrackInt {
         } else {
             // signal next horse
             do {
-                horseTurn = (horseTurn + 1) % EventVariables.NUMBER_OF_HORSES_PER_RACE;
+                horseTurn = (horseTurn + 1) %
+                        EventVariables.NUMBER_OF_HORSES_PER_RACE;
             } while (inMovement[horseTurn] == null);
 
             // remove current racer from the race
