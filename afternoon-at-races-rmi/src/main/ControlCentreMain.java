@@ -166,7 +166,7 @@ public class ControlCentreMain {
         System.out.println(objectName + " object was unregistered!");
 
         try {
-            UnicastRemoteObject.unexportObject(generalRepositoryStub, true);
+            UnicastRemoteObject.unexportObject(controlCentre, true);
         } catch (NoSuchObjectException e) {
             System.out.println(objectName + " stub destruction exception: "
                     + e.getMessage());

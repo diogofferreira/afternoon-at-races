@@ -38,7 +38,7 @@ public class HostsInfo {
     /**
      * Hostname of the Betting Centre server.
      */
-    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws06.ua.pt";
+    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws10.ua.pt";
 
     /**
      * Hostname of the Horses server.

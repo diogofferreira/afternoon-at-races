@@ -168,7 +168,7 @@ public class StableMain {
         System.out.println(objectName + " object was unregistered!");
 
         try {
-            UnicastRemoteObject.unexportObject(generalRepositoryStub, true);
+            UnicastRemoteObject.unexportObject(stable, true);
         } catch (NoSuchObjectException e) {
             System.out.println(objectName + " stub destruction exception: "
                     + e.getMessage());

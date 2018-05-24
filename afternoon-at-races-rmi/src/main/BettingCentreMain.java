@@ -163,7 +163,7 @@ public class BettingCentreMain {
         System.out.println(objectName + " object was unregistered!");
 
         try {
-            UnicastRemoteObject.unexportObject(generalRepositoryStub, true);
+            UnicastRemoteObject.unexportObject(bettingCentre, true);
         } catch (NoSuchObjectException e) {
             System.out.println(objectName + " stub destruction exception: "
                     + e.getMessage());

@@ -492,7 +492,7 @@ public class BettingCentre implements BettingCentreInt {
         if (currentRaceID == EventVariables.NUMBER_OF_RACES - 1) {
             requests++;
 
-            if (requests != numberOfWinners + 1)
+            if (requests == numberOfWinners + 1)
                 BettingCentreMain.wakeUp();
         }
 
@@ -553,7 +553,7 @@ public class BettingCentre implements BettingCentreInt {
         if (currentRaceID == EventVariables.NUMBER_OF_RACES - 1) {
             requests++;
 
-            if (requests != numberOfWinners + 1)
+            if (requests == numberOfWinners + 1)
                 BettingCentreMain.wakeUp();
         }
 

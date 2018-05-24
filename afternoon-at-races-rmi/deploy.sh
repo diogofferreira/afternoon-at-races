@@ -6,7 +6,7 @@ HOSTNAMES=(
     l040101-ws03.ua.pt
     l040101-ws04.ua.pt
     l040101-ws05.ua.pt
-    l040101-ws06.ua.pt
+    l040101-ws10.ua.pt
     l040101-ws07.ua.pt
     l040101-ws08.ua.pt
     l040101-ws09.ua.pt
