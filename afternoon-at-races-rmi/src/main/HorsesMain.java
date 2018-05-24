@@ -30,11 +30,6 @@ public class HorsesMain {
         Random rnd;
         int agility;
 
-        /* create and install the security manager */
-        if (System.getSecurityManager() == null)
-            System.setSecurityManager(new SecurityManager());
-        System.out.println("Security manager was installed!");
-
         try {
             registry = LocateRegistry.getRegistry(
                     HostsInfo.REGISTRY_HOSTNAME,
