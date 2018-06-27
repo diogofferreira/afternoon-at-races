@@ -128,9 +128,9 @@ be configured to serve static files over HTTP (`*.class` files).
 Just like the previous solution, do not forget to modify the deploy script to 
 your remote machines.
 
-`
+```
 cd afternoon-at-races-rmi
 ./deploy.sh
-`
+```
 
 Diogo Ferreira & Pedro Martins - 2018
