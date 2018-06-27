@@ -50,6 +50,7 @@ for i in ${!HOSTNAMES[@]}; do
         printf "\n\e[38;5;220m RMI Registry Engine will be running in ${HOSTNAMES[$i]}... \n\e[0m";
         COMMAND="screen -d -m sh out-registry/run-registry.sh &";
         ssh $USERNAME@${HOSTNAMES[$i]} "$COMMAND"
+        ssh $USERNAME@${HOSTNAMES[$i]} "sleep 1"
     fi
 
     if [ $i -gt 5 ]; then
