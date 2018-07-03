@@ -1,5 +1,10 @@
 package entities;
 
+import java.io.*;
+import java.nio.file.*;
+import java.util.Arrays;
+
+import communication.HostsInfo;
 import main.EventVariables;
 import states.BrokerState;
 import stubs.BettingCentreStub;
@@ -13,9 +18,24 @@ import stubs.StableStub;
  */
 public class Broker extends Thread implements BrokerInt {
     /**
+     * Current step in broker's lifecycle.
+     */
+    private int step;
+
+    /**
      * Current state of the broker lifecycle.
      */
     private BrokerState state;
+
+    /**
+     * Current race identifier.
+     */
+    private int raceNumber;
+
+    /**
+     * Current race horse winners.
+     */
+    private int[] winners;
 
     /**
      * Instance of the shared region Stable.
@@ -37,6 +57,8 @@ public class Broker extends Thread implements BrokerInt {
      */
     private BettingCentreStub bettingCentre;
 
+    private boolean test;
+
     /**
      * Creates a new instance of Broker.
      * @param stable Reference to an instance of the shared region Stable.
@@ -53,42 +75,139 @@ public class Broker extends Thread implements BrokerInt {
                 controlCentre == null || bettingCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
-        this.state = BrokerState.OPENING_THE_EVENT;
+        this.step = 0;
+        this.state = null;
+        this.raceNumber = 0;
+        this.winners = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.stable = stable;
         this.controlCentre = controlCentre;
         this.bettingCentre = bettingCentre;
         this.racingTrack = racingTrack;
+
+        /* Check if status file exists, if so, load previous state */
+        File statusFile = new File(HostsInfo.BROKER_STATUS_PATH);
+        BufferedReader br = null;
+
+        test = false;
+        if (statusFile.isFile()) {
+            test = true;
+            try {
+                br = new BufferedReader(new FileReader(statusFile));
+            } catch (FileNotFoundException e) {
+                System.err.format("%s: no such" + " file or directory%n", HostsInfo.BROKER_STATUS_PATH);
+                System.exit(1);
+            }
+            String st;
+            String[] w;
+
+            try {
+                this.step = Integer.parseInt(br.readLine().trim());
+                this.state = BrokerState.getType(Integer.parseInt(br.readLine().trim()));
+                this.raceNumber = Integer.parseInt(br.readLine().trim());
+                st = br.readLine().trim();
+                w = st.substring(1, st.length()-1).split(",");
+                this.winners = new int[w.length];
+                for (int i = 0; i < w.length; i++)
+                    this.winners[i] = Integer.parseInt(w[i].trim());
+            } catch (Exception e) {
+                System.err.println(e);
+                System.err.println("Invalid Broker status file");
+                System.exit(1);
+            }
+        }
+    }
+
+    private void updateStatusFile(int step) {
+        PrintWriter pw = null;
+
+        this.step = step;
+        try {
+            pw = new PrintWriter(new FileWriter(HostsInfo.BROKER_STATUS_PATH, false));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        pw.println(this.step);
+        pw.println(this.state.getId());
+        pw.println(this.raceNumber);
+        pw.println(Arrays.toString(this.winners));
+        pw.close();
+    }
+
+    private void deleteStatusFile() {
+        try {
+            Files.delete(Paths.get(HostsInfo.BROKER_STATUS_PATH));
+        } catch (NoSuchFileException x) {
+            System.err.format("%s: no such" + " file or directory%n", HostsInfo.BROKER_STATUS_PATH);
+            System.exit(1);
+        } catch (DirectoryNotEmptyException x) {
+            System.err.format("%s not empty%n", HostsInfo.BROKER_STATUS_PATH);
+            System.exit(1);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+            System.exit(1);
+        }
     }
 
     /**
      * Broker lifecycle.
      */
     public void run() {
-        int[] winners;
-
-        controlCentre.openTheEvent();
-
-        for (int i = 0; i < EventVariables.NUMBER_OF_RACES; i++) {
-            // summonHorsesToPaddock
-            controlCentre.summonHorsesToPaddock(i);
-
-            // acceptsBets
-            bettingCentre.acceptTheBets(i);
-
-            // startTheRace
-            racingTrack.startTheRace();
-            controlCentre.startTheRace();
-
-            // reportResults
-            winners = controlCentre.reportResults();
-
-            // if there are any winners, honour those bets
-            if (bettingCentre.areThereAnyWinners(winners))
-                bettingCentre.honourTheBets();
+        if (this.step == 0) {
+            controlCentre.openTheEvent();
+            updateStatusFile(0);
         }
 
-        controlCentre.celebrate();
-        stable.entertainTheGuests();
+        for (; raceNumber < EventVariables.NUMBER_OF_RACES; raceNumber++) {
+            // summonHorsesToPaddock
+            if (this.step == 0 || this.step == 6) {
+                controlCentre.summonHorsesToPaddock(raceNumber);
+                updateStatusFile(1);
+            }
+
+            // acceptsBets
+            if (this.step == 1) {
+                bettingCentre.acceptTheBets(raceNumber);
+                updateStatusFile(2);
+            }
+
+            if (!test && raceNumber == 1)
+                System.exit(1);
+
+            // startTheRace
+            if (this.step == 2) {
+                racingTrack.startTheRace();
+                updateStatusFile(3);
+            }
+            if (this.step == 3) {
+                controlCentre.startTheRace();
+                updateStatusFile(4);
+            }
+
+            // reportResults
+            if (this.step == 4) {
+                winners = controlCentre.reportResults();
+                updateStatusFile(5);
+            }
+
+            // if there are any winners, honour those bets
+            if (this.step == 5) {
+                if (bettingCentre.areThereAnyWinners(winners))
+                    bettingCentre.honourTheBets();
+                updateStatusFile(6);
+            }
+        }
+
+        if (this.step == 6) {
+            controlCentre.celebrate();
+            updateStatusFile(7);
+        }
+        if (this.step == 7) {
+            stable.entertainTheGuests();
+            updateStatusFile(8);
+        }
+        deleteStatusFile();
     }
 
     /**

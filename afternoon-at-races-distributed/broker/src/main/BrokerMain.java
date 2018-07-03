@@ -22,6 +22,8 @@ public class BrokerMain {
         ControlCentreStub controlCentre;            // instance of Control Centre
         BettingCentreStub bettingCentre;            // instance of Betting Centre
 
+
+        System.out.println("BROKEEER");
         /**
          * LOCATIONS
          * GR - ws01

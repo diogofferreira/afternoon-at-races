@@ -5,50 +5,96 @@ package communication;
  * remote machines.
  */
 public class HostsInfo {
+//    /**
+//     * Hostname of the General Repository server.
+//     */
+//    public static final String GENERAL_REPOSITORY_HOSTNAME = "l040101-ws01.ua.pt";
+//
+//    /**
+//     * Hostname of the Stable server.
+//     */
+//    public static final String STABLE_HOSTNAME = "l040101-ws02.ua.pt";
+//
+//    /**
+//     * Hostname of the Control Centre server.
+//     */
+//    public static final String CONTROL_CENTRE_HOSTNAME = "l040101-ws03.ua.pt";
+//
+//    /**
+//     * Hostname of the Paddock server.
+//     */
+//    public static final String PADDOCK_HOSTNAME = "l040101-ws04.ua.pt";
+//
+//    /**
+//     * Hostname of the Racing Track server.
+//     */
+//    public static final String RACING_TRACK_HOSTNAME = "l040101-ws05.ua.pt";
+//
+//    /**
+//     * Hostname of the Betting Centre server.
+//     */
+//    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws06.ua.pt";
+//
+//    /**
+//     * Hostname of the Horses server.
+//     */
+//    public static final String HORSES_HOSTNAME = "l040101-ws07.ua.pt";
+//
+//    /**
+//     * Hostname of the Spectators server.
+//     */
+//    public static final String SPECTATORS_HOSTNAME = "l040101-ws08.ua.pt";
+//
+//    /**
+//     * Hostname of the Broker server.
+//     */
+//    public static final String BROKER_HOSTNAME = "l040101-ws09.ua.pt";
+
+
     /**
      * Hostname of the General Repository server.
      */
-    public static final String GENERAL_REPOSITORY_HOSTNAME = "l040101-ws01.ua.pt";
+    public static final String GENERAL_REPOSITORY_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Stable server.
      */
-    public static final String STABLE_HOSTNAME = "l040101-ws02.ua.pt";
+    public static final String STABLE_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Control Centre server.
      */
-    public static final String CONTROL_CENTRE_HOSTNAME = "l040101-ws03.ua.pt";
+    public static final String CONTROL_CENTRE_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Paddock server.
      */
-    public static final String PADDOCK_HOSTNAME = "l040101-ws04.ua.pt";
+    public static final String PADDOCK_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Racing Track server.
      */
-    public static final String RACING_TRACK_HOSTNAME = "l040101-ws05.ua.pt";
+    public static final String RACING_TRACK_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Betting Centre server.
      */
-    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws06.ua.pt";
+    public static final String BETTING_CENTRE_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Horses server.
      */
-    public static final String HORSES_HOSTNAME = "l040101-ws07.ua.pt";
+    public static final String HORSES_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Spectators server.
      */
-    public static final String SPECTATORS_HOSTNAME = "l040101-ws08.ua.pt";
+    public static final String SPECTATORS_HOSTNAME = "127.0.0.1";
 
     /**
      * Hostname of the Broker server.
      */
-    public static final String BROKER_HOSTNAME = "l040101-ws09.ua.pt";
+    public static final String BROKER_HOSTNAME = "127.0.0.1";
 
     /**
      * Port number of the General Repository server.
@@ -94,4 +140,9 @@ public class HostsInfo {
      * Port number of the Broker server.
      */
     public static final int BROKER_PORT = 22409;
+
+    /**
+     * Broker status file path.
+     */
+    public static final String BROKER_STATUS_PATH = "/home/sd0401/broker-status.info";
 }
