@@ -54,5 +54,8 @@ public class ControlCentreMain {
                 controlCentreAPS.start();
             }
         }
+
+        // delete previously created status file
+        controlCentreInterface.deleteStatusFile();
     }
 }

@@ -223,7 +223,8 @@ public class ControlCentreStub {
 
         h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
+                ControlCentreMessageTypes.PROCEED_TO_PADDOCK,
+                h.getRaceID(), h.getRaceIdx()));
 
         if (inMessage.getMethod() !=
                 ControlCentreMessageTypes.PROCEED_TO_PADDOCK.getId()) {

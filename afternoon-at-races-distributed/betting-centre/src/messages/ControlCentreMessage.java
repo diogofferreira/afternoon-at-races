@@ -107,14 +107,16 @@ public class ControlCentreMessage implements Serializable {
      * @param method Method an entity invokes on the shared region server.
      * @param raceIdOrHorseIdx Field that represents the race identifier when
      *                         the invoked method is SUMMON_HORSES_TO_PADDOCK
-     *                         or the horse index a Spectator bet on when the
-     *                         server is responding to a HAVE_I_WON invocation.
+     *                         and PROCEED_TO_PADDOCK or the horse index a
+     *                         Spectator bet on when the server is responding
+     *                         to a HAVE_I_WON invocation.
      * @param entityId Id of the entity sending the message.
      */
     public ControlCentreMessage(ControlCentreMessageTypes method,
                                 int raceIdOrHorseIdx, int entityId) {
         this.method = method.getId();
-        if (method == ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK)
+        if (method == ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK ||
+                method == ControlCentreMessageTypes.PROCEED_TO_PADDOCK)
             this.raceId = raceIdOrHorseIdx;
         else
             this.horseIdx = raceIdOrHorseIdx;

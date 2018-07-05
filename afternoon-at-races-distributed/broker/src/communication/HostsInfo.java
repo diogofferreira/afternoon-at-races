@@ -142,6 +142,11 @@ public class HostsInfo {
     public static final int BROKER_PORT = 22409;
 
     /**
+     * Control Centre status file path.
+     */
+    public static final String CONTROL_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/control-centre-status.info";
+
+    /**
      * Broker status file path.
      */
     public static final String BROKER_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/broker-status.info";

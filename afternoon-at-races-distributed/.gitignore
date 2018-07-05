@@ -6,4 +6,5 @@
 *.iml
 logs/*
 out/
+out-*
 META-INF/

@@ -94,7 +94,8 @@ public class Broker extends Thread implements BrokerInt {
             try {
                 br = new BufferedReader(new FileReader(statusFile));
             } catch (FileNotFoundException e) {
-                System.err.format("%s: no such" + " file or directory%n", HostsInfo.BROKER_STATUS_PATH);
+                System.err.format("%s: no such" + " file or directory%n",
+                        HostsInfo.BROKER_STATUS_PATH);
                 System.exit(1);
             }
             String st;
@@ -114,31 +115,39 @@ public class Broker extends Thread implements BrokerInt {
                 System.err.println("Invalid Broker status file");
                 System.exit(1);
             }
-        }
+        } else
+            updateStatusFile(-1);
     }
 
+    /**
+     * Updates the step of the entity's lifecycle is in and saves all changes to a file.
+     * @param step Entity's lifecycle step.
+     */
     private void updateStatusFile(int step) {
-        PrintWriter pw = null;
+        PrintWriter pw;
 
         this.step = step;
         try {
             pw = new PrintWriter(new FileWriter(HostsInfo.BROKER_STATUS_PATH, false));
+            pw.println(this.step);
+            pw.println(this.state == null ? -1 : this.state.getId());
+            pw.println(this.raceNumber);
+            pw.println(Arrays.toString(this.winners));
+            pw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        pw.println(this.step);
-        pw.println(this.state.getId());
-        pw.println(this.raceNumber);
-        pw.println(Arrays.toString(this.winners));
-        pw.close();
     }
 
+    /**
+     * Deletes the previously created status file.
+     */
     private void deleteStatusFile() {
         try {
             Files.delete(Paths.get(HostsInfo.BROKER_STATUS_PATH));
         } catch (NoSuchFileException x) {
-            System.err.format("%s: no such" + " file or directory%n", HostsInfo.BROKER_STATUS_PATH);
+            System.err.format("%s: no such" + " file or directory%n",
+                    HostsInfo.BROKER_STATUS_PATH);
             System.exit(1);
         } catch (DirectoryNotEmptyException x) {
             System.err.format("%s not empty%n", HostsInfo.BROKER_STATUS_PATH);
@@ -154,7 +163,7 @@ public class Broker extends Thread implements BrokerInt {
      * Broker lifecycle.
      */
     public void run() {
-        if (this.step == 0) {
+        if (this.step == -1) {
             controlCentre.openTheEvent();
             updateStatusFile(0);
         }
@@ -172,8 +181,10 @@ public class Broker extends Thread implements BrokerInt {
                 updateStatusFile(2);
             }
 
-            if (!test && raceNumber == 1)
+            if (!test && raceNumber == 1) {
+                System.out.println("EXIT 2");
                 System.exit(1);
+            }
 
             // startTheRace
             if (this.step == 2) {

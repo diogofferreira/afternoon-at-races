@@ -2,6 +2,7 @@ package stubs;
 
 
 import communication.ClientCom;
+import communication.HostsInfo;
 import entities.BrokerInt;
 import entities.HorseInt;
 import entities.SpectatorInt;
@@ -10,6 +11,8 @@ import messageTypes.ControlCentreMessageTypes;
 import messages.ControlCentreMessage;
 import states.BrokerState;
 import states.SpectatorState;
+
+import java.io.File;
 
 /**
  * This data type defines the communication stub of Control Centre.
@@ -25,6 +28,8 @@ public class ControlCentreStub {
      */
     private int serverPortNumb;
 
+    private boolean test;
+
     /**
      * Instantiation of the stub.
      *
@@ -35,6 +40,9 @@ public class ControlCentreStub {
     public ControlCentreStub(String hostName, int port) {
         serverHostName = hostName;
         serverPortNumb = port;
+
+        File statusFile = new File(HostsInfo.BROKER_STATUS_PATH);
+        this.test = statusFile.isFile();
     }
 
     /**
@@ -52,7 +60,15 @@ public class ControlCentreStub {
         }
 
         com.writeObject(outMessage);
-        inMessage = (ControlCentreMessage)com.readObject();
+
+        // Exit only of first execution on the OPEN_THE_EVENT message
+        if (!test && outMessage.getMethod() ==
+                ControlCentreMessageTypes.OPEN_THE_EVENT.getId()) {
+            System.out.println("EXIT 1");
+            System.exit(1);
+        }
+
+        inMessage = (ControlCentreMessage) com.readObject();
         com.close();
 
         return inMessage;
@@ -223,7 +239,8 @@ public class ControlCentreStub {
 
         h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new ControlCentreMessage(
-                ControlCentreMessageTypes.PROCEED_TO_PADDOCK, h.getRaceIdx()));
+                ControlCentreMessageTypes.PROCEED_TO_PADDOCK,
+                h.getRaceID(), h.getRaceIdx()));
 
         if (inMessage.getMethod() !=
                 ControlCentreMessageTypes.PROCEED_TO_PADDOCK.getId()) {
