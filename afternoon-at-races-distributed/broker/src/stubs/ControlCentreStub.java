@@ -63,7 +63,8 @@ public class ControlCentreStub {
 
         // Exit only of first execution on the OPEN_THE_EVENT message
         if (!test && outMessage.getMethod() ==
-                ControlCentreMessageTypes.OPEN_THE_EVENT.getId()) {
+                ControlCentreMessageTypes.START_THE_RACE.getId()
+                && outMessage.getRaceId() == 0) {
             System.out.println("EXIT 1");
             System.exit(1);
         }

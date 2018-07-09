@@ -113,8 +113,8 @@ public class ControlCentre {
         this.waitForRace = this.mutex.newCondition();
         this.watchingRace = this.mutex.newCondition();
         this.startingRace = this.mutex.newCondition();
-        this.spectatorsInPaddock = false;
 
+        this.spectatorsInPaddock = false;
         this.spectatorsCanProceed = false;
         this.raceFinished = false;
         this.reportsPosted = false;
@@ -266,6 +266,7 @@ public class ControlCentre {
     public void startTheRace() {
         mutex.lock();
 
+        System.out.println(raceFinished);
         // broker wait
         while (!raceFinished) {
             try {

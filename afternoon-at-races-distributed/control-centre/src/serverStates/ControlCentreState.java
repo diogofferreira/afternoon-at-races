@@ -1,116 +1,108 @@
 package serverStates;
 
-import main.EventVariables;
-import messageTypes.ControlCentreMessageTypes;
-
-import java.util.Arrays;
-
-/**
- * Definition of the Control Centre states.
- */
 public class ControlCentreState {
-    private int entityId;
 
-    private ControlCentreMessageTypes mType;
+    private int methodId;
 
-    private int raceNumber;
+    private int conditionVariableId;
 
-    private boolean isThereARace;
+    /**
+     * Flag that signals if the Spectators are still at the Paddock.
+     */
+    private boolean spectatorsInPaddock;
 
-    private int[] winners;
+    /**
+     * Flag that signals if the Spectators can proceed to the Paddock.
+     */
+    private boolean spectatorsCanProceed;
 
-    private boolean haveIWon;
+    /**
+     * Flag that signals the Broker if that race has already finished.
+     */
+    private boolean raceFinished;
 
-    public ControlCentreState(int entityId, ControlCentreMessageTypes mType, int raceNumber) {
-        if (entityId < 0 || raceNumber > EventVariables.NUMBER_OF_RACES)
-            throw new IllegalArgumentException("Illegal arguments");
+    /**
+     * Flag that signals the Spectators waiting for the results of the race
+     * to be announced.
+     */
+    private boolean reportsPosted;
 
-        this.entityId = entityId;
-        this.mType = mType;
-        this.raceNumber = raceNumber;
+    /**
+     * Counter that increments each time a spectator is waken up by the
+     * announcing of the race results.
+     */
+    private int spectatorsLeavingRace;
+
+    /**
+     * Flag that signals if the event has already ended;
+     */
+    private boolean eventEnded;
+
+    public ControlCentreState(int methodId) {
+        this.methodId = methodId;
     }
 
-    public ControlCentreState(String info) {
-        if (info == null || info.length() < 1)
-            throw new IllegalArgumentException("Illegal info string");
-
-        try {
-            String[] args = info.split("\\|");
-
-            this.entityId = Integer.parseInt(args[0]);
-            this.mType = ControlCentreMessageTypes.getType(Integer.parseInt(args[1]));
-            this.raceNumber = Integer.parseInt(args[2]);
-            this.isThereARace = Boolean.parseBoolean(args[3]);
-
-            String[] w = args[4].equals("null") ? null :
-                    args[4].substring(1, args[4].length()-1).split(",");
-            if (w != null) {
-                this.winners = new int[w.length];
-                for (int i = 0; i < w.length; i++)
-                    this.winners[i] = Integer.parseInt(w[i].trim());
-            }
-
-            this.haveIWon = Boolean.parseBoolean(args[5]);
-
-        } catch (Exception e) {
-            System.err.println("Invalid info arguments");
-            System.exit(1);
-        }
-
+    public int getMethodId() {
+        return methodId;
     }
 
-    public int getEntityId() {
-        return entityId;
+    public void setMethodId(int methodId) {
+        this.methodId = methodId;
     }
 
-    public void setEntityId(int entityId) {
-        this.entityId = entityId;
+    public int getConditionVariableId() {
+        return conditionVariableId;
     }
 
-    public ControlCentreMessageTypes getmType() {
-        return mType;
+    public void setConditionVariableId(int conditionVariableId) {
+        this.conditionVariableId = conditionVariableId;
     }
 
-    public void setmType(ControlCentreMessageTypes mType) {
-        this.mType = mType;
+    public boolean isSpectatorsInPaddock() {
+        return spectatorsInPaddock;
     }
 
-    public int getRaceNumber() {
-        return raceNumber;
+    public void setSpectatorsInPaddock(boolean spectatorsInPaddock) {
+        this.spectatorsInPaddock = spectatorsInPaddock;
     }
 
-    public void setRaceNumber(int raceNumber) {
-        this.raceNumber = raceNumber;
+    public boolean isSpectatorsCanProceed() {
+        return spectatorsCanProceed;
     }
 
-    public boolean isThereARace() {
-        return isThereARace;
+    public void setSpectatorsCanProceed(boolean spectatorsCanProceed) {
+        this.spectatorsCanProceed = spectatorsCanProceed;
     }
 
-    public void setThereARace(boolean thereARace) {
-        isThereARace = thereARace;
+    public boolean isRaceFinished() {
+        return raceFinished;
     }
 
-    public int[] getWinners() {
-        return winners;
+    public void setRaceFinished(boolean raceFinished) {
+        this.raceFinished = raceFinished;
     }
 
-    public void setWinners(int[] winners) {
-        this.winners = winners;
+    public boolean isReportsPosted() {
+        return reportsPosted;
     }
 
-    public boolean isHaveIWon() {
-        return haveIWon;
+    public void setReportsPosted(boolean reportsPosted) {
+        this.reportsPosted = reportsPosted;
     }
 
-    public void setHaveIWon(boolean haveIWon) {
-        this.haveIWon = haveIWon;
+    public int getSpectatorsLeavingRace() {
+        return spectatorsLeavingRace;
     }
 
-    @Override
-    public String toString() {
-        int mId = mType == null ? -1 : mType.getId();
-        return entityId + "|" + mId + "|" + raceNumber + "|" + isThereARace
-                + "|" + Arrays.toString(winners) + "|" +  haveIWon;
+    public void setSpectatorsLeavingRace(int spectatorsLeavingRace) {
+        this.spectatorsLeavingRace = spectatorsLeavingRace;
+    }
+
+    public boolean isEventEnded() {
+        return eventEnded;
+    }
+
+    public void setEventEnded(boolean eventEnded) {
+        this.eventEnded = eventEnded;
     }
 }

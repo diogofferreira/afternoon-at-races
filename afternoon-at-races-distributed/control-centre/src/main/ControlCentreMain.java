@@ -56,6 +56,6 @@ public class ControlCentreMain {
         }
 
         // delete previously created status file
-        controlCentreInterface.deleteStatusFile();
+        controlCentreInterface.deleteStatusFiles();
     }
 }
