@@ -123,7 +123,8 @@ public class StableStub {
 
         h = (HorseInt) Thread.currentThread();
         inMessage = exchange(new StableMessage(
-                StableMessageTypes.PROCEED_TO_STABLE, h.getAgility(), h.getID()));
+                StableMessageTypes.PROCEED_TO_STABLE, h.getRaceID(),
+                h.getAgility(), h.getCurrentPosition() > 0, h.getID()));
 
         if (inMessage.getMethod() !=
                 StableMessageTypes.PROCEED_TO_STABLE.getId()) {

@@ -56,5 +56,8 @@ public class StableMain {
                 stableAPS.start();
             }
         }
+
+        // delete previously created status file
+        stableInterface.deleteStatusFiles();
     }
 }

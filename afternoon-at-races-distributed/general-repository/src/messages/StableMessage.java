@@ -40,6 +40,11 @@ public class StableMessage implements Serializable {
      */
     private int agility;
 
+    /**
+     * Indicates if an Horse as already run.
+     */
+    private boolean alreadyRun;
+
     // arguments
     /**
      * Array of Horse/Jockey pair IDs that will store the lineups for all races.
@@ -157,6 +162,23 @@ public class StableMessage implements Serializable {
     }
 
     /**
+     * Constructor (type 6).
+     * @param method Method an entity invokes on the shared region server.
+     * @param raceID Id of the race.
+     * @param agility Horses' agility value.
+     * @param alreadyRun Indicates if the horse has already finished a race.
+     * @param entityId Id of the entity sending the message.
+     */
+    public StableMessage(StableMessageTypes method, int raceID, int agility,
+                         boolean alreadyRun, int entityId) {
+        this.method = method.getId();
+        this.raceId = raceID;
+        this.agility = agility;
+        this.alreadyRun = alreadyRun;
+        this.entityId = entityId;
+    }
+
+    /**
      * Method that returns an integer identifier of the method invoked on the
      * shared region.
      * @return The identifier of the method invoked on the shared region.
@@ -218,6 +240,14 @@ public class StableMessage implements Serializable {
      */
     public int getAgility() {
         return agility;
+    }
+
+    /**
+     * Method that returns true if Horse has already run a race.
+     * @return True if Horse has already run a race.
+     */
+    public boolean isAlreadyRun() {
+        return alreadyRun;
     }
 
     /**
