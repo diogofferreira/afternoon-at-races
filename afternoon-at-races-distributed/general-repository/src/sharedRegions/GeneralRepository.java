@@ -7,6 +7,7 @@ import states.SpectatorState;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.locks.Lock;
@@ -72,6 +73,16 @@ public class GeneralRepository {
     private int[] spectatorsBet;
 
     /**
+     * Indicates if a given Spectator has already placed a bet.
+     */
+    private boolean[] spectatorsAlreadyBetted;
+
+    /**
+     * Indicates if a given Spectator has already got his gains.
+     */
+    private boolean[] spectatorsAlreadyHounoured;
+
+    /**
      * Bidimensional array with the agilities (maximum step per iteration) of
      * all the horses that will race, indexed by the raceID and raceIdx of each.
      */
@@ -117,6 +128,8 @@ public class GeneralRepository {
         this.spectatorsWallet = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
         this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
+        this.spectatorsAlreadyBetted = new boolean[EventVariables.NUMBER_OF_SPECTATORS];
+        this.spectatorsAlreadyHounoured = new boolean[EventVariables.NUMBER_OF_SPECTATORS];
         this.horsesAgility = new int[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
         this.horsesOdd = new double[EventVariables.NUMBER_OF_RACES]
@@ -131,6 +144,7 @@ public class GeneralRepository {
             this.spectatorsWallet[i] = -1;
             this.spectatorsBettedHorse[i] = -1;
             this.spectatorsBet[i] = -1;
+            this.spectatorsAlreadyBetted[i] = false;
         }
 
         // Set up initial values for horses info
@@ -291,8 +305,10 @@ public class GeneralRepository {
     public void setBrokerState(BrokerState brokerState) {
         mutex.lock();
 
-        this.brokerState = brokerState;
-        printState();
+        if (this.brokerState != brokerState) {
+            this.brokerState = brokerState;
+            printState();
+        }
 
         mutex.unlock();
     }
@@ -307,15 +323,17 @@ public class GeneralRepository {
 
         if (this.spectatorsState[spectatorId] == null)
             this.spectatorsWallet[spectatorId] = EventVariables.INITIAL_WALLET;
-        this.spectatorsState[spectatorId] = spectatorState;
+        else if (this.spectatorsState[spectatorId] != spectatorState) {
+            this.spectatorsState[spectatorId] = spectatorState;
 
-        if (spectatorState == SpectatorState.CELEBRATING) {
-            celebrating++;
-            spectatorsBet[spectatorId] = -1;
-            spectatorsBettedHorse[spectatorId] = -1;
+            if (spectatorState == SpectatorState.CELEBRATING) {
+                celebrating++;
+                spectatorsBet[spectatorId] = -1;
+                spectatorsBettedHorse[spectatorId] = -1;
+            }
+
+            printState();
         }
-
-        printState();
 
         mutex.unlock();
     }
@@ -329,7 +347,10 @@ public class GeneralRepository {
     public void setSpectatorGains(int spectatorId, int amount) {
         mutex.lock();
 
-        this.spectatorsWallet[spectatorId] += amount;
+        if (!spectatorsAlreadyHounoured[spectatorId]) {
+            this.spectatorsWallet[spectatorId] += amount;
+            spectatorsAlreadyHounoured[spectatorId] = true;
+        }
 
         mutex.unlock();
     }
@@ -343,13 +364,15 @@ public class GeneralRepository {
     public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
         mutex.lock();
 
-        this.horsesState[raceID][horseIdx] = horseState;
-        if (horseState == HorseState.AT_THE_STARTING_LINE) {
-            this.horsesPosition[horseIdx] = 0;
-            this.horsesStep[horseIdx] = 0;
+        if (this.horsesState[raceID][horseIdx] != horseState) {
+            this.horsesState[raceID][horseIdx] = horseState;
+            if (horseState == HorseState.AT_THE_STARTING_LINE) {
+                this.horsesPosition[horseIdx] = 0;
+                this.horsesStep[horseIdx] = 0;
+            }
+            if (raceID == raceNumber && horseState != HorseState.RUNNING)
+                printState();
         }
-        if (raceID == raceNumber && horseState != HorseState.RUNNING)
-            printState();
 
         mutex.unlock();
     }
@@ -379,11 +402,14 @@ public class GeneralRepository {
                                  int spectatorBettedHorse) {
         mutex.lock();
 
-        this.spectatorsBet[spectatorId] = spectatorBet;
-        this.spectatorsBettedHorse[spectatorId] = spectatorBettedHorse;
-        this.spectatorsWallet[spectatorId] -= spectatorBet;
+        if (!this.spectatorsAlreadyBetted[spectatorId]) {
+            this.spectatorsBet[spectatorId] = spectatorBet;
+            this.spectatorsBettedHorse[spectatorId] = spectatorBettedHorse;
+            this.spectatorsWallet[spectatorId] -= spectatorBet;
+            this.spectatorsAlreadyBetted[spectatorId] = true;
 
-        printState();
+            printState();
+        }
 
         mutex.unlock();
     }
@@ -411,9 +437,11 @@ public class GeneralRepository {
     public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
         mutex.lock();
 
-        this.horsesPosition[horseIdx] = horsePosition;
-        this.horsesStep[horseIdx] = horseStep;
-        printState();
+        if (this.horsesStep[horseStep] != horseStep) {
+            this.horsesPosition[horseIdx] = horsePosition;
+            this.horsesStep[horseIdx] = horseStep;
+            printState();
+        }
 
         mutex.unlock();
     }
@@ -425,8 +453,10 @@ public class GeneralRepository {
     public void setHorsesStanding(int[] standings) {
         mutex.lock();
 
-        this.horsesStanding = standings;
-        printState();
+        if (!Arrays.equals(this.horsesStanding, standings)) {
+            this.horsesStanding = standings;
+            printState();
+        }
 
         mutex.unlock();
     }
@@ -438,24 +468,28 @@ public class GeneralRepository {
      * @param raceNumber The updated race number.
      */
     public void initRace(int raceNumber) {
-        this.raceNumber = raceNumber;
-        this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
-        this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
-        this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+        if (this.raceNumber != raceNumber) {
+            this.raceNumber = raceNumber;
+            this.spectatorsBettedHorse = new int[EventVariables.NUMBER_OF_SPECTATORS];
+            this.spectatorsBet = new int[EventVariables.NUMBER_OF_SPECTATORS];
+            this.horsesStep = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+            this.horsesPosition = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
+            this.horsesStanding = new int[EventVariables.NUMBER_OF_HORSES_PER_RACE];
 
-        // Set up initial values for spectators info
-        for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
-            this.spectatorsBettedHorse[i] = -1;
-            this.spectatorsBet[i] = -1;
-        }
+            // Set up initial values for spectators info
+            for (int i = 0; i < EventVariables.NUMBER_OF_SPECTATORS; i++) {
+                this.spectatorsBettedHorse[i] = -1;
+                this.spectatorsBet[i] = -1;
+                this.spectatorsAlreadyBetted[i] = false;
+                this.spectatorsAlreadyHounoured [i] = false;
+            }
 
-        // Set up initial values for horses info
-        for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
-            this.horsesStep[i] = -1;
-            this.horsesPosition[i] = -1;
-            this.horsesStanding[i] = -1;
+            // Set up initial values for horses info
+            for (int i = 0; i < EventVariables.NUMBER_OF_HORSES_PER_RACE; i++) {
+                this.horsesStep[i] = -1;
+                this.horsesPosition[i] = -1;
+                this.horsesStanding[i] = -1;
+            }
         }
     }
 }
