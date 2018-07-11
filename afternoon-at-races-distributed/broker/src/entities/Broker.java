@@ -57,7 +57,7 @@ public class Broker extends Thread implements BrokerInt {
      */
     private BettingCentreStub bettingCentre;
 
-    private boolean test;
+    private int numExecs;
 
     /**
      * Creates a new instance of Broker.
@@ -70,7 +70,7 @@ public class Broker extends Thread implements BrokerInt {
      *                      Betting Centre.
      */
     public Broker(StableStub stable, RacingTrackStub racingTrack,
-                  ControlCentreStub controlCentre, BettingCentreStub bettingCentre) {
+                  ControlCentreStub controlCentre, BettingCentreStub bettingCentre, int numExecs) {
         if (stable == null || racingTrack == null ||
                 controlCentre == null || bettingCentre == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
@@ -83,14 +83,13 @@ public class Broker extends Thread implements BrokerInt {
         this.controlCentre = controlCentre;
         this.bettingCentre = bettingCentre;
         this.racingTrack = racingTrack;
+        this.numExecs = numExecs;
 
         /* Check if status file exists, if so, load previous state */
         File statusFile = new File(HostsInfo.BROKER_STATUS_PATH);
         BufferedReader br = null;
 
-        test = false;
         if (statusFile.isFile()) {
-            test = true;
             try {
                 br = new BufferedReader(new FileReader(statusFile));
             } catch (FileNotFoundException e) {
@@ -181,7 +180,7 @@ public class Broker extends Thread implements BrokerInt {
                 updateStatusFile(2);
             }
 
-            if (!test && raceNumber == 1) {
+            if (numExecs == 1 && raceNumber == 1) {
                 System.out.println("EXIT 2");
                 System.exit(1);
             }

@@ -77,8 +77,7 @@ public class StableInterface {
                 }
             }
         } else {
-            this.stStates[0] = new StableClientsState(0, null, -1);
-            for (int i = 1; i < this.stStates.length; i++)
+            for (int i = 0; i < this.stStates.length; i++)
                 this.stStates[i] = new StableClientsState(i, null, -1);
         }
     }

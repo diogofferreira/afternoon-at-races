@@ -4,7 +4,7 @@ FILE="/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-di
 i=0;
 
 while : ; do
-    java -cp out-${1} ${2}
+    java -cp out-${1} ${2} ${i}
     i=$((i+1))
-    [[ -f $FILE && $i < 3 ]] || break
+    [[ -f $FILE && $i < 4 ]] || break
 done

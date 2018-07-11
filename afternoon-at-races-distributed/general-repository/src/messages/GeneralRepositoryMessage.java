@@ -180,38 +180,48 @@ public class GeneralRepositoryMessage implements Serializable {
     /**
      * Constructor (type 3).
      * @param method Method an entity invokes on the shared region server.
-     * @param raceIdOrHorsePosition Field that represents either the current race
-     *                              id or the final Horses' position in the race.
+     * @param raceId Field that represents the current race id.
      * @param horseIdx Horse's index in the race.
-     * @param stateOrAgilityOrStep Field that represents either the current entity
-     *                             state, the Horses' agility value or the Horses'
-     *                             position in the track.
+     * @param stateOrAgility Field that represents either the current entity
+     *                             state or the Horses' agility value.
      * @param entityId Id of the entity sending the message.
      */
     public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
-                                    int raceIdOrHorsePosition, int horseIdx,
-                                    int stateOrAgilityOrStep,
-                                    int entityId) {
+                                    int raceId, int horseIdx,
+                                    int stateOrAgility, int entityId) {
         this.method = method.getId();
         this.horseIdx = horseIdx;
-        switch (method) {
-            case SET_HORSE_STATE:
-                this.horseState = stateOrAgilityOrStep;
-                this.raceNumber = raceIdOrHorsePosition;
-                break;
-            case SET_HORSE_AGILITY:
-                this.horseAgility = stateOrAgilityOrStep;
-                this.raceNumber = raceIdOrHorsePosition;
-                break;
-            case SET_HORSE_POSITION:
-                this.horseStep = stateOrAgilityOrStep;
-                this.horsePosition = raceIdOrHorsePosition;
-        }
+        if (method == GeneralRepositoryMessageTypes.SET_HORSE_STATE)
+            this.horseState = stateOrAgility;
+        else
+            this.horseAgility = stateOrAgility;
+
+        this.raceNumber = raceId;
         this.entityId = entityId;
     }
 
     /**
      * Constructor (type 4).
+     * @param method Method an entity invokes on the shared region server.
+     * @param raceId Field that represents the current race id.
+     * @param horsePosition Field that represents the final Horses' position in the race.
+     * @param horseIdx Horse's index in the race.
+     * @param horseStep Field that represents the Horses' position in the track.
+     * @param entityId Id of the entity sending the message.
+     */
+    public GeneralRepositoryMessage(GeneralRepositoryMessageTypes method,
+                                    int raceId, int horsePosition, int horseIdx,
+                                    int horseStep, int entityId) {
+        this.method = method.getId();
+        this.raceNumber = raceId;
+        this.horsePosition = horsePosition;
+        this.horseIdx = horseIdx;
+        this.horseStep = horseStep;
+        this.entityId = entityId;
+    }
+
+    /**
+     * Constructor (type 5).
      * @param method Method an entity invokes on the shared region server.
      * @param spectatorBet Value of the Spectators' current bet.
      * @param bettedHorse RaceIdx of the Horse the Spectator bet on the current race.
@@ -226,7 +236,7 @@ public class GeneralRepositoryMessage implements Serializable {
     }
 
     /**
-     * Constructor (type 5).
+     * Constructor (type 6).
      * @param method Method an entity invokes on the shared region server.
      * @param raceId Current race id.
      * @param horsesOdd Array containing the Horse odds of winning.
@@ -241,7 +251,7 @@ public class GeneralRepositoryMessage implements Serializable {
     }
 
     /**
-     * Constructor (type 6).
+     * Constructor (type 7).
      * @param method Method an entity invokes on the shared region server.
      * @param standings Array that indicates if the Horse/Jockey pair has already
      *                 crossed the finish line (0 - false / 1 - true).

@@ -16,14 +16,15 @@ public class BrokerMain {
      * Main method.
      * @param args Runtime arguments.
      */
-    public static void main (String [] args) {
+    public static void main (String[] args) {
         StableStub stable;                          // instance of Stable
         RacingTrackStub racingTrack;                // instance of Racing Track
         ControlCentreStub controlCentre;            // instance of Control Centre
         BettingCentreStub bettingCentre;            // instance of Betting Centre
+        int numExecs;
 
-
-        System.out.println("BROKEEER");
+        numExecs = Integer.parseInt(args[0]);
+        System.out.println("BROKEEER " + numExecs);
         /**
          * LOCATIONS
          * GR - ws01
@@ -40,10 +41,10 @@ public class BrokerMain {
         // shared regions initialization
         stable = new StableStub(
                 HostsInfo.STABLE_HOSTNAME,
-                HostsInfo.STABLE_PORT);
+                HostsInfo.STABLE_PORT, numExecs);
         controlCentre = new ControlCentreStub(
                 HostsInfo.CONTROL_CENTRE_HOSTNAME,
-                HostsInfo.CONTROL_CENTRE_PORT);
+                HostsInfo.CONTROL_CENTRE_PORT, numExecs);
         racingTrack = new RacingTrackStub(
                 HostsInfo.RACING_TRACK_HOSTNAME,
                 HostsInfo.RACING_TRACK_PORT);
@@ -60,7 +61,7 @@ public class BrokerMain {
                 22406);*/
 
         // entities initialization
-        Broker broker = new Broker(stable, racingTrack, controlCentre, bettingCentre);
+        Broker broker = new Broker(stable, racingTrack, controlCentre, bettingCentre, numExecs);
 
         // start of the simulation
         broker.start();

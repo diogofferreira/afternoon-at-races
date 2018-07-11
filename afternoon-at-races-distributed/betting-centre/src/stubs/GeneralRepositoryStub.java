@@ -158,8 +158,10 @@ public class GeneralRepositoryStub {
             throw new IllegalArgumentException("Invalid horse step");
 
         inMessage = exchange(new GeneralRepositoryMessage(
-                GeneralRepositoryMessageTypes.SET_HORSE_POSITION, horsePosition,
-                horseIdx, horseStep, ((HorseInt)Thread.currentThread()).getID()));
+                GeneralRepositoryMessageTypes.SET_HORSE_POSITION,
+                        ((HorseInt)Thread.currentThread()).getRaceID(),
+                horsePosition, horseIdx, horseStep,
+                ((HorseInt)Thread.currentThread()).getID()));
 
         if (inMessage.getMethod() !=
                 GeneralRepositoryMessageTypes.SET_HORSE_POSITION.getId()) {

@@ -1,11 +1,14 @@
 package stubs;
 
 import communication.ClientCom;
+import communication.HostsInfo;
 import entities.HorseInt;
 import main.EventVariables;
 import messageTypes.StableMessageTypes;
 import messages.StableMessage;
 import states.HorseState;
+
+import java.io.File;
 
 
 /**
@@ -23,15 +26,21 @@ public class StableStub {
     private int serverPortNumb;
 
     /**
+     * Variable to test client crashes.
+     */
+    private int numExecs;
+
+    /**
      * Instantiation of the stub.
      *
      * @param hostName host name of the computational system where the server
      *                 is located.
      * @param port Port number where the server is listening.
      */
-    public StableStub(String hostName, int port) {
+    public StableStub(String hostName, int port, int numExecs) {
         serverHostName = hostName;
         serverPortNumb = port;
+        this.numExecs = numExecs;
     }
 
     /**
@@ -49,6 +58,15 @@ public class StableStub {
         }
 
         com.writeObject(outMessage);
+
+        // Exit only of first execution on the OPEN_THE_EVENT message
+        if (numExecs == 0 && outMessage.getMethod() ==
+                StableMessageTypes.SUMMON_HORSES_TO_PADDOCK.getId()
+                && outMessage.getRaceId() == 0) {
+            System.out.println("EXIT 1");
+            System.exit(1);
+        }
+
         inMessage = (StableMessage) com.readObject();
         com.close();
 

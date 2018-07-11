@@ -301,16 +301,20 @@ public class GeneralRepository {
     /**
      * Method that updates the Broker state.
      * @param brokerState The new Broker state.
+     * @return True if the Broker state was updated.
      */
-    public void setBrokerState(BrokerState brokerState) {
+    public boolean setBrokerState(BrokerState brokerState) {
+        boolean updated = false;
         mutex.lock();
 
         if (this.brokerState != brokerState) {
             this.brokerState = brokerState;
             printState();
+            updated = true;
         }
 
         mutex.unlock();
+        return updated;
     }
 
     /**
@@ -323,7 +327,8 @@ public class GeneralRepository {
 
         if (this.spectatorsState[spectatorId] == null)
             this.spectatorsWallet[spectatorId] = EventVariables.INITIAL_WALLET;
-        else if (this.spectatorsState[spectatorId] != spectatorState) {
+
+        if (this.spectatorsState[spectatorId] != spectatorState) {
             this.spectatorsState[spectatorId] = spectatorState;
 
             if (spectatorState == SpectatorState.CELEBRATING) {
@@ -360,8 +365,10 @@ public class GeneralRepository {
      * @param raceID The ID of the race which the pair will run.
      * @param horseIdx The raceIdx of the Horse whose state will be updated.
      * @param horseState The next Horse state.
+     * @return True if the Horse state was updated.
      */
-    public void setHorseState(int raceID, int horseIdx, HorseState horseState) {
+    public boolean setHorseState(int raceID, int horseIdx, HorseState horseState) {
+        boolean updated = false;
         mutex.lock();
 
         if (this.horsesState[raceID][horseIdx] != horseState) {
@@ -372,9 +379,12 @@ public class GeneralRepository {
             }
             if (raceID == raceNumber && horseState != HorseState.RUNNING)
                 printState();
+
+            updated = true;
         }
 
         mutex.unlock();
+        return updated;
     }
 
     /**
@@ -437,7 +447,7 @@ public class GeneralRepository {
     public void setHorsePosition(int horseIdx, int horsePosition, int horseStep) {
         mutex.lock();
 
-        if (this.horsesStep[horseStep] != horseStep) {
+        if (this.horsesStep[horseIdx] != horseStep) {
             this.horsesPosition[horseIdx] = horsePosition;
             this.horsesStep[horseIdx] = horseStep;
             printState();

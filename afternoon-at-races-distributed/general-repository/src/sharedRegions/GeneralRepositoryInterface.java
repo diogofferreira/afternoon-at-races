@@ -3,6 +3,7 @@ package sharedRegions;
 import main.EventVariables;
 import messageTypes.GeneralRepositoryMessageTypes;
 import messages.GeneralRepositoryMessage;
+import serverStates.GeneralRepositoryClientsState;
 import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
@@ -27,6 +28,11 @@ public class GeneralRepositoryInterface {
     private GeneralRepository generalRepository;
 
     /**
+     * Array with the states of active entities.
+     */
+    private GeneralRepositoryClientsState[] grStates;
+
+    /**
      * Creates a new instance of an interface of the General Repository
      * shared region.
      * @param generalRepository Instance of the General Repository shared region.
@@ -37,6 +43,11 @@ public class GeneralRepositoryInterface {
 
         this.generalRepository = generalRepository;
         this.requests = 0;
+        this.grStates = new GeneralRepositoryClientsState[
+                1 + EventVariables.NUMBER_OF_HORSES +
+                        EventVariables.NUMBER_OF_SPECTATORS];
+        for (int i = 0; i < this.grStates.length; i++)
+            this.grStates[i] = new GeneralRepositoryClientsState();
     }
 
     /**
@@ -71,7 +82,10 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid race ID");
 
+                grStates[0].enterMonitor();
                 generalRepository.initRace(raceID);
+                grStates[0].exitMonitor();
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.INIT_RACE,
                         inMessage.getEntityId());
@@ -83,11 +97,13 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid broker state");
 
-                generalRepository.setBrokerState(brokerState);
+                grStates[0].enterMonitor();
+                boolean updated = generalRepository.setBrokerState(brokerState);
 
                 // Update counter
-                if (brokerState == BrokerState.PLAYING_HOST_AT_THE_BAR)
+                if (updated && brokerState == BrokerState.PLAYING_HOST_AT_THE_BAR)
                     requests++;
+                grStates[0].exitMonitor();
 
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_BROKER_STATE,
@@ -108,16 +124,24 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid horse agility");
 
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].enterMonitor();
                 generalRepository.setHorseAgility(raceID, horseIdx, horseAgility);
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].exitMonitor();
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSE_AGILITY,
                         inMessage.getEntityId());
 
             case SET_HORSE_POSITION:
+                raceID = inMessage.getRaceNumber();
                 horseIdx = inMessage.getHorseIdx();
                 horsePosition = inMessage.getHorsePosition();
                 horseStep = inMessage.getHorseStep();
 
+                if (raceID <0 || raceID >= EventVariables.NUMBER_OF_RACES)
+                    return new GeneralRepositoryMessage(
+                            inMessage, "Invalid race ID");
                 if (horseIdx < 0 ||
                         horseIdx >= EventVariables.NUMBER_OF_HORSES_PER_RACE)
                     return new GeneralRepositoryMessage(
@@ -129,8 +153,12 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid horse step");
 
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].enterMonitor();
                 generalRepository.setHorsePosition(
                         horseIdx, horsePosition, horseStep);
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].exitMonitor();
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSE_POSITION,
                         inMessage.getEntityId());
@@ -147,7 +175,9 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid horse odds array");
 
+                grStates[0].enterMonitor();
                 generalRepository.setHorsesOdd(raceID, horsesOdd);
+                grStates[0].exitMonitor();
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSES_ODD,
                         inMessage.getEntityId());
@@ -160,7 +190,9 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid standings array");
 
+                grStates[0].enterMonitor();
                 generalRepository.setHorsesStanding(standings);
+                grStates[0].exitMonitor();
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSES_STANDING,
                         inMessage.getEntityId());
@@ -181,12 +213,17 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid horse state");
 
-                generalRepository.setHorseState(raceID, horseIdx, horseState);
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].enterMonitor();
+                boolean hUpdated = generalRepository.setHorseState(
+                        raceID, horseIdx, horseState);
 
                 // Update internal counters
-                if (raceID == EventVariables.NUMBER_OF_RACES - 1
+                if (hUpdated && raceID == EventVariables.NUMBER_OF_RACES - 1
                         && horseState == HorseState.AT_THE_STABLE)
                     requests++;
+                grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                        horseIdx].exitMonitor();
 
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_HORSE_STATE,
@@ -201,7 +238,12 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid spectator ID");
 
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].enterMonitor();
                 generalRepository.setSpectatorGains(spectatorID, amount);
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].exitMonitor();
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_SPECTATOR_GAINS,
                         amount,
@@ -224,8 +266,13 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid spectator betted horse");
 
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].enterMonitor();
                 generalRepository.setSpectatorsBet(
                         spectatorID, spectatorBet, spectatorBettedHorse);
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].exitMonitor();
+
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_SPECTATORS_BET,
                         inMessage.getEntityId());
@@ -247,8 +294,11 @@ public class GeneralRepositoryInterface {
                     return new GeneralRepositoryMessage(
                             inMessage, "Invalid spectator state");
 
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].enterMonitor();
                 generalRepository.setSpectatorState(spectatorID, spectatorState);
-
+                grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                        spectatorID].exitMonitor();
 
                 return new GeneralRepositoryMessage(
                         GeneralRepositoryMessageTypes.SET_SPECTATOR_STATE,

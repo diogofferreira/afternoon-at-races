@@ -28,7 +28,7 @@ public class ControlCentreStub {
      */
     private int serverPortNumb;
 
-    private boolean test;
+    private int numExecs;
 
     /**
      * Instantiation of the stub.
@@ -37,12 +37,10 @@ public class ControlCentreStub {
      *                 is located.
      * @param port Port number where the server is listening.
      */
-    public ControlCentreStub(String hostName, int port) {
+    public ControlCentreStub(String hostName, int port, int numExecs) {
         serverHostName = hostName;
         serverPortNumb = port;
-
-        File statusFile = new File(HostsInfo.BROKER_STATUS_PATH);
-        this.test = statusFile.isFile();
+        this.numExecs = numExecs;
     }
 
     /**
@@ -62,10 +60,10 @@ public class ControlCentreStub {
         com.writeObject(outMessage);
 
         // Exit only of first execution on the OPEN_THE_EVENT message
-        if (!test && outMessage.getMethod() ==
+        if (numExecs == 2 && outMessage.getMethod() ==
                 ControlCentreMessageTypes.START_THE_RACE.getId()
                 && outMessage.getRaceId() == 0) {
-            System.out.println("EXIT 1");
+            System.out.println("EXIT 3");
             System.exit(1);
         }
 
