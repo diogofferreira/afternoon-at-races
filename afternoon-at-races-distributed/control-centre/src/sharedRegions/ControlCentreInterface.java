@@ -170,9 +170,6 @@ public class ControlCentreInterface {
                     return new ControlCentreMessage(
                             inMessage, "Invalid race ID");
                 else {
-                    System.out.println(ccStates[0]);
-                    System.out.println(raceID);
-
                     ccStates[0].enterMonitor();
                     if ((ccStates[0].getmType() == ControlCentreMessageTypes.OPEN_THE_EVENT
                             || ccStates[0].getmType() == ControlCentreMessageTypes.REPORT_RESULTS)
@@ -291,12 +288,10 @@ public class ControlCentreInterface {
 
             case START_THE_RACE:
                 ccStates[0].enterMonitor();
-                System.out.println(ccStates[0].getmType());
                 if (ccStates[0].getmType() ==
                         ControlCentreMessageTypes.SUMMON_HORSES_TO_PADDOCK) {
                     controlCentre.startTheRace();
 
-                    System.out.println("STARTED RACE");
                     // Update control centre status file
                     ccStates[0].setmType(ControlCentreMessageTypes.START_THE_RACE);
                     updateStatusFile(0);

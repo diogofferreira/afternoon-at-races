@@ -59,5 +59,6 @@ public class StableMain {
 
         // delete previously created status file
         stableInterface.deleteStatusFiles();
+        stable.deleteStatusFiles();
     }
 }

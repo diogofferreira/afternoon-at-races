@@ -1,10 +1,17 @@
 package sharedRegions;
 
+import communication.HostsInfo;
 import entities.HorseInt;
 import main.EventVariables;
+import serverStates.StableClientsState;
 import states.HorseState;
 import stubs.GeneralRepositoryStub;
 
+import java.io.*;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
@@ -95,6 +102,93 @@ public class Stable {
 
         this.raceOdds = new double[EventVariables.NUMBER_OF_RACES]
                 [EventVariables.NUMBER_OF_HORSES_PER_RACE];
+
+
+        /* Check if status file exists, if so, load previous state */
+        File statusFile = new File(HostsInfo.STABLE_STATUS_PATH.replace("{}", "0"));
+        BufferedReader br = null;
+
+        if (statusFile.isFile()) {
+            try {
+                br = new BufferedReader(new FileReader(
+                        new File(HostsInfo.STABLE_STATUS_PATH.replace(
+                                "{}-", ""))));
+            } catch (FileNotFoundException e) {
+                System.err.format("%s: no such" + " file or directory%n",
+                        HostsInfo.STABLE_STATUS_PATH.replace(
+                                "{}-", ""));
+                System.exit(1);
+            }
+
+            try {
+                String[] w, k;
+                String[] args = br.readLine().trim().split("\\|");
+
+                w = args[0].trim().substring(1, args[0].trim().length()-1).split(",");
+                for (int i = 0; i < w.length; i++)
+                    this.canProceed[i] = Boolean.parseBoolean(w[i].trim());
+
+                this.canCelebrate = Boolean.parseBoolean(args[1].trim());
+
+                w = args[3].trim().substring(1, args[3].trim().length()-1).split(",");
+                for (int i = 0; i < w.length; i++) {
+                    k = w[i].trim().substring(1, w[i].trim().length()-1).split(",");
+                    for (int j = 0; j < EventVariables.NUMBER_OF_HORSES_PER_RACE; j++)
+                        this.horsesAgility[i][j] = Integer.parseInt(k[j].trim());
+                }
+
+                w = args[4].trim().substring(1, args[4].trim().length()-1).split(",");
+                for (int i = 0; i < w.length; i++) {
+                    k = w[i].trim().substring(1, w[i].trim().length()-1).split(",");
+                    for (int j = 0; j < EventVariables.NUMBER_OF_HORSES_PER_RACE; j++)
+                        this.raceOdds[i][j] = Integer.parseInt(k[j].trim());
+                }
+
+            } catch (Exception e) {
+                System.err.println(e);
+                System.err.println("Invalid Stable status file");
+                System.exit(1);
+            }
+        }
+    }
+
+    /**
+     * Updates the file which stores all the entities last state on the current server.
+     */
+    private void updateStatusFile() {
+        PrintWriter pw;
+
+        try {
+            pw = new PrintWriter(new FileWriter(
+                    HostsInfo.STABLE_STATUS_PATH.replace(
+                            "{}-", ""), false));
+            pw.println(toString());
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Deletes the previously created status file.
+     */
+    public void deleteStatusFiles() {
+        try {
+            Files.delete(Paths.get(HostsInfo.STABLE_STATUS_PATH.replace(
+                    "{}-", "")));
+        } catch (NoSuchFileException x) {
+            System.err.format("%s: no such" + " file or directory%n",
+                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+            //System.exit(1);
+        } catch (DirectoryNotEmptyException x) {
+            System.err.format("%s not empty%n",
+                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+            System.exit(1);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+            System.exit(1);
+        }
     }
 
     /**
@@ -150,6 +244,7 @@ public class Stable {
         mutex.lock();
 
         toRtn = this.horsesAgility;
+        updateStatusFile();
 
         mutex.unlock();
         return toRtn;
@@ -185,6 +280,7 @@ public class Stable {
         // notify all horses
         canProceed[raceID] = true;
         inStable[raceID].signalAll();
+        updateStatusFile();
 
         mutex.unlock();
     }
@@ -222,6 +318,8 @@ public class Stable {
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
 
+        updateStatusFile();
+
         // only waits if it's not time to celebrate or if broker has not notified
         // that it can proceed to paddock
         while (!(canCelebrate || canProceed[h.getRaceID()])) {
@@ -246,7 +344,28 @@ public class Stable {
         for (Condition horsesInRace : inStable)
             horsesInRace.signalAll();
 
+        updateStatusFile();
         mutex.unlock();
+    }
+
+    /**
+     * Returns a string representation of the Stable state.
+     * @return
+     */
+    @Override
+    public String toString() {
+        String ha = "[";
+        for (int[] a : horsesAgility)
+            ha = ha + Arrays.toString(a) + ",";
+        ha = ha.substring(0, ha.length()-1) + "]";
+
+        String ro = "[";
+        for (double[] r : raceOdds)
+            ro = ro + Arrays.toString(r) + ",";
+        ro = ro.substring(0, ro.length()-1) + "]";
+
+        return Arrays.toString(canProceed) + "|" + canCelebrate + "|" +
+                Arrays.toString(lineups) + "|[" + ha + "|" + ro;
     }
 }
 
