@@ -1,11 +1,19 @@
 package entities;
 
+import communication.HostsInfo;
 import main.EventVariables;
+import states.BrokerState;
 import states.HorseState;
 import stubs.PaddockStub;
 import stubs.RacingTrackStub;
 import stubs.StableStub;
 
+import java.io.*;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -13,6 +21,11 @@ import java.util.Random;
  * one time max in each event to run a race.
  */
 public class Horse extends Thread implements HorseInt {
+    /**
+     * Current step in Horse/Jockey's lifecycle.
+     */
+    private int step;
+
     /**
      * Current state of the Horse/Jockey lifecycle.
      */
@@ -50,6 +63,11 @@ public class Horse extends Thread implements HorseInt {
     private int currentStep;
 
     /**
+     * Indicates if the Horse has already crossed the finish line.
+     */
+    private boolean finishLineCrossed;
+
+    /**
      * Instance of the shared region Stable.
      */
     private StableStub stable;
@@ -82,16 +100,96 @@ public class Horse extends Thread implements HorseInt {
         if (stable == null || paddock == null || racingTrack == null)
             throw new IllegalArgumentException("Invalid shared region reference.");
 
-        this.state = HorseState.AT_THE_STABLE;
+        this.step = 0;
+        this.state = null;
         this.id = id;
         this.agility = agility;
         this.raceID = -1;
         this.raceIdx = -1;
         this.currentPosition = 0;
         this.currentStep = 0;
+        this.finishLineCrossed = false;
         this.stable = stable;
         this.paddock = paddock;
         this.racingTrack = racingTrack;
+
+        /* Check if status file exists, if so, load previous state */
+        File statusFile = new File(HostsInfo.HORSES_STATUS_PATH.replace(
+                "{}", Integer.toString(this.id)));
+        BufferedReader br = null;
+
+        if (statusFile.isFile()) {
+            try {
+                br = new BufferedReader(new FileReader(statusFile));
+            } catch (FileNotFoundException e) {
+                System.err.format("%s: no such" + " file or directory%n",
+                        HostsInfo.HORSES_STATUS_PATH.replace(
+                                "{}", Integer.toString(this.id)));
+                System.exit(1);
+            }
+            String[] args;
+
+            try {
+                args = br.readLine().trim().split("\\|");
+
+                this.step = Integer.parseInt(args[0].trim());
+                this.state = HorseState.getType(Integer.parseInt(args[1].trim()));
+                this.agility = Integer.parseInt(args[2].trim());
+                this.raceID = Integer.parseInt(args[3].trim());
+                this.raceIdx = Integer.parseInt(args[4].trim());
+                this.currentPosition = Integer.parseInt(args[5].trim());
+                this.currentStep = Integer.parseInt(args[6].trim());
+                this.finishLineCrossed = Boolean.parseBoolean(args[7].trim());
+            } catch (Exception e) {
+                System.err.println(e);
+                System.err.println("Invalid Broker status file");
+                System.exit(1);
+            }
+        } else
+            updateStatusFile(-1);
+    }
+
+    /**
+     * Updates the step of the entity's lifecycle is in and saves all changes to a file.
+     * @param step Entity's lifecycle step.
+     */
+    private void updateStatusFile(int step) {
+        PrintWriter pw;
+
+        this.step = step;
+        try {
+            pw = new PrintWriter(new FileWriter(HostsInfo.HORSES_STATUS_PATH.replace(
+                    "{}", Integer.toString(this.id)), false));
+            pw.println(this.step);
+            pw.println(this.state == null ? -1 : this.state.getId());
+
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Deletes the previously created status file.
+     */
+    private void deleteStatusFile() {
+        try {
+            Files.delete(Paths.get(HostsInfo.HORSES_STATUS_PATH.replace(
+                    "{}", Integer.toString(this.id))));
+        } catch (NoSuchFileException x) {
+            System.err.format("%s: no such" + " file or directory%n",
+                    HostsInfo.HORSES_STATUS_PATH.replace(
+                            "{}", Integer.toString(this.id)));
+            System.exit(1);
+        } catch (DirectoryNotEmptyException x) {
+            System.err.format("%s not empty%n", HostsInfo.HORSES_STATUS_PATH.replace(
+                    "{}", Integer.toString(this.id)));
+            System.exit(1);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+            System.exit(1);
+        }
     }
 
     /**
@@ -103,26 +201,52 @@ public class Horse extends Thread implements HorseInt {
         return rnd.nextInt(agility) + 1;
     }
 
-
     /**
      * Horse/Jockey pair lifecycle.
      */
     public void run() {
+
         // Start at the stable
-        stable.proceedToStable();
+        if (this.step == -1) {
+            stable.proceedToStable();
+            updateStatusFile(0);
+        }
 
         // when called, proceed to paddock to be appraised
-        paddock.proceedToPaddock();
+        if (this.step == 0) {
+            paddock.proceedToPaddock();
+            updateStatusFile(1);
+        }
 
         // proceed to the starting line
-        racingTrack.proceedToStartLine();
+        if (this.step == 1) {
+            racingTrack.proceedToStartLine();
+            updateStatusFile(2);
+        }
 
         // while not crossed the finish line, keep moving
-        while (!racingTrack.hasFinishLineBeenCrossed())
-            racingTrack.makeAMove(makeAStep());
+        while (true) {
+            if (this.step == 2 || this.step == 4) {
+                finishLineCrossed = racingTrack.hasFinishLineBeenCrossed();
+                updateStatusFile(3);
+            }
+
+            if (finishLineCrossed)
+                break;
+
+            if (this.step == 3) {
+                racingTrack.makeAMove(makeAStep());
+                updateStatusFile(4);
+            }
+        }
 
         // wait at the stable until the broker ends the event
-        stable.proceedToStable();
+        if (this.step == 3) {
+            stable.proceedToStable();
+            updateStatusFile(5);
+        }
+
+        deleteStatusFile();
     }
 
     /**
@@ -271,5 +395,16 @@ public class Horse extends Thread implements HorseInt {
     public void updateCurrentPosition(int step) {
         this.currentPosition += step;
         this.currentStep++;
+    }
+
+    /**
+     * Prints the current state of the Horse/Jockey pair.
+     */
+    @Override
+    public String toString() {
+        int st = this.state == null ? -1 : this.state.getId();
+        return this.step + "|" + st + "|" + this.agility + "|" + this.raceID
+                + "|" + this.raceIdx + "|" + this.currentPosition
+                + "|" + this.currentStep + "|" + this.finishLineCrossed;
     }
 }

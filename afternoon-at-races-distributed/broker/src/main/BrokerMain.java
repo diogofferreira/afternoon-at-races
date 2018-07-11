@@ -41,7 +41,7 @@ public class BrokerMain {
         // shared regions initialization
         stable = new StableStub(
                 HostsInfo.STABLE_HOSTNAME,
-                HostsInfo.STABLE_PORT, numExecs);
+                HostsInfo.STABLE_PORT);
         controlCentre = new ControlCentreStub(
                 HostsInfo.CONTROL_CENTRE_HOSTNAME,
                 HostsInfo.CONTROL_CENTRE_PORT, numExecs);

@@ -97,15 +97,15 @@ public class Broker extends Thread implements BrokerInt {
                         HostsInfo.BROKER_STATUS_PATH);
                 System.exit(1);
             }
-            String st;
             String[] w;
+            String[] args;
 
             try {
-                this.step = Integer.parseInt(br.readLine().trim());
-                this.state = BrokerState.getType(Integer.parseInt(br.readLine().trim()));
-                this.raceNumber = Integer.parseInt(br.readLine().trim());
-                st = br.readLine().trim();
-                w = st.substring(1, st.length()-1).split(",");
+                args = br.readLine().trim().split("\\|");
+                this.step = Integer.parseInt(args[0].trim());
+                this.state = BrokerState.getType(Integer.parseInt(args[1].trim()));
+                this.raceNumber = Integer.parseInt(args[2].trim());
+                w = args[3].trim().substring(1, args[3].trim().length()-1).split(",");
                 this.winners = new int[w.length];
                 for (int i = 0; i < w.length; i++)
                     this.winners[i] = Integer.parseInt(w[i].trim());
@@ -128,10 +128,7 @@ public class Broker extends Thread implements BrokerInt {
         this.step = step;
         try {
             pw = new PrintWriter(new FileWriter(HostsInfo.BROKER_STATUS_PATH, false));
-            pw.println(this.step);
-            pw.println(this.state == null ? -1 : this.state.getId());
-            pw.println(this.raceNumber);
-            pw.println(Arrays.toString(this.winners));
+            pw.println(toString());
             pw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,7 +177,7 @@ public class Broker extends Thread implements BrokerInt {
                 updateStatusFile(2);
             }
 
-            if (numExecs == 1 && raceNumber == 1) {
+            if (numExecs == 0 && raceNumber == 1) {
                 System.out.println("EXIT 2");
                 System.exit(1);
             }
@@ -236,5 +233,15 @@ public class Broker extends Thread implements BrokerInt {
     @Override
     public void setBrokerState(BrokerState state) {
         this.state = state;
+    }
+
+    /**
+     * Prints the current state of the Broker.
+     */
+    @Override
+    public String toString() {
+        int st = this.state == null ? -1 : this.state.getId();
+        return this.step + "|" + st + "|" + this.raceNumber + "|" +
+                Arrays.toString(this.winners);
     }
 }

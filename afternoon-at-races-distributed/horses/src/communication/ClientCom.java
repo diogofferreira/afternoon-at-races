@@ -207,7 +207,7 @@ public class ClientCom {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while writing an object from the socket output stream!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
     }
 }

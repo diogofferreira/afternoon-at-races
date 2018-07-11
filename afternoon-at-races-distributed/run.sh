@@ -6,5 +6,6 @@ i=0;
 while : ; do
     java -cp out-${1} ${2} ${i}
     i=$((i+1))
+    echo $i
     [[ -f $FILE && $i < 4 ]] || break
 done
