@@ -48,27 +48,30 @@ public class ControlCentreStub {
      */
     private ControlCentreMessage exchange(ControlCentreMessage outMessage) {
         ClientCom com = new ClientCom(serverHostName, serverPortNumb);
-        ControlCentreMessage inMessage;
+        ControlCentreMessage inMessage= null;
+        boolean succesfullWrite = false;
 
-        while (!com.open()) {
-            try {
-                Thread.currentThread().sleep((long)10);
-            } catch (InterruptedException e) {
+        while (!succesfullWrite || inMessage == null) {
+            while (!com.open()) {
+                try {
+                    Thread.currentThread().sleep((long) 10);
+                } catch (InterruptedException e) {
+                }
             }
+
+            succesfullWrite = com.writeObject(outMessage);
+
+            // Exit only of first execution on the OPEN_THE_EVENT message
+            if (numExecs == 1 && outMessage.getMethod() ==
+                    ControlCentreMessageTypes.START_THE_RACE.getId()
+                    && outMessage.getRaceId() == 0) {
+                System.out.println("EXIT" + numExecs);
+                System.exit(1);
+            }
+
+            inMessage = (ControlCentreMessage) com.readObject();
+            com.close();
         }
-
-        com.writeObject(outMessage);
-
-        // Exit only of first execution on the OPEN_THE_EVENT message
-        if (numExecs == 1 && outMessage.getMethod() ==
-                ControlCentreMessageTypes.START_THE_RACE.getId()
-                && outMessage.getRaceId() == 0) {
-            System.out.println("EXIT" + numExecs);
-            System.exit(1);
-        }
-
-        inMessage = (ControlCentreMessage) com.readObject();
-        com.close();
 
         return inMessage;
     }

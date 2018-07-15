@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import communication.HostsInfo;
 import entities.BrokerInt;
 import entities.SpectatorInt;
 import main.EventVariables;
@@ -8,6 +9,14 @@ import states.SpectatorState;
 import stubs.GeneralRepositoryStub;
 import stubs.StableStub;
 
+import java.io.*;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -68,10 +77,10 @@ public class ControlCentre {
     private boolean reportsPosted;
 
     /**
-     * Counter that increments each time a spectator is waken up by the
+     * Array list that increments each time a spectator is waken up by the
      * announcing of the race results.
      */
-    private int spectatorsLeavingRace;
+    private List<Integer> spectatorsLeavingRace;
 
     /**
      * Flag that signals if the event has already ended;
@@ -93,6 +102,8 @@ public class ControlCentre {
      */
     private StableStub stable;
 
+    private int numExecs;
+
     /**
      * Creates a new instance of Control Centre.
      * @param generalRepository Reference to an instance of a communication stub
@@ -100,11 +111,13 @@ public class ControlCentre {
      * @param stable Reference to an instance of the communication stub
      *               for the shared region Stable.
      */
-    public ControlCentre(GeneralRepositoryStub generalRepository, StableStub stable) {
+    public ControlCentre(GeneralRepositoryStub generalRepository, StableStub stable, int numExecs) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository Stub.");
         if (stable == null)
             throw new IllegalArgumentException("Invalid Stable Stub.");
+
+        this.numExecs = numExecs;
 
         this.generalRepository = generalRepository;
         this.stable = stable;
@@ -118,8 +131,96 @@ public class ControlCentre {
         this.spectatorsCanProceed = false;
         this.raceFinished = false;
         this.reportsPosted = false;
-        this.spectatorsLeavingRace = 0;
+        this.spectatorsLeavingRace = new ArrayList<>();
         this.eventEnded = false;
+
+
+        /* Check if status file exists, if so, load previous state */
+        File statusFile = new File(HostsInfo.CONTROL_CENTRE_STATUS_PATH.replace(
+                "{}-", ""));
+        BufferedReader br = null;
+
+        if (statusFile.isFile()) {
+            try {
+                br = new BufferedReader(new FileReader(
+                        new File(HostsInfo.CONTROL_CENTRE_STATUS_PATH.replace(
+                                "{}-", ""))));
+            } catch (FileNotFoundException e) {
+                System.err.format("%s: no such" + " file or directory%n",
+                        HostsInfo.CONTROL_CENTRE_STATUS_PATH.replace(
+                                "{}-", ""));
+                System.exit(1);
+            }
+
+            try {
+                String[] w;
+                String[] args = br.readLine().trim().split("\\|");
+
+                this.spectatorsInPaddock = Boolean.parseBoolean(args[0].trim());
+                this.spectatorsCanProceed = Boolean.parseBoolean(args[1].trim());
+                this.raceFinished = Boolean.parseBoolean(args[2].trim());
+                this.reportsPosted = Boolean.parseBoolean(args[3].trim());
+
+                if (!args[4].trim().equals("[]")) {
+                    w = args[4].trim().substring(1, args[4].trim().length() - 1).split(",");
+                    for (int i = 0; i < w.length; i++)
+                        this.spectatorsLeavingRace.add(Integer.parseInt(w[i].trim()));
+                }
+
+                this.eventEnded = Boolean.parseBoolean(args[5].trim());
+
+                w = args[6].trim().substring(1, args[6].trim().length()-1).split(",");
+                this.standings = new int[w.length];
+                for (int i = 0; i < w.length; i++)
+                    this.standings[i] = Integer.parseInt(w[i].trim());
+
+            } catch (Exception e) {
+                System.err.println(e);
+                System.err.println("Invalid Control Centre status file");
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else
+            updateStatusFile();
+    }
+
+    /**
+     * Updates the file which stores all the entities last state on the current server.
+     */
+    private void updateStatusFile() {
+        PrintWriter pw;
+
+        try {
+            pw = new PrintWriter(new FileWriter(
+                    HostsInfo.CONTROL_CENTRE_STATUS_PATH.replace(
+                            "{}-", ""), false));
+            pw.println(toString());
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Deletes the previously created status file.
+     */
+    public void deleteStatusFiles() {
+        try {
+            Files.delete(Paths.get(HostsInfo.CONTROL_CENTRE_STATUS_PATH.replace(
+                    "{}-", "")));
+        } catch (NoSuchFileException x) {
+            System.err.format("%s: no such" + " file or directory%n",
+                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+            //System.exit(1);
+        } catch (DirectoryNotEmptyException x) {
+            System.err.format("%s not empty%n",
+                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+            System.exit(1);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+            System.exit(1);
+        }
     }
 
     /**
@@ -165,6 +266,7 @@ public class ControlCentre {
         }
 
         spectatorsInPaddock = false;
+        updateStatusFile();
 
         mutex.unlock();
     }
@@ -194,6 +296,7 @@ public class ControlCentre {
         }
 
         isThereARace = !eventEnded;
+        updateStatusFile();
 
         mutex.unlock();
 
@@ -212,6 +315,12 @@ public class ControlCentre {
         spectatorsCanProceed = true;
         waitForRace.signalAll();
 
+        // update internal variables
+        reportsPosted = false;
+        spectatorsLeavingRace = new ArrayList<>();
+
+        updateStatusFile();
+
         mutex.unlock();
     }
 
@@ -225,6 +334,7 @@ public class ControlCentre {
         // notify broker
         spectatorsInPaddock = true;
         horsesInPaddock.signal();
+        updateStatusFile();
 
         mutex.unlock();
     }
@@ -250,11 +360,20 @@ public class ControlCentre {
             } catch (InterruptedException ignored) { }
         }
 
-        if (++spectatorsLeavingRace == EventVariables.NUMBER_OF_SPECTATORS) {
-            reportsPosted = false;
-            spectatorsLeavingRace = 0;
-        }
+        if (!spectatorsLeavingRace.contains(s.getID()))
+            spectatorsLeavingRace.add(s.getID());
 
+        /*if (spectatorsLeavingRace.size() == EventVariables.NUMBER_OF_SPECTATORS) {
+            reportsPosted = false;
+            spectatorsLeavingRace = new ArrayList<>();
+        }*/
+
+        updateStatusFile();
+
+        if (numExecs == 0) {
+            //System.out.println("EXIT 2 ON PROCEED TO STABLE");
+            Runtime.getRuntime().halt(1);
+        }
         mutex.unlock();
     }
 
@@ -274,6 +393,7 @@ public class ControlCentre {
         }
 
         raceFinished = false;
+        updateStatusFile();
         mutex.unlock();
     }
 
@@ -292,6 +412,7 @@ public class ControlCentre {
         // notify broker
         raceFinished = true;
         startingRace.signal();
+        updateStatusFile();
 
         mutex.unlock();
     }
@@ -314,6 +435,7 @@ public class ControlCentre {
         // notify all spectators
         reportsPosted = true;
         watchingRace.signalAll();
+        updateStatusFile();
 
         mutex.unlock();
 
@@ -356,6 +478,7 @@ public class ControlCentre {
 
         eventEnded = true;
         waitForRace.signalAll();
+        updateStatusFile();
 
         mutex.unlock();
     }
@@ -374,5 +497,17 @@ public class ControlCentre {
                 SpectatorState.CELEBRATING);
 
         mutex.unlock();
+    }
+
+    /**
+     * Returns a string representation of the Control Centre state.
+     * @return Textual representation of the Control Centre state.
+     */
+    @Override
+    public String toString() {
+        return spectatorsInPaddock + "|" + spectatorsCanProceed + "|" +
+                raceFinished + "|" + reportsPosted + "|" +
+                spectatorsLeavingRace + "|" + eventEnded + "|" +
+                Arrays.toString(standings);
     }
 }

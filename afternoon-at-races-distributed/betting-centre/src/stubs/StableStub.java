@@ -103,6 +103,7 @@ public class StableStub {
         raceOdds = inMessage.getRaceOdds();
         if (raceOdds == null ||
                 raceOdds.length != EventVariables.NUMBER_OF_HORSES_PER_RACE) {
+            System.out.println(raceOdds);
             System.out.println(Thread.currentThread().getName() +
                     " - Invalid race odds array - " +
                     StableMessageTypes.GET_RACE_ODDS);

@@ -21,10 +21,13 @@ public class ControlCentreMain {
         ControlCentre controlCentre;
         ControlCentreInterface controlCentreInterface;
         ControlCentreAPS controlCentreAPS;
-
         GeneralRepositoryStub generalRepository;
         StableStub stable;
         ServerCom scom, scomi;
+        int numExecs;
+
+        numExecs = Integer.parseInt(args[0]);
+        System.out.println("CONTROL CENTRE " + numExecs);
 
         // shared regions stub initialization
         generalRepository = new GeneralRepositoryStub(
@@ -43,7 +46,7 @@ public class ControlCentreMain {
         scom.start();
 
         // shared region initialization
-        controlCentre = new ControlCentre(generalRepository, stable);
+        controlCentre = new ControlCentre(generalRepository, stable, numExecs);
         controlCentreInterface = new ControlCentreInterface(controlCentre);
 
         // request processing
@@ -57,5 +60,6 @@ public class ControlCentreMain {
 
         // delete previously created status file
         controlCentreInterface.deleteStatusFiles();
+        controlCentre.deleteStatusFiles();
     }
 }

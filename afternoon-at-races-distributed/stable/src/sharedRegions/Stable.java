@@ -109,7 +109,7 @@ public class Stable {
 
 
         /* Check if status file exists, if so, load previous state */
-        File statusFile = new File(HostsInfo.STABLE_STATUS_PATH.replace("{}", "0"));
+        File statusFile = new File(HostsInfo.STABLE_STATUS_PATH.replace("{}-", ""));
         BufferedReader br = null;
 
         if (statusFile.isFile()) {
@@ -188,11 +188,11 @@ public class Stable {
                     "{}-", "")));
         } catch (NoSuchFileException x) {
             System.err.format("%s: no such" + " file or directory%n",
-                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+                    HostsInfo.STABLE_STATUS_PATH);
             //System.exit(1);
         } catch (DirectoryNotEmptyException x) {
             System.err.format("%s not empty%n",
-                    HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+                    HostsInfo.STABLE_STATUS_PATH);
             System.exit(1);
         } catch (IOException x) {
             // File permission problems are caught here.
@@ -254,7 +254,6 @@ public class Stable {
         mutex.lock();
 
         toRtn = this.horsesAgility;
-        updateStatusFile();
 
         mutex.unlock();
         return toRtn;
@@ -328,12 +327,12 @@ public class Stable {
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
 
+        updateStatusFile();
+
         if (numExecs == 1) {
             //System.out.println("EXIT 2 ON PROCEED TO STABLE");
             Runtime.getRuntime().halt(1);
         }
-
-        updateStatusFile();
 
         // only waits if it's not time to celebrate or if broker has not notified
         // that it can proceed to paddock
@@ -365,7 +364,7 @@ public class Stable {
 
     /**
      * Returns a string representation of the Stable state.
-     * @return
+     * @return Textual representation of the Stable state.
      */
     @Override
     public String toString() {

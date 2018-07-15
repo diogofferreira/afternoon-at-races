@@ -137,10 +137,11 @@ public class ControlCentreInterface {
             return new ControlCentreMessage(
                     inMessage, "Invalid message type");
 
-
         if (inMessage.getEntityId() < 0)
             return new ControlCentreMessage(
                     inMessage, "Invalid entity ID");
+
+        //System.out.println(inMessage);
 
         switch (mType) {
             case OPEN_THE_EVENT:
@@ -263,6 +264,7 @@ public class ControlCentreInterface {
                             inMessage.getEntityId());
 
                     ccStates[2 + inMessage.getEntityId()].enterMonitor();
+
                     if (ccStates[2 + inMessage.getEntityId()].getmType() ==
                             ControlCentreMessageTypes.GO_CHECK_HORSES ||
                             ccStates[2 + inMessage.getEntityId()].getmType() ==
