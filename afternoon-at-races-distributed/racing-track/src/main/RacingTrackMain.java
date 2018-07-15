@@ -55,5 +55,7 @@ public class RacingTrackMain {
                 racingTrackAPS.start();
             }
         }
+
+        racingTrackInterface.deleteStatusFiles();
     }
 }

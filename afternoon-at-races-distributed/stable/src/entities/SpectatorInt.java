@@ -61,4 +61,16 @@ public interface SpectatorInt {
      * @param strategy The strategy used by the Spectator.
      */
     void setStrategy(int strategy);
+
+    /**
+     * Method that returns the current race identifier.
+     * @return The current race identifier.
+     */
+    public int getRaceNumber();
+
+    /**
+     * Method that sets the current race identifier.
+     * @param raceNumber The current race identifier.
+     */
+    public void setRaceNumber(int raceNumber);
 }

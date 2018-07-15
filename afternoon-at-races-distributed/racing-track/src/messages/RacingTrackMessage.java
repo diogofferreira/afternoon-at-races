@@ -109,13 +109,16 @@ public class RacingTrackMessage implements Serializable {
     /**
      * Constructor (type 2).
      * @param method Method an entity invokes on the shared region server.
-     * @param step Current Horses' step number.
+     * @param raceIdOrStep Current race id or current Horses' step number.
      * @param entityId Id of the entity sending the message.
      */
     public RacingTrackMessage(RacingTrackMessageTypes method,
-                              int step, int entityId) {
+                              int raceIdOrStep, int entityId) {
         this.method = method.getId();
-        this.step = step;
+        if (method == RacingTrackMessageTypes.START_THE_RACE)
+            this.raceID = raceIdOrStep;
+        else
+            this.step = raceIdOrStep;
         this.entityId = entityId;
     }
 

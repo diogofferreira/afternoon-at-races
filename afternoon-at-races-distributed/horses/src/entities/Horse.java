@@ -142,7 +142,7 @@ public class Horse extends Thread implements HorseInt {
                 this.finishLineCrossed = Boolean.parseBoolean(args[7].trim());
             } catch (Exception e) {
                 System.err.println(e);
-                System.err.println("Invalid Broker status file");
+                System.err.println("Invalid Horse status file");
                 System.exit(1);
             }
         } else

@@ -17,4 +17,16 @@ public interface BrokerInt {
      * @param state The new Broker state.
      */
     void setBrokerState(BrokerState state);
+
+    /**
+     * Method that returns the current race identifier.
+     * @return Current race id.
+     */
+    public int getRaceNumber();
+
+    /**
+     * Updates the current race identifier.
+     * @param raceNumber The new race number.
+     */
+    public void setRaceNumber(int raceNumber);
 }

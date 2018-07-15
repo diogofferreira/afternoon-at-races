@@ -81,9 +81,10 @@ public class ClientCom {
             if (e.getMessage().equals("Connection refused"))
                 success = false;
             else {
+                success = false;
                 System.out.println(e.getMessage() + "!");
-                e.printStackTrace();
-                System.exit(1);
+                //e.printStackTrace();
+                //System.exit(1);
             }
         } catch (SocketTimeoutException e) {
             System.out.println(Thread.currentThread().getName() +
@@ -169,17 +170,17 @@ public class ClientCom {
             System.out.println(Thread.currentThread().getName() +
                     " - the read object cannot be deserialized!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (IOException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while reading an object from the socket input stream!");
-            e.printStackTrace();
-            System.exit(1);
+            //e.printStackTrace();
+            //System.exit(1);
         } catch (ClassNotFoundException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - read object unknow data type!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
 
         return fromServer;
@@ -189,25 +190,31 @@ public class ClientCom {
      * Write an object to the communication channel output stream.
      *
      * @param toServer Object to be written.
+     * @return True if the write operation was successful.
      */
-    public void writeObject(Object toServer) {
+    public boolean writeObject(Object toServer) {
+        boolean successfulWrite = false;
+
         try {
             out.writeObject(toServer);
+            successfulWrite = true;
         } catch (InvalidClassException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - the written object cannot be deserialized!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (NotSerializableException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - the given object is an instance of a non serializable data type!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (IOException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while writing an object from the socket output stream!");
-            e.printStackTrace();
+            //e.printStackTrace();
             //System.exit(1);
         }
+
+        return successfulWrite;
     }
 }

@@ -169,7 +169,7 @@ public class RacingTrackStub {
 
         b = (BrokerInt) Thread.currentThread();
         inMessage = exchange(new RacingTrackMessage(
-                RacingTrackMessageTypes.START_THE_RACE, 0));
+                RacingTrackMessageTypes.START_THE_RACE, b.getRaceNumber(), 0));
 
         if (inMessage.getMethod() !=
                 RacingTrackMessageTypes.START_THE_RACE.getId()) {

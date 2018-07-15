@@ -71,6 +71,8 @@ public class Stable {
      */
     private GeneralRepositoryStub generalRepository;
 
+    private int numExecs;
+
     /**
      * Creates a new instance of Stable.
      * @param generalRepository Reference to an instance of the shared region
@@ -78,11 +80,13 @@ public class Stable {
      * @param horsesIds Array of all the participant Horse/Jockey pairs ids to
      *                  generate the lineups.
      */
-    public Stable(GeneralRepositoryStub generalRepository, int[] horsesIds) {
+    public Stable(GeneralRepositoryStub generalRepository, int[] horsesIds, int numExecs) {
         if (generalRepository == null)
             throw new IllegalArgumentException("Invalid General Repository.");
         if (horsesIds.length != EventVariables.NUMBER_OF_HORSES)
             throw new IllegalArgumentException("Invalid array of horses' indexes");
+
+        this.numExecs = numExecs;
 
         this.generalRepository = generalRepository;
         this.mutex = new ReentrantLock();
@@ -130,26 +134,32 @@ public class Stable {
 
                 this.canCelebrate = Boolean.parseBoolean(args[1].trim());
 
-                w = args[3].trim().substring(1, args[3].trim().length()-1).split(",");
+                w = args[2].trim().substring(1, args[2].trim().length()-1).split(",");
+                for (int i = 0; i < w.length; i++)
+                    this.lineups[i] = Integer.parseInt(w[i].trim());
+
+                w = args[3].trim().substring(1, args[3].trim().length()-1).split("],");
                 for (int i = 0; i < w.length; i++) {
-                    k = w[i].trim().substring(1, w[i].trim().length()-1).split(",");
-                    for (int j = 0; j < EventVariables.NUMBER_OF_HORSES_PER_RACE; j++)
+                    k = w[i].trim().substring(1).split(",");
+                    for (int j = 0; j < k.length; j++)
                         this.horsesAgility[i][j] = Integer.parseInt(k[j].trim());
                 }
 
-                w = args[4].trim().substring(1, args[4].trim().length()-1).split(",");
+                w = args[4].trim().substring(1, args[4].trim().length()-1).split("],");
                 for (int i = 0; i < w.length; i++) {
-                    k = w[i].trim().substring(1, w[i].trim().length()-1).split(",");
-                    for (int j = 0; j < EventVariables.NUMBER_OF_HORSES_PER_RACE; j++)
-                        this.raceOdds[i][j] = Integer.parseInt(k[j].trim());
+                    k = w[i].trim().substring(1).split(",");
+                    for (int j = 0; j < k.length; j++)
+                        this.raceOdds[i][j] = Double.parseDouble(k[j].trim());
                 }
 
             } catch (Exception e) {
                 System.err.println(e);
                 System.err.println("Invalid Stable status file");
+                e.printStackTrace();
                 System.exit(1);
             }
-        }
+        } else
+            updateStatusFile();
     }
 
     /**
@@ -318,6 +328,11 @@ public class Stable {
         generalRepository.setHorseState(h.getRaceID(), h.getRaceIdx(),
                 HorseState.AT_THE_STABLE);
 
+        if (numExecs == 1) {
+            //System.out.println("EXIT 2 ON PROCEED TO STABLE");
+            Runtime.getRuntime().halt(1);
+        }
+
         updateStatusFile();
 
         // only waits if it's not time to celebrate or if broker has not notified
@@ -357,15 +372,15 @@ public class Stable {
         String ha = "[";
         for (int[] a : horsesAgility)
             ha = ha + Arrays.toString(a) + ",";
-        ha = ha.substring(0, ha.length()-1) + "]";
+        ha = ha + "]";
 
         String ro = "[";
         for (double[] r : raceOdds)
             ro = ro + Arrays.toString(r) + ",";
-        ro = ro.substring(0, ro.length()-1) + "]";
+        ro = ro + "]";
 
         return Arrays.toString(canProceed) + "|" + canCelebrate + "|" +
-                Arrays.toString(lineups) + "|[" + ha + "|" + ro;
+                Arrays.toString(lineups) + "|" + ha + "|" + ro;
     }
 }
 

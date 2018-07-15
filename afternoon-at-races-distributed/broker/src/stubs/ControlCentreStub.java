@@ -63,7 +63,7 @@ public class ControlCentreStub {
         if (numExecs == 1 && outMessage.getMethod() ==
                 ControlCentreMessageTypes.START_THE_RACE.getId()
                 && outMessage.getRaceId() == 0) {
-            System.out.println("EXIT 3");
+            System.out.println("EXIT" + numExecs);
             System.exit(1);
         }
 

@@ -21,9 +21,12 @@ public class StableMain {
         Stable stable;
         StableInterface stableInterface;
         StableAPS stableAPS;
-
         GeneralRepositoryStub generalRepository;
         ServerCom scom, scomi;
+        int numExecs;
+
+        numExecs = Integer.parseInt(args[0]);
+        System.out.println("STABLE " + numExecs);
 
         // shared regions stub initialization
         generalRepository = new GeneralRepositoryStub(
@@ -44,8 +47,8 @@ public class StableMain {
         for (int i = 0; i < EventVariables.NUMBER_OF_HORSES; i++)
             horsesIdx[i] = i;
 
-        stable = new Stable(generalRepository, horsesIdx);
-        stableInterface = new StableInterface(stable);
+        stable = new Stable(generalRepository, horsesIdx, numExecs);
+        stableInterface = new StableInterface(stable, numExecs);
 
         // request processing
         while(stableInterface.getRequests() !=

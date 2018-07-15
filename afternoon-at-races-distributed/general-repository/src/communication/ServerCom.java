@@ -218,7 +218,7 @@ public class ServerCom {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while reading an object from the socket input stream!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (ClassNotFoundException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - read object unknow data type!");

@@ -178,7 +178,7 @@ public class Broker extends Thread implements BrokerInt {
             }
 
             if (numExecs == 0 && raceNumber == 1) {
-                System.out.println("EXIT 2");
+                System.out.println("EXIT" + numExecs);
                 System.exit(1);
             }
 
@@ -233,6 +233,24 @@ public class Broker extends Thread implements BrokerInt {
     @Override
     public void setBrokerState(BrokerState state) {
         this.state = state;
+    }
+
+    /**
+     * Method that returns the current race identifier.
+     * @return Current race id.
+     */
+    @Override
+    public int getRaceNumber() {
+        return raceNumber;
+    }
+
+    /**
+     * Updates the current race identifier.
+     * @param raceNumber The new race number.
+     */
+    @Override
+    public void setRaceNumber(int raceNumber) {
+        this.raceNumber = raceNumber;
     }
 
     /**

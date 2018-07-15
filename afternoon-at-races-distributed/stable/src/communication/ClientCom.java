@@ -169,17 +169,17 @@ public class ClientCom {
             System.out.println(Thread.currentThread().getName() +
                     " - the read object cannot be deserialized!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (IOException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while reading an object from the socket input stream!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (ClassNotFoundException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - read object unknow data type!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
 
         return fromServer;
@@ -197,17 +197,17 @@ public class ClientCom {
             System.out.println(Thread.currentThread().getName() +
                     " - the written object cannot be deserialized!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (NotSerializableException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - the given object is an instance of a non serializable data type!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         } catch (IOException e) {
             System.out.println(Thread.currentThread().getName() +
                     " - an error occurred while writing an object from the socket output stream!");
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
     }
 }

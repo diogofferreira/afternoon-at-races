@@ -67,6 +67,11 @@ public class RacingTrackAPS extends Thread implements BrokerInt, HorseInt {
     private BrokerState brokerState;
 
     /**
+     * Id of the current race taking place.
+     */
+    private int raceNumber;
+
+    /**
      *  Constructor to initiate variables.
      *
      *     @param com Communication channel.
@@ -256,5 +261,23 @@ public class RacingTrackAPS extends Thread implements BrokerInt, HorseInt {
     public void updateCurrentPosition(int step) {
         this.currentPosition += step;
         this.currentStep++;
+    }
+
+    /**
+     * Method that returns the current race identifier.
+     * @return The current race identifier.
+     */
+    @Override
+    public int getRaceNumber() {
+        return raceNumber;
+    }
+
+    /**
+     * Method that sets the current race identifier.
+     * @param raceNumber The current race identifier.
+     */
+    @Override
+    public void setRaceNumber(int raceNumber) {
+        this.raceNumber = raceNumber;
     }
 }

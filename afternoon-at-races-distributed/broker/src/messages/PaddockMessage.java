@@ -78,6 +78,19 @@ public class PaddockMessage implements Serializable {
      * Constructor (type 2).
      * @param method Method an entity invokes on the shared region server.
      * @param raceId Id of the race.
+     * @param entityId Id of the entity sending the message.
+     */
+    public PaddockMessage(PaddockMessageTypes method, int raceId,
+                          int entityId) {
+        this.method = method.getId();
+        this.raceId = raceId;
+        this.entityId = entityId;
+    }
+
+    /**
+     * Constructor (type 3).
+     * @param method Method an entity invokes on the shared region server.
+     * @param raceId Id of the race.
      * @param raceIdx Index of a horse in the specified race.
      * @param entityId Id of the entity sending the message.
      */

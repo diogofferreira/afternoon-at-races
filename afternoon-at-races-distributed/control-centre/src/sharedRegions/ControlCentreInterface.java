@@ -2,6 +2,7 @@ package sharedRegions;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.Arrays;
 
 import communication.HostsInfo;
 import entities.SpectatorInt;
@@ -16,12 +17,6 @@ import serverStates.ControlCentreClientsState;
  * for the service (APS).
  */
 public class ControlCentreInterface {
-
-    /**
-     * Counter that registers the number of Spectators that have already invoked
-     * the RELAX_A_BIT method. It is useful to close the server socket.
-     */
-    private int requests;
 
     /**
      * Instance of the Control Centre shared region.
@@ -43,7 +38,6 @@ public class ControlCentreInterface {
         if (controlCentre == null)
             throw new IllegalArgumentException("Invalid Control Centre.");
 
-        this.requests = 0;
         this.controlCentre = controlCentre;
         this.ccStates =
                 new ControlCentreClientsState[2 + EventVariables.NUMBER_OF_SPECTATORS];
@@ -84,6 +78,7 @@ public class ControlCentreInterface {
 
     /**
      * Updates the file which stores all the entities last state on the current server.
+     * @param id Id of the entity writing in its log.
      */
     private void updateStatusFile(int id) {
         PrintWriter pw;
@@ -406,9 +401,8 @@ public class ControlCentreInterface {
                         // Update control centre status file
                         ccStates[2 + inMessage.getEntityId()].setmType(
                                 ControlCentreMessageTypes.RELAX_A_BIT);
+                        ccStates[2 + inMessage.getEntityId()].increaseRequests();
                         updateStatusFile(2 + inMessage.getEntityId());
-
-                        requests++;
                     }
                     ccStates[2 + inMessage.getEntityId()].exitMonitor();
                     reply = new ControlCentreMessage(
@@ -433,6 +427,6 @@ public class ControlCentreInterface {
      * that have already invoked the RELAX_A_BIT method.
      */
     public int getRequests() {
-        return requests;
+        return Arrays.stream(ccStates).mapToInt(x -> x.getRequests()).sum();
     }
 }

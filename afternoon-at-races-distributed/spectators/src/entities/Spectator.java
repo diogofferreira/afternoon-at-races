@@ -31,6 +31,11 @@ public class Spectator extends Thread implements SpectatorInt {
     private int strategy;
 
     /**
+     * Id of the current race taking place.
+     */
+    private int raceNumber;
+
+    /**
      * Instance of the shared region Paddock.
      */
     private PaddockStub paddock;
@@ -69,6 +74,7 @@ public class Spectator extends Thread implements SpectatorInt {
         this.id = id;
         this.wallet = wallet;
         this.strategy = strategy;
+        this.raceNumber = 0;
         this.paddock = paddock;
         this.controlCentre = controlCentre;
         this.bettingCentre = bettingCentre;
@@ -93,6 +99,8 @@ public class Spectator extends Thread implements SpectatorInt {
             // Check if won the bet and collect the gains if so
             if (controlCentre.haveIWon(bettedHorse))
                 wallet += bettingCentre.goCollectTheGains();
+
+            raceNumber++;
         }
 
         controlCentre.relaxABit();
@@ -179,5 +187,23 @@ public class Spectator extends Thread implements SpectatorInt {
     @Override
     public void setStrategy(int strategy) {
         this.strategy = strategy;
+    }
+
+    /**
+     * Method that returns the current race identifier.
+     * @return The current race identifier.
+     */
+    @Override
+    public int getRaceNumber() {
+        return raceNumber;
+    }
+
+    /**
+     * Method that sets the current race identifier.
+     * @param raceNumber The current race identifier.
+     */
+    @Override
+    public void setRaceNumber(int raceNumber) {
+        this.raceNumber = raceNumber;
     }
 }

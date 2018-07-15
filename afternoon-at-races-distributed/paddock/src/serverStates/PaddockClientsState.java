@@ -1,8 +1,7 @@
 package serverStates;
 
 import main.EventVariables;
-import messageTypes.ControlCentreMessageTypes;
-import messageTypes.StableMessageTypes;
+import messageTypes.PaddockMessageTypes;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
@@ -10,9 +9,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Definition of the Stable clients states.
+ * Definition of the Paddock states.
  */
-public class StableClientsState {
+public class PaddockClientsState {
     /**
      * Instance of a monitor.
      */
@@ -43,7 +42,7 @@ public class StableClientsState {
     /**
      * Last registered message sent.
      */
-    private StableMessageTypes mType;
+    private PaddockMessageTypes mType;
 
     /**
      * Number of requests made by this entity.
@@ -56,17 +55,13 @@ public class StableClientsState {
     private int raceNumber;
 
     /**
-     * Odds of horses winning.
-     */
-    private double[] odds;
-
-    /**
      * Constructor (type 1).
      * @param entityId Identifier of the entity which possesses this state log.
      * @param mType Last registered message sent.
      * @param raceNumber Current identifier of the race.
      */
-    public StableClientsState(int entityId, StableMessageTypes mType, int raceNumber) {
+    public PaddockClientsState(int entityId, PaddockMessageTypes mType,
+                               int raceNumber) {
         if (entityId < 0 || raceNumber > EventVariables.NUMBER_OF_RACES)
             throw new IllegalArgumentException("Illegal arguments");
 
@@ -76,15 +71,15 @@ public class StableClientsState {
         this.entityId = entityId;
         this.mType = mType;
         this.raceNumber = raceNumber;
-        this.threadInside = null;
         this.requests = 0;
+        this.threadInside = null;
     }
 
     /**
      * Constructor (type 2).
      * @param info Contents of the log.
      */
-    public StableClientsState(String info) {
+    public PaddockClientsState(String info) {
         if (info == null || info.length() < 1)
             throw new IllegalArgumentException("Illegal info string");
 
@@ -95,20 +90,10 @@ public class StableClientsState {
             this.enter = this.mutex.newCondition();
             this.exit = this.mutex.newCondition();
             this.entityId = Integer.parseInt(args[0]);
-            this.mType = StableMessageTypes.getType(Integer.parseInt(args[1]));
+            this.mType = PaddockMessageTypes.getType(Integer.parseInt(args[1]));
             this.raceNumber = Integer.parseInt(args[2]);
+            this.requests = Integer.parseInt(args[3]);
             this.threadInside = null;
-
-            String[] w = args[3].equals("null") ? null :
-                    args[3].substring(1, args[3].length()-1).split(",");
-            if (w != null) {
-                this.odds = new double[w.length];
-                for (int i = 0; i < w.length; i++)
-                    this.odds[i] = Double.parseDouble(w[i].trim());
-            }
-
-            this.requests = Integer.parseInt(args[4]);
-
         } catch (Exception e) {
             System.err.println("Invalid info arguments");
             System.exit(1);
@@ -172,7 +157,7 @@ public class StableClientsState {
      * Method that returns the last registered message sent.
      * @return The last registered message sent.
      */
-    public StableMessageTypes getmType() {
+    public PaddockMessageTypes getmType() {
         return mType;
     }
 
@@ -180,7 +165,7 @@ public class StableClientsState {
      * Method that sets the last registered message sent.
      * @param mType The last registered message sent.
      */
-    public void setmType(StableMessageTypes mType) {
+    public void setmType(PaddockMessageTypes mType) {
         this.mType = mType;
     }
 
@@ -232,29 +217,12 @@ public class StableClientsState {
     }
 
     /**
-     * Method that returns the odds of horses winning.
-     * @return Odds of horses winning.
-     */
-    public double[] getOdds() {
-        return odds;
-    }
-
-    /**
-     * Method that sets the odds of horses winning.
-     * @param odds Odds of horses winning.
-     */
-    public void setOdds(double[] odds) {
-        this.odds = odds;
-    }
-
-    /**
      * Method that returns a textual representation of the logging state.
      * @return Textual representation of the logging state.
      */
     @Override
     public String toString() {
         int mId = mType == null ? -1 : mType.getId();
-        return entityId + "|" + mId + "|" + raceNumber +
-                "|" + Arrays.toString(odds) + "|" + this.requests;
+        return entityId + "|" + mId + "|" + raceNumber + "|" + requests;
     }
 }

@@ -21,7 +21,6 @@ public class PaddockMain {
         Paddock paddock;
         PaddockInterface paddockInterface;
         PaddockAPS paddockAPS;
-
         ControlCentreStub controlCentre;
         GeneralRepositoryStub generalRepository;
         ServerCom scom, scomi;
@@ -57,5 +56,7 @@ public class PaddockMain {
                 paddockAPS.start();
             }
         }
+
+        paddockInterface.deleteStatusFiles();
     }
 }

@@ -54,6 +54,11 @@ public class GeneralRepositoryAPS extends Thread
     private int strategy;
 
     /**
+     * Id of the current race taking place.
+     */
+    private int raceNumber;
+
+    /**
      * Current state of the Horse/Jockey lifecycle.
      */
     private HorseState horseState;
@@ -210,6 +215,24 @@ public class GeneralRepositoryAPS extends Thread
     @Override
     public void updateWallet(int value) {
         this.wallet += value;
+    }
+
+    /**
+     * Method that returns the current race identifier.
+     * @return The current race identifier.
+     */
+    @Override
+    public int getRaceNumber() {
+        return raceNumber;
+    }
+
+    /**
+     * Method that sets the current race identifier.
+     * @param raceNumber The current race identifier.
+     */
+    @Override
+    public void setRaceNumber(int raceNumber) {
+        this.raceNumber = raceNumber;
     }
 
     /**

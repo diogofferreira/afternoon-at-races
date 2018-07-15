@@ -65,7 +65,7 @@ public class PaddockStub {
 
         s = (SpectatorInt) Thread.currentThread();
         inMessage = exchange(new PaddockMessage(
-                PaddockMessageTypes.GO_CHECK_HORSES, s.getID()));
+                PaddockMessageTypes.GO_CHECK_HORSES, s.getRaceNumber(), s.getID()));
 
         if (inMessage.getMethod() !=
                 PaddockMessageTypes.GO_CHECK_HORSES.getId()) {

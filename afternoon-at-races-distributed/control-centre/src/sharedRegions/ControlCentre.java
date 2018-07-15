@@ -266,7 +266,6 @@ public class ControlCentre {
     public void startTheRace() {
         mutex.lock();
 
-        System.out.println(raceFinished);
         // broker wait
         while (!raceFinished) {
             try {

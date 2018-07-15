@@ -190,45 +190,45 @@ public class HostsInfo {
     /**
      * General Repository status file path.
      */
-    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/general-repository-status.info";
+    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/general-repository-{}-status.info";
 
     /**
      * Stable status file path.
      */
-    public static final String STABLE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/stable-status.info";
+    public static final String STABLE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/stable-{}-status.info";
 
     /**
      * Control Centre status file path.
      */
-    public static final String CONTROL_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/control-centre-status.info";
+    public static final String CONTROL_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/control-centre-{}-status.info";
 
     /**
      * Paddock status file path.
      */
-    public static final String PADDOCK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/paddock-status.info";
+    public static final String PADDOCK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/paddock-{}-status.info";
 
     /**
      * Racing Track status file path.
      */
-    public static final String RACING_TRACK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/racing-track-status.info";
+    public static final String RACING_TRACK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/racing-track-{}-status.info";
 
     /**
      * Betting Centre status file path.
      */
-    public static final String BETTING_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/betting-centre-status.info";
+    public static final String BETTING_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/betting-centre-{}-status.info";
 
     /**
      * Horses status file path.
      */
-    public static final String HORSES_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/horses-status.info";
+    public static final String HORSES_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/horses-{}-status.info";
 
     /**
      * Spectators status file path.
      */
-    public static final String SPECTATORS_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/spectators-status.info";
+    public static final String SPECTATORS_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/spectators-{}-status.info";
 
     /**
      * Broker status file path.
      */
-    public static final String BROKER_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/broker-status.info";
+    public static final String BROKER_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/broker-status.info";
 }

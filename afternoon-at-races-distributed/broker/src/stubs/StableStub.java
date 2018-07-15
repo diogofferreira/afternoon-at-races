@@ -42,18 +42,21 @@ public class StableStub {
      */
     private StableMessage exchange(StableMessage outMessage) {
         ClientCom com = new ClientCom(serverHostName, serverPortNumb);
-        StableMessage inMessage;
+        StableMessage inMessage = null;
+        boolean succesfullWrite = false;
 
-        while (!com.open()) {
-            try {
-                Thread.currentThread().sleep((long)10);
-            } catch (InterruptedException e) {
+        while (!succesfullWrite || inMessage == null) {
+            while (!com.open()) {
+                try {
+                    Thread.currentThread().sleep((long) 10);
+                } catch (InterruptedException e) {
+                }
             }
-        }
 
-        com.writeObject(outMessage);
-        inMessage = (StableMessage) com.readObject();
-        com.close();
+            succesfullWrite = com.writeObject(outMessage);
+            inMessage = (StableMessage) com.readObject();
+            com.close();
+        }
 
         return inMessage;
     }

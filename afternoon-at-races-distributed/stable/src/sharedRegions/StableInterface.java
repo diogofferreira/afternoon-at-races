@@ -13,6 +13,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Interface of the Stable server that processes the received messages,
@@ -39,14 +40,19 @@ public class StableInterface {
      */
     private StableClientsState[] stStates;
 
+    private int numExecs;
+
     /**
      * Creates a new instance of an interface of the Stable shared region.
      * @param stable Instance of the Stable shared region.
      */
-    public StableInterface(Stable stable) {
+    public StableInterface(Stable stable, int numExecs) {
         if (stable == null)
             throw new IllegalArgumentException("Invalid Stable.");
 
+        this.numExecs = numExecs;
+
+        //this.requests = 0;
         this.stable = stable;
         this.stStates =
                 new StableClientsState[1 + EventVariables.NUMBER_OF_HORSES];
@@ -70,20 +76,25 @@ public class StableInterface {
 
                 try {
                     this.stStates[i] = new StableClientsState(br.readLine().trim());
+                    //this.requests = Math.max(this.requests,
+                    //        Integer.parseInt(br.readLine().trim()));
                 } catch (Exception e) {
                     System.err.println(e);
-                    System.err.println("Invalid Stable status file");
+                    System.err.println("Invalid Stable client status file");
                     System.exit(1);
                 }
             }
         } else {
-            for (int i = 0; i < this.stStates.length; i++)
+            for (int i = 0; i < this.stStates.length; i++) {
                 this.stStates[i] = new StableClientsState(i, null, -1);
+                updateStatusFile(i);
+            }
         }
     }
 
     /**
      * Updates the file which stores all the entities last state on the current server.
+     * @param id Id of the entity writing in its log.
      */
     private void updateStatusFile(int id) {
         PrintWriter pw;
@@ -109,11 +120,13 @@ public class StableInterface {
                         "{}", Integer.toString(i))));
             } catch (NoSuchFileException x) {
                 System.err.format("%s: no such" + " file or directory%n",
-                        HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+                        HostsInfo.STABLE_STATUS_PATH.replace(
+                                "{}", Integer.toString(i)));
                 //System.exit(1);
             } catch (DirectoryNotEmptyException x) {
                 System.err.format("%s not empty%n",
-                        HostsInfo.CONTROL_CENTRE_STATUS_PATH);
+                        HostsInfo.STABLE_STATUS_PATH.replace(
+                                "{}", Integer.toString(i)));
                 System.exit(1);
             } catch (IOException x) {
                 // File permission problems are caught here.
@@ -159,7 +172,7 @@ public class StableInterface {
                     if (stStates[0].getmType() == StableMessageTypes.SUMMON_HORSES_TO_PADDOCK) {
                         odds = stable.getRaceOdds(raceID);
 
-                        // Update control centre status file
+                        // Update stable status file
                         stStates[0].setmType(
                                 StableMessageTypes.GET_RACE_ODDS);
                         updateStatusFile(0);
@@ -183,7 +196,12 @@ public class StableInterface {
                             stStates[0].getmType() == StableMessageTypes.GET_RACE_ODDS) {
                         stable.summonHorsesToPaddock(raceID);
 
-                        // Update control centre status file
+                        if (numExecs == 0) {
+                            //System.out.println("EXIT 1 ON PROCEED TO STABLE");
+                            Runtime.getRuntime().halt(1);
+                        }
+
+                        // Update stable status file
                         stStates[0].setmType(StableMessageTypes.SUMMON_HORSES_TO_PADDOCK);
                         stStates[0].setRaceNumber(raceID);
                         updateStatusFile(0);
@@ -212,14 +230,20 @@ public class StableInterface {
                     h.setAgility(inMessage.getAgility());
 
                     stStates[1 + inMessage.getEntityId()].enterMonitor();
+
                     if (stStates[1 + inMessage.getEntityId()].getmType() == null ||
                             (stStates[1 + inMessage.getEntityId()].getmType() ==
                                     StableMessageTypes.PROCEED_TO_STABLE &&
                                     inMessage.isAlreadyRun())) {
-                        stable.proceedToStable();
-                        requests++;
 
+                        stable.proceedToStable();
+
+                        // Update stable status file
+                        stStates[1 + inMessage.getEntityId()].setmType(
+                                StableMessageTypes.PROCEED_TO_STABLE);
+                        stStates[1 + inMessage.getEntityId()].increaseRequests();
                         updateStatusFile(1 + inMessage.getEntityId());
+
                     }
 
                     stStates[1 + inMessage.getEntityId()].exitMonitor();
@@ -233,12 +257,12 @@ public class StableInterface {
 
                 if (stStates[0].getmType() == StableMessageTypes.GET_RACE_ODDS) {
                     stable.entertainTheGuests();
-                    requests++;
 
                     // Update control centre status file
                     stStates[0].setmType(StableMessageTypes.ENTERTAIN_THE_GUESTS);
+                    stStates[0].increaseRequests();
                     updateStatusFile(0);
-                }
+                 }
 
                 stStates[0].exitMonitor();
                 reply = new StableMessage(StableMessageTypes.ENTERTAIN_THE_GUESTS,
@@ -266,6 +290,6 @@ public class StableInterface {
      * the CELEBRATE method.
      */
     public int getRequests() {
-        return requests;
+        return Arrays.stream(stStates).mapToInt(x -> x.getRequests()).sum();
     }
 }
