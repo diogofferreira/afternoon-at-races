@@ -363,11 +363,6 @@ public class ControlCentre {
         if (!spectatorsLeavingRace.contains(s.getID()))
             spectatorsLeavingRace.add(s.getID());
 
-        /*if (spectatorsLeavingRace.size() == EventVariables.NUMBER_OF_SPECTATORS) {
-            reportsPosted = false;
-            spectatorsLeavingRace = new ArrayList<>();
-        }*/
-
         updateStatusFile();
 
         if (numExecs == 0) {
