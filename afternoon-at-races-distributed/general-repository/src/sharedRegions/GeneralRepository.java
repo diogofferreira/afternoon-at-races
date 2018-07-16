@@ -321,8 +321,10 @@ public class GeneralRepository {
      * Method that updates the state of a Spectator.
      * @param spectatorId The ID of the Spectator whose the state is updated.
      * @param spectatorState The new state of the referenced Spectator.
+     * @return True if the Spectator state was updated.
      */
-    public void setSpectatorState(int spectatorId, SpectatorState spectatorState) {
+    public boolean setSpectatorState(int spectatorId, SpectatorState spectatorState) {
+        boolean updated = false;
         mutex.lock();
 
         if (this.spectatorsState[spectatorId] == null)
@@ -338,9 +340,11 @@ public class GeneralRepository {
             }
 
             printState();
+            updated = true;
         }
 
         mutex.unlock();
+        return updated;
     }
 
     /**

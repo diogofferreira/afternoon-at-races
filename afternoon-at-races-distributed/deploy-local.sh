@@ -31,5 +31,5 @@ for i in ${!MODULES[@]}; do
     rm -rf out-${MODULES[$i]} && mkdir out-${MODULES[$i]} && \
         javac -d out-${MODULES[$i]} -sourcepath ${MODULES[$i]}/src ${MODULES[$i]}/src/main/${CLASSES[$i]}.java
 
-    #screen -d -m ./run.sh ${MODULES[$i]} main.${CLASSES[$i]} &
+    screen -d -m ./run.sh ${MODULES[$i]} main.${CLASSES[$i]} &
 done

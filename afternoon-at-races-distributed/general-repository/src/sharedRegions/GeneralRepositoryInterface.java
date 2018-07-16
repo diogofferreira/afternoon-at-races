@@ -8,19 +8,14 @@ import states.BrokerState;
 import states.HorseState;
 import states.SpectatorState;
 
+import java.util.Arrays;
+
 /**
  * Interface of the General Repository server that processes the received messages,
  * communicating with shared region, and replies to the thread that requests
  * for the service (APS).
  */
 public class GeneralRepositoryInterface {
-
-    /**
-     * Counter that registers the number of Spectators that have already invoked
-     * the SET_SPECTATOR method when the update state corresponds to CELEBRATING.
-     * It is useful to close the server socket.
-     */
-    private int requests;
 
     /**
      * Instance of the General Repository shared region.
@@ -42,7 +37,6 @@ public class GeneralRepositoryInterface {
             throw new IllegalArgumentException("Invalid General Repository.");
 
         this.generalRepository = generalRepository;
-        this.requests = 0;
         this.grStates = new GeneralRepositoryClientsState[
                 1 + EventVariables.NUMBER_OF_HORSES +
                         EventVariables.NUMBER_OF_SPECTATORS];
@@ -102,7 +96,7 @@ public class GeneralRepositoryInterface {
 
                 // Update counter
                 if (updated && brokerState == BrokerState.PLAYING_HOST_AT_THE_BAR)
-                    requests++;
+                    grStates[0].increaseRequests();
                 grStates[0].exitMonitor();
 
                 return new GeneralRepositoryMessage(
@@ -221,7 +215,8 @@ public class GeneralRepositoryInterface {
                 // Update internal counters
                 if (hUpdated && raceID == EventVariables.NUMBER_OF_RACES - 1
                         && horseState == HorseState.AT_THE_STABLE)
-                    requests++;
+                    grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
+                            horseIdx].increaseRequests();
                 grStates[1 + raceID * EventVariables.NUMBER_OF_HORSES_PER_RACE +
                         horseIdx].exitMonitor();
 
@@ -282,10 +277,6 @@ public class GeneralRepositoryInterface {
                 spectatorState = SpectatorState.getType(
                         inMessage.getSpectatorState());
 
-                // Update counter
-                if (spectatorState == SpectatorState.CELEBRATING)
-                    requests++;
-
                 if (spectatorID < 0 ||
                         spectatorID > EventVariables.NUMBER_OF_SPECTATORS)
                     return new GeneralRepositoryMessage(
@@ -296,7 +287,14 @@ public class GeneralRepositoryInterface {
 
                 grStates[1 + EventVariables.NUMBER_OF_HORSES +
                         spectatorID].enterMonitor();
-                generalRepository.setSpectatorState(spectatorID, spectatorState);
+                boolean sUpdated = generalRepository.setSpectatorState(
+                        spectatorID, spectatorState);
+
+                // Update counter
+                if (sUpdated && spectatorState == SpectatorState.CELEBRATING)
+                    grStates[1 + EventVariables.NUMBER_OF_HORSES +
+                            spectatorID].increaseRequests();
+
                 grStates[1 + EventVariables.NUMBER_OF_HORSES +
                         spectatorID].exitMonitor();
 
@@ -311,7 +309,7 @@ public class GeneralRepositoryInterface {
     }
 
     public int getRequests() {
-        return requests;
+        return Arrays.stream(grStates).mapToInt(x -> x.getRequests()).sum();
     }
 
 }
