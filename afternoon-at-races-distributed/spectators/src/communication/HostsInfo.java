@@ -5,96 +5,96 @@ package communication;
  * remote machines.
  */
 public class HostsInfo {
-//    /**
-//     * Hostname of the General Repository server.
-//     */
-//    public static final String GENERAL_REPOSITORY_HOSTNAME = "l040101-ws01.ua.pt";
-//
-//    /**
-//     * Hostname of the Stable server.
-//     */
-//    public static final String STABLE_HOSTNAME = "l040101-ws02.ua.pt";
-//
-//    /**
-//     * Hostname of the Control Centre server.
-//     */
-//    public static final String CONTROL_CENTRE_HOSTNAME = "l040101-ws03.ua.pt";
-//
-//    /**
-//     * Hostname of the Paddock server.
-//     */
-//    public static final String PADDOCK_HOSTNAME = "l040101-ws04.ua.pt";
-//
-//    /**
-//     * Hostname of the Racing Track server.
-//     */
-//    public static final String RACING_TRACK_HOSTNAME = "l040101-ws05.ua.pt";
-//
-//    /**
-//     * Hostname of the Betting Centre server.
-//     */
-//    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws06.ua.pt";
-//
-//    /**
-//     * Hostname of the Horses server.
-//     */
-//    public static final String HORSES_HOSTNAME = "l040101-ws07.ua.pt";
-//
-//    /**
-//     * Hostname of the Spectators server.
-//     */
-//    public static final String SPECTATORS_HOSTNAME = "l040101-ws08.ua.pt";
-//
-//    /**
-//     * Hostname of the Broker server.
-//     */
-//    public static final String BROKER_HOSTNAME = "l040101-ws09.ua.pt";
-
-
     /**
      * Hostname of the General Repository server.
      */
-    public static final String GENERAL_REPOSITORY_HOSTNAME = "127.0.0.1";
+    public static final String GENERAL_REPOSITORY_HOSTNAME = "l040101-ws01.ua.pt";
 
     /**
      * Hostname of the Stable server.
      */
-    public static final String STABLE_HOSTNAME = "127.0.0.1";
+    public static final String STABLE_HOSTNAME = "l040101-ws02.ua.pt";
 
     /**
      * Hostname of the Control Centre server.
      */
-    public static final String CONTROL_CENTRE_HOSTNAME = "127.0.0.1";
+    public static final String CONTROL_CENTRE_HOSTNAME = "l040101-ws03.ua.pt";
 
     /**
      * Hostname of the Paddock server.
      */
-    public static final String PADDOCK_HOSTNAME = "127.0.0.1";
+    public static final String PADDOCK_HOSTNAME = "l040101-ws04.ua.pt";
 
     /**
      * Hostname of the Racing Track server.
      */
-    public static final String RACING_TRACK_HOSTNAME = "127.0.0.1";
+    public static final String RACING_TRACK_HOSTNAME = "l040101-ws05.ua.pt";
 
     /**
      * Hostname of the Betting Centre server.
      */
-    public static final String BETTING_CENTRE_HOSTNAME = "127.0.0.1";
+    public static final String BETTING_CENTRE_HOSTNAME = "l040101-ws06.ua.pt";
 
     /**
      * Hostname of the Horses server.
      */
-    public static final String HORSES_HOSTNAME = "127.0.0.1";
+    public static final String HORSES_HOSTNAME = "l040101-ws07.ua.pt";
 
     /**
      * Hostname of the Spectators server.
      */
-    public static final String SPECTATORS_HOSTNAME = "127.0.0.1";
+    public static final String SPECTATORS_HOSTNAME = "l040101-ws08.ua.pt";
 
     /**
      * Hostname of the Broker server.
      */
-    public static final String BROKER_HOSTNAME = "127.0.0.1";
+    public static final String BROKER_HOSTNAME = "l040101-ws09.ua.pt";
+
+
+//    /**
+//     * Hostname of the General Repository server.
+//     */
+//    public static final String GENERAL_REPOSITORY_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Stable server.
+//     */
+//    public static final String STABLE_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Control Centre server.
+//     */
+//    public static final String CONTROL_CENTRE_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Paddock server.
+//     */
+//    public static final String PADDOCK_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Racing Track server.
+//     */
+//    public static final String RACING_TRACK_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Betting Centre server.
+//     */
+//    public static final String BETTING_CENTRE_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Horses server.
+//     */
+//    public static final String HORSES_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Spectators server.
+//     */
+//    public static final String SPECTATORS_HOSTNAME = "127.0.0.1";
+//
+//    /**
+//     * Hostname of the Broker server.
+//     */
+//    public static final String BROKER_HOSTNAME = "127.0.0.1";
 
     /**
      * Port number of the General Repository server.
@@ -141,94 +141,94 @@ public class HostsInfo {
      */
     public static final int BROKER_PORT = 22409;
 
-//    /**
-//     * General Repository status file path.
-//     */
-//    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/home/sd0401/general-repository-status.info";
-//
-//    /**
-//     * Stable status file path.
-//     */
-//    public static final String STABLE_STATUS_PATH = "/home/sd0401/stable-status.info";
-//
-//    /**
-//     * Control Centre status file path.
-//     */
-//    public static final String CONTROL_CENTRE_STATUS_PATH = "/home/sd0401/control-centre-status.info";
-//
-//    /**
-//     * Paddock status file path.
-//     */
-//    public static final String PADDOCK_STATUS_PATH = "/home/sd0401/paddock-status.info";
-//
-//    /**
-//     * Racing Track status file path.
-//     */
-//    public static final String RACING_TRACK_STATUS_PATH = "/home/sd0401/racing-track-status.info";
-//
-//    /**
-//     * Betting Centre status file path.
-//     */
-//    public static final String BETTING_CENTRE_STATUS_PATH = "/home/sd0401/betting-centre-status.info";
-//
-//    /**
-//     * Horses status file path.
-//     */
-//    public static final String HORSES_STATUS_PATH = "/home/sd0401/horses-status.info";
-//
-//    /**
-//     * Spectators status file path.
-//     */
-//    public static final String SPECTATORS_STATUS_PATH = "/home/sd0401/spectators-status.info";
-//
-//    /**
-//     * Broker status file path.
-//     */
-//    public static final String BROKER_STATUS_PATH = "/home/sd0401/broker-status.info";
-
-
     /**
      * General Repository status file path.
      */
-    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/general-repository-{}-status.info";
+    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/home/sd0401/states/general-repository-{}-status.info";
 
     /**
      * Stable status file path.
      */
-    public static final String STABLE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/stable-{}-status.info";
+    public static final String STABLE_STATUS_PATH = "/home/sd0401/states/stable-{}-status.info";
 
     /**
      * Control Centre status file path.
      */
-    public static final String CONTROL_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/control-centre-{}-status.info";
+    public static final String CONTROL_CENTRE_STATUS_PATH = "/home/sd0401/states/control-centre-{}-status.info";
 
     /**
      * Paddock status file path.
      */
-    public static final String PADDOCK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/paddock-{}-status.info";
+    public static final String PADDOCK_STATUS_PATH = "/home/sd0401/states/paddock-{}-status.info";
 
     /**
      * Racing Track status file path.
      */
-    public static final String RACING_TRACK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/racing-track-{}-status.info";
+    public static final String RACING_TRACK_STATUS_PATH = "/home/sd0401/states/racing-track-{}-status.info";
 
     /**
      * Betting Centre status file path.
      */
-    public static final String BETTING_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/betting-centre-{}-status.info";
+    public static final String BETTING_CENTRE_STATUS_PATH = "/home/sd0401/states/betting-centre-{}-status.info";
 
     /**
      * Horses status file path.
      */
-    public static final String HORSES_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/horses-{}-status.info";
+    public static final String HORSES_STATUS_PATH = "/home/sd0401/states/horses-{}-status.info";
 
     /**
      * Spectators status file path.
      */
-    public static final String SPECTATORS_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/spectators-{}-status.info";
+    public static final String SPECTATORS_STATUS_PATH = "/home/sd0401/states/spectators-{}-status.info";
 
     /**
      * Broker status file path.
      */
-    public static final String BROKER_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/broker-status.info";
+    public static final String BROKER_STATUS_PATH = "/home/sd0401/states/broker-status.info";
+
+//
+//    /**
+//     * General Repository status file path.
+//     */
+//    public static final String GENERAL_REPOSITORY_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/general-repository-{}-status.info";
+//
+//    /**
+//     * Stable status file path.
+//     */
+//    public static final String STABLE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/stable-{}-status.info";
+//
+//    /**
+//     * Control Centre status file path.
+//     */
+//    public static final String CONTROL_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/control-centre-{}-status.info";
+//
+//    /**
+//     * Paddock status file path.
+//     */
+//    public static final String PADDOCK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/paddock-{}-status.info";
+//
+//    /**
+//     * Racing Track status file path.
+//     */
+//    public static final String RACING_TRACK_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/racing-track-{}-status.info";
+//
+//    /**
+//     * Betting Centre status file path.
+//     */
+//    public static final String BETTING_CENTRE_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/betting-centre-{}-status.info";
+//
+//    /**
+//     * Horses status file path.
+//     */
+//    public static final String HORSES_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/horses-{}-status.info";
+//
+//    /**
+//     * Spectators status file path.
+//     */
+//    public static final String SPECTATORS_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/spectators-{}-status.info";
+//
+//    /**
+//     * Broker status file path.
+//     */
+//    public static final String BROKER_STATUS_PATH = "/Users/pbm/Documents/UA/4_year/sd/afternoon-at-races/afternoon-at-races-distributed/states/broker-status.info";
 }

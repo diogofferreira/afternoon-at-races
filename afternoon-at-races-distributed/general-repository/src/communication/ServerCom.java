@@ -121,7 +121,7 @@ public class ServerCom {
      * @return Communication channel.
      */
     public ServerCom accept() {
-        ServerCom scon;                                      // canal de comunicação
+        ServerCom scon;
         boolean timeout = false;
 
         scon = new ServerCom(serverPortNumb, listeningSocket);

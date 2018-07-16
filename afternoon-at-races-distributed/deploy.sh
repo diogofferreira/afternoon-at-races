@@ -44,20 +44,21 @@ for i in ${!HOSTNAMES[@]}; do
     
     printf "\n\e[38;5;220m Copying ${MODULES[$i]} to ${HOSTNAMES[$i]}... \n\e[0m";
     scp ${MODULES[$i]}.tgz $USERNAME@${HOSTNAMES[$i]}:~
+    scp run.sh $USERNAME@${HOSTNAMES[$i]}:~
 
     printf "\n\e[38;5;220m Decompressing ${MODULES[$i]} in ${HOSTNAMES[$i]}... \n\e[0m";
-    COMMAND="rm -rf out && tar -zxvf ${MODULES[$i]}.tgz && 
-        mkdir out &&
-        javac -d out -sourcepath ${MODULES[$i]}/src ${MODULES[$i]}/src/main/${CLASSES[$i]}.java &&
+    COMMAND="rm -rf out-${MODULES[$i]} && rm -rf logs && rm -rf states && tar -zxvf ${MODULES[$i]}.tgz && 
+        mkdir out-${MODULES[$i]} && mkdir states && mkdir logs &&
+        javac -d out-${MODULES[$i]} -sourcepath ${MODULES[$i]}/src ${MODULES[$i]}/src/main/${CLASSES[$i]}.java &&
         rm -rf ${MODULES[$i]}*"
 
-    if [ "${MODULES[$i]}"="general-repository" ]; then
-        COMMAND="$COMMAND && mkdir logs";
-    fi
+    #if [ "${MODULES[$i]}"="general-repository" ]; then
+    #    COMMAND="$COMMAND && mkdir logs";
+    #fi
 
     ssh $USERNAME@${HOSTNAMES[$i]} "$COMMAND"
     
-    ssh $USERNAME@${HOSTNAMES[$i]} "screen -d -m java -cp out main.${CLASSES[$i]} &"
+    ssh $USERNAME@${HOSTNAMES[$i]} "screen -d -m ./run.sh ${MODULES[$i]} main.${CLASSES[$i]} &"
 
     printf "\n\e[38;5;220m Cleaning local ${MODULES[$i]}... \n\e[0m";
     rm ${MODULES[$i]}.tgz
